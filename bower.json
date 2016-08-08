@@ -1,0 +1,20 @@
+{
+  "name": "highway",
+  "description": "highway",
+  "main": "dest/highway.js",
+  "authors": [
+    "fish-in-water"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "highway"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

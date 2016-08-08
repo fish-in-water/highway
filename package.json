@@ -1,0 +1,36 @@
+{
+  "name": "highway",
+  "version": "1.0.0",
+  "description": "highway",
+  "main": "dest/highway.js",
+  "scripts": {
+    "dev": "webpack-dev-server --devtool sourcemap",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fish-in-water/highway.git"
+  },
+  "keywords": [
+    "highway"
+  ],
+  "author": "fish-in-water",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fish-in-water/highway/issues"
+  },
+  "homepage": "https://github.com/fish-in-water/highway#readme",
+  "devDependencies": {
+    "babel-core": "^6.11.4",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-class-properties": "^6.11.5",
+    "babel-preset-es2015": "^6.9.0",
+    "casperjs": "^1.1.3",
+    "eslint": "^2.13.1",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-loader": "^1.3.0",
+    "phantomjs": "^2.1.7",
+    "webpack": "^1.13.1",
+    "webpack-dev-server": "^1.14.1"
+  }
+}

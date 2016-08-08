@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>sample</title>
+</head>
+<body>
+  <app id="xxx"></app>
+
+  <template id="t-app">
+    <h2>ToDo App</h2>
+    <div>
+      <todos>
+      </todos>
+    </div>
+    <todo-form hi-props:area="jiangsu" hi-props:author="$parent.$props.author" hi-props:author2="$parent.$props.author2">
+    </todo-form>
+  </template>
+  <template id="t-todos">
+    <ul>
+      <li hi-for="todo in todos">{{todo.mesage}}</li>
+    </ul>
+  </template>
+  <template id="t-todo-form">
+    <input name='todo' type="text" hi-value="{{name}}" />
+    <input type="submit" value="submit" hi-on="onclick($ev, $el, '2')"/>
+  </template>
+
+  <script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+  <script type="text/javascript" src="../../../dest/highway.js"></script>
+  <script type="text/javascript" src="app.js"></script>
+</body>
+</html>
