@@ -20,6 +20,10 @@ module.exports = {
         }
       }
     ]
-  }
-  //devtool: 'source-map'
+  },
+  externals: {
+    'Zepto': 'Zepto'
+  },
+  //devtool: 'source-map',
+
 };

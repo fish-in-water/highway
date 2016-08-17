@@ -14,6 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
     template: $('#t-todo-form').html(),
     $props: {
 
+    },
+    onclick: function ($ev, $el, type) {
+      debugger;
     }
   });
   Highway.component('todo-form', TodoForm);
@@ -22,9 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
     template: $('#t-app').html(),
     $props: {
 
-    },
-    onclick: function (ev, $el, type) {
-      this.$props.attr0 = 1;
     }
   });
   Highway.component('app', App);

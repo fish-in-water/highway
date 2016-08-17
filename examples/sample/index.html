@@ -5,15 +5,23 @@
   <title>sample</title>
 </head>
 <body>
+<p>1</p>
+<p>1</p>
+<hr>
+<div id="test2"></div>
   <app id="xxx"></app>
 
-  <template id="t-app">
-    <h2>ToDo App</h2>
+  <template id="t-app" >
+    <h2 id="test">ToDo App</h2>
     <div>
+      <p>fdfdfds</p>
+      <p>fdfdfds</p>
       <todos>
+        <div>just atest</div>
       </todos>
     </div>
     <todo-form hi-props:area="jiangsu" hi-props:author="$parent.$props.author" hi-props:author2="$parent.$props.author2">
+
     </todo-form>
   </template>
   <template id="t-todos">
@@ -22,11 +30,12 @@
     </ul>
   </template>
   <template id="t-todo-form">
+    <p>You Name is {{name}}</p>
     <input name='todo' type="text" hi-value="{{name}}" />
-    <input type="submit" value="submit" hi-on="onclick($ev, $el, '2')"/>
+    <input id="submit" type="submit" value="submit" hi-on:click='onclick($ev, $el, "2", " 123 ", 2)'/>
   </template>
 
-  <script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+  <script type="text/javascript" src="../../lib/zepto/zepto.js"></script>
   <script type="text/javascript" src="../../../dest/highway.js"></script>
   <script type="text/javascript" src="app.js"></script>
 </body>

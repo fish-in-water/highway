@@ -1,6 +1,7 @@
-import element from './utils/element'
+import element from './element'
 import event from './event';
 import component from './component';
+import service from './service';
 import directive from './directive';
 
 // privates methods
@@ -20,26 +21,47 @@ const privates = {
 
       // if is component
       if (component.isComponent(this.$el[0])) {
+
         const $old = this.$el;
-        const $new = this.$el = $('<div></div>').attr(
-          Object.assign({'hi-component': $old[0].tagName.toLowerCase()}, element.getAttrs($old[0])));
+        const attrs = Object.assign({}, element.getAttrs($old[0]));
+        attrs[$old[0].tagName.toLowerCase()] = '';
+        const $new = this.$el = $('<div></div>').attr(attrs);
+        //const $new = this.$el = $('<div></div>').attr(
+        //  Object.assign({'hi-component': $old[0].tagName.toLowerCase()}, element.getAttrs($old[0])));
         $old.replaceWith($new);
+
+        this.tag = $old[0].tagName.toLowerCase();
       }
 
       // html template
       if (this.template) {
         this.$el.html(this.template);
       }
+			//
+      //// install delegates
+      //this.$el.$on = (event, selector, handler) => {
+      //  this.$el.on(event, selector, handler)
+      //}
+    }
+
+    // compile elements
+    {
+      element.compile(this);
     }
 
     // compile components
     {
-      this.children = component.compile(this.$el[0], this);
+      component.compile(this);
+    }
+
+    // compile services
+    {
+      service.compile(this);
     }
 
     // compile directives
     {
-
+      directive.compile(this);
     }
 
   }
