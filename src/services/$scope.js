@@ -1,11 +1,12 @@
 import {inject} from '../utils/grocery';
+import service from '../service';
 
-const $scope = function ($ctx) {
+const $scope = service.extend(function ($ctx) {
   const $scope = $ctx.$scope || ($ctx.$scope = {});
   const watches = {};
   return Object.assign($scope, {
     get(prop) {
-      return $scope[prop];
+      return $scope[prop] || '';
     },
     set(prop, newVal) {
       const oldVal = $scope[prop];
@@ -28,6 +29,6 @@ const $scope = function ($ctx) {
       }
     }
   });
-};
+});
 
 export default $scope;

@@ -5,17 +5,12 @@ import directive from './directive';
 import macro from './macro';
 
 const installServices = function () {
-  const $template = require('./services/$template');
-  const $el = require('./services/$el');
   const $scope = require('./services/$scope');
-  const $on = require('./services/$on');
-  const $off = require('./services/$off');
+  const $timeout = require('./services/$timeout');
 
-  service('$tempalte', $template.default);
-  service('$el', $el.default);
   service('$scope', $scope.default);
-  service('$on', $on.default);
-  service('$off', $off.default);
+  service('$timeout', $timeout.default);
+
 };
 
 const installDirectives = function () {
@@ -28,7 +23,6 @@ const installDirectives = function () {
 };
 
 const installMacro = function () {
-
   const fill = require('./macros/fill');
   const bind = require('./macros/bind');
 

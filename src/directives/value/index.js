@@ -1,7 +1,8 @@
-import {inject} from '../../utils/grocery'
+import {inject} from '../../utils/grocery';
+import directive from '../../directive';
 import input from './input';
 
-const value = function ($el, $ctx, $arg, $exp) {
+const value = directive.extend(function ($el, $ctx, $arg, $exp) {
   switch ($el.attr('tagName').toLowerCase()) {
     case 'input': {
       inject(input, {
@@ -10,7 +11,7 @@ const value = function ($el, $ctx, $arg, $exp) {
       break;
     }
   }
-};
+});
 
 export default value;
 

@@ -1,6 +1,7 @@
-import {deconstruction, secureHtml} from '../../../utils/grocery'
+import {deconstruction, secureHtml} from '../../../utils/grocery';
+import directive from '../../../directive';
 
-const text = function ($el, $ctx, $arg, $exp) {
+const text = directive.extend(function ($el, $ctx, $arg, $exp) {
   const {prop, secure, watch} = deconstruction($exp);
   const handler = function ($new) {
     $el.val(secure ? secureHtml($new) : $new);
@@ -12,7 +13,7 @@ const text = function ($el, $ctx, $arg, $exp) {
     });
   }
   handler($ctx.$scope.get(prop));
-};
+});
 
 export default text;
 

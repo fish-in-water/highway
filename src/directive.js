@@ -58,6 +58,9 @@ Object.assign(directive, {
     }
 
     return !!directives[attr];
+  },
+  extend(handler) {
+    return handler;
   }
 });
 

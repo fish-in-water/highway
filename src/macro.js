@@ -40,6 +40,9 @@ Object.assign(macro, {
   },
   isText(node) {
     return node.nodeType === 3;
+  },
+  extend(handler) {
+    return handler;
   }
 });
 

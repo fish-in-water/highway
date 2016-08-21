@@ -1,6 +1,7 @@
 import {inject} from '../utils/grocery';
+import directive from '../directive';
 
-const on = function ($el, $ctx, $arg, $exp) {
+const on = directive.extend(function ($el, $ctx, $arg, $exp) {
   const matches = $exp.trim().match(/^([^\(]*)\s*\(\s*([^\)]*)\)/m);
   const method = matches[1];
   const args = matches[2].split(',').map(function (arg) {
@@ -24,7 +25,7 @@ const on = function ($el, $ctx, $arg, $exp) {
       $ev
     }, obj))();
   });
-};
+});
 
 export default on;
 

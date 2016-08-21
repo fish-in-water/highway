@@ -1,7 +1,8 @@
 import {deconstruction, secureHtml} from '../utils/grocery';
 import fill from './fill';
+import macro from '../macro';
 
-const bind = function ($el, $ctx, $text, $exp) {
+const bind = macro.extend(function ($el, $ctx, $text, $exp) {
   const {prop, secure} = deconstruction($exp);
   $ctx.$scope.watch(prop, function () {
     $el.html($text.replace(/{{{(\S+)}}}/, function ($0, $1) {
@@ -11,6 +12,6 @@ const bind = function ($el, $ctx, $text, $exp) {
     }));
   });
   return secure ? secureHtml($ctx.$scope.get(prop)) : $ctx.$scope.get(prop);
-};
+});
 
 export default bind;

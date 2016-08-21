@@ -1,3 +1,5 @@
+import {inject} from './utils/grocery';
+
 const services = {};
 
 const service = function (service, handler) {
@@ -8,8 +10,14 @@ Object.assign(service, {
   services,
   compile($ctx) {
     for (const service in services) {
-      $ctx[service] = services[service]($ctx);
+      const instance = $ctx[service] = inject(services[service], {
+        $ctx
+      })();
+      instance.$mount && instance.$mount();
     }
+  },
+  extend(handler) {
+    return handler;
   }
 });
 
