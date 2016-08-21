@@ -10,13 +10,10 @@ const compile = function (node) {
 
   if (!node.$children) {
     node.$children = $();
-    //$el.$children.search = function (selector) {
-    //  return $([].concat(this.filter(selector)).concat(this.find(selector)));
-    //}
   }
 
-  for (const childNode of Array.prototype.slice.call(node.childNodes)) {
-    if (!component.isComponent(childNode) && element.isElement(childNode)) {
+  for (const childNode of Array.from(node.childNodes)) {
+    if (!component.isComponent(childNode)) {
       node.$children.push($(childNode));
       compile(childNode);
     }
@@ -27,7 +24,34 @@ const compile = function (node) {
 
 const element = {
   compile($ctx) {
-    console.log($ctx.tag);
+    // el is empty
+    if (!$ctx.$el) {
+      $ctx.$el = $('<div></div>');
+      const tag = component.findTag($ctx.constructor);
+      const el = component.findEl(tag);
+      if (tag && el) {
+        $ctx.$el = $(el);
+      }
+    }
+
+    // if is component
+    if (component.isComponent($ctx.$el[0])) {
+      const $old = $ctx.$el;
+      const attrs = Object.assign({}, element.getAttrs($old[0]));
+      attrs[$old[0].tagName.toLowerCase()] = '';
+      const $new = $ctx.$el = $('<div></div>').attr(attrs);
+      //const $new = this.$el = $('<div></div>').attr(
+      //  Object.assign({'hi-component': $old[0].tagName.toLowerCase()}, element.getAttrs($old[0])));
+      $old.replaceWith($new);
+
+      $ctx.tag = $old[0].tagName.toLowerCase();
+    }
+
+    // html template
+    if ($ctx.$template) {
+      $ctx.$el.html($ctx.$template);
+    }
+
     return compile($ctx.$el[0]);
   },
   getAttrs(node) {

@@ -9,7 +9,7 @@ const directive = function (directive, handler) {
 
 const compile = function (node, $ctx) {
   const children = node.$children || [];
-  for (const child of Array.prototype.slice.call(children)) {
+  for (const child of Array.from(children)) {
     compile(child[0], $ctx);
   }
 

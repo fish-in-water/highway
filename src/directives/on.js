@@ -1,3 +1,5 @@
+import {inject} from '../utils/grocery';
+
 const on = function ($el, $ctx, $arg, $exp) {
   const matches = $exp.trim().match(/^([^\(]*)\s*\(\s*([^\)]*)\)/m);
   const method = matches[1];
@@ -11,14 +13,16 @@ const on = function ($el, $ctx, $arg, $exp) {
       return arg - 0;
     }
   });
+  const obj = {};
+  for (const arg of args) {
+    obj[arg] = arg;
+  }
 
   $el.on($arg, function ($ev) {
-    $ctx[method].apply($ctx, args.map(function (arg) {
-      return {
-        $el,
-        $ev
-      }[arg] || arg;
-    }));
+    inject($ctx[method].bind($ctx), Object.assign({
+      $el,
+      $ev
+    }, obj))();
   });
 };
 

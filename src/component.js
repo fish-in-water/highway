@@ -9,7 +9,7 @@ const component = function (tag, View) {
 const compile = function (node, $ctx) {
   $ctx.$children = $ctx.$children || [];
 
-  for (const childNode of Array.prototype.slice.call(node.childNodes)) {
+  for (const childNode of Array.from(node.childNodes)) {
     if (component.isComponent(childNode)) { // this is component
       const View = components[childNode.tagName.toLowerCase()];
       const instance = new View({$el: $(childNode)});
