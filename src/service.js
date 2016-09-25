@@ -1,25 +1,21 @@
-import {inject} from './utils/grocery';
-
 const services = {};
 
-const service = function (service, handler) {
-  services[service] = handler;
+const service = function (name, service) {
+  services[name] = service;
 };
 
 Object.assign(service, {
-  services,
   compile($ctx) {
-    for (const service in services) {
-      const instance = $ctx[service] = inject(services[service], {
-        $ctx
-      })();
+    $ctx.$services = Object.assign({}, services, $ctx.$services);
+    for (const service in $ctx.$services) {
+      const instance = $ctx.$services[service]($ctx);
+      $ctx.$services[service] = instance;
       instance.$mount && instance.$mount();
     }
   },
-  extend(handler) {
-    return handler;
+  destroy($ctx) {
+    console.log('service destroy')
   }
 });
 
 export default service;
-

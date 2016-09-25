@@ -1,20 +1,21 @@
 {
   "name": "highway",
-  "description": "highway",
-  "main": "dest/highway.js",
+  "description": "",
+  "main": "index.js",
   "authors": [
-    "fish-in-water"
+    "fish-in-water <13310100718@qq.com>"
   ],
   "license": "MIT",
-  "keywords": [
-    "highway"
-  ],
   "homepage": "",
   "ignore": [
     "**/.*",
     "node_modules",
     "bower_components",
+    "lib",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "zepto": "^1.1.6"
+  }
 }

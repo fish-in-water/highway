@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>sample</title>
+</head>
+<body>
+<div id="my-app" hi-on:click="clickMe">
+  <h2>To Do App</h2>
+  <div>Hi, {{name}}, [[name]], you age is {{age}}</div>
+  <div>
+  <div hi-bind="{{name}}"></div>
+    <div>My name is <input type="text" hi-value="{{name}}"></div>
+    <div>My age is <input type="text" hi-value="{{age}}"></div>
+  </div>
+  <button hi-on:click="destroy">Destroy</button>
+  <notice></notice>
+  <my-form></my-form>
+  <my-list></my-list>
+</div>
+<script id="my-app-bak" hi-on:click="clickMe">
+//  <h2>To Do App</h2>
+//  <div>Hi, {{name}}</div>
+//  <div>
+//    <div hi-bind="{{name}}"></div>
+//    <div>My name is <input type="text" hi-value="{{name}}"></div>
+//  </div>
+//  <button hi-on:click="destroy">Destroy</button>
+//  <notice></notice>
+//  <my-form></my-form>
+//  <my-list></my-list>
+</script>
+<script id="t-notice" type="text/template">
+  <div>This is notice1</div>
+  <div>This is notice2</div>
+  <div>This is notice3</div>
+</script>
+<script id="t-my-form" type="text/template">
+  <div>This is form</div>
+</script>
+<script id="t-my-list" type="text/template">
+  <div>This is list</div>
+</script>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>

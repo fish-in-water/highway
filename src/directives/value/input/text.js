@@ -1,21 +1,28 @@
-import {deconstruction, secureHtml} from '../../../utils/grocery';
-import directive from '../../../directive';
+import {deconstruct, secureHtml} from '../../../utils';
 
-const text = directive.extend(function ($el, $ctx, $arg, $exp) {
-  const {prop, secure, watch} = deconstruction($exp);
-  const handler = function ($new) {
-    $el.val(secure ? secureHtml($new) : $new);
+const text = function ({$ctx, $el, $arg, $exp}) { //$ctx, $el, $arg, $exp
+  const {prop, watch, secure} = deconstruct($exp);
+  const watcher = function (value) {
+    $el.val(secure ? secureHtml(value) : value);
   };
+  const inputer = function () {
+    $ctx.$scope.$set(prop, $el.val());
+  };
+
+  watcher($ctx.$scope.$get(prop));
+
   if (watch) {
-    $ctx.$scope.watch(prop, handler);
-    $el.on('input', function () {
-      $ctx.$scope.set(prop, $el.val());
-    });
+    return {
+      $mount() {
+        $ctx.$scope.$watch(prop, watcher);
+        $el.on('input', inputer);
+      },
+      $unmount() {
+        $ctx.$scope.$unwatch(prop, handler);
+        $el.off('input', inputer);
+      }
+    };
   }
-  handler($ctx.$scope.get(prop));
-});
+};
 
 export default text;
-
-
-

@@ -1,26 +1,10 @@
-import {inject} from '../../../utils/grocery';
-import directive from '../../../directive';
 import text from './text';
-import password from './password';
 
-const input = directive.extend(function ($el, $ctx, $arg, $exp) {
+const input = function ({$ctx, $el, $arg, $exp}) { //$ctx, $el, $arg, $exp
   switch ($el.attr('type').toLowerCase()) {
-    case 'text': {
-      inject(text, {
-        $el, $ctx, $arg, $exp
-      })();
-      break;
-    }
-    case 'password': {
-      inject(password, {
-        $el, $ctx, $arg, $exp
-      })();
-      break;
-    }
+    case 'text':
+      return text({$ctx, $el, $arg, $exp});
   }
-});
+};
 
 export default input;
-
-
-

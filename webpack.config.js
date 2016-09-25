@@ -1,4 +1,4 @@
-var path = require('path');
+var path = require('path')
 
 module.exports = {
   entry: {
@@ -6,24 +6,29 @@ module.exports = {
   },
   output: {
     path: __dirname,
-    filename: './dest/highway.js'
+    filename: './dest/[name].js'
+    //library: 'Highway',
+    //libraryTarget: 'umd'
   },
   module: {
-    //preLoaders: [
-    //  {test: /\.js$/, loader: "eslint-loader", exclude: /node_modules/}
-    //],
     loaders: [
       {
         test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/, query: {
           presets: ['es2015'],
-          "plugins": ["transform-class-properties"]
+          plugins: ["transform-class-properties"]
         }
       }
     ]
   },
   externals: {
     'Zepto': 'Zepto'
-  },
-  //devtool: 'source-map',
-
-};
+  }
+  //plugins: [
+  //  new webpack.DefinePlugin({
+  //    'process.env': {
+  //      NODE_ENV: '"development"'
+  //    }
+  //  })
+  //],
+  //devtool: 'source-map'
+}

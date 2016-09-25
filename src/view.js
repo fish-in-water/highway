@@ -1,62 +1,65 @@
-import element from './element'
-import event from './event';
+import {extend} from './utils';
 import component from './component';
 import service from './service';
 import directive from './directive';
 import macro from './macro';
 
-// privates methods
 const privates = {
-  initialize() {
-    // compile services
-    {
-      service.compile(this);
-    }
+  compile($ctx) {
+    $ctx.$willmount && $ctx.$willmount();
 
-    // compile elements
-    {
-      element.compile(this);
-    }
+    component.compile($ctx);
 
-    // compile components
-    {
-      component.compile(this);
-    }
+    service.compile($ctx);
 
-    // compile directives
-    {
-      directive.compile(this);
-    }
+    directive.compile($ctx);
 
-    // compile macros
-    {
-      macro.compile(this);
-    }
+    macro.compile($ctx);
+
+    $ctx.$didmount && $ctx.$didmount();
+  },
+  destroy($ctx) {
+    $ctx.$willunmount && $ctx.$willunmount();
+
+    component.destroy($ctx);
+
+    service.destroy($ctx);
+
+    directive.destroy($ctx);
+
+    macro.destroy($ctx);
+
+    $ctx.$didunmount && $ctx.$didunmount();
   }
 };
 
 class View {
-  // constructor
+  static extend = extend
+
   constructor(options) {
     Object.assign(this, options);
-    privates.initialize.call(this);
+    privates.compile(this);
+  }
+
+  $willmount($ctx) {
+
+  }
+
+  $didmount($ctx) {
+
+  }
+
+  $willunmount($ctx) {
+
+  }
+
+  $didunmount($ctx) {
+
+  }
+
+  $destroy() {
+    privates.destroy(this);
   }
 }
-
-// static
-Object.assign(View, {
-  extend(options) {
-    class Hi extends View {
-      constructor(options) {
-        super(options);
-      }
-    }
-    Object.assign(Hi.prototype, options);
-    return Hi;
-  },
-});
-
-//prototype
-Object.assign(View.prototype, event);
 
 export default View;

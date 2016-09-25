@@ -1,4 +1,4 @@
-import Highway from './highway';
+import Highway from './highway'
 
 window.Highway = Highway;
 

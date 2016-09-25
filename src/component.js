@@ -1,65 +1,45 @@
-import element from './element'
-
 const components = {};
 
-const component = function (tag, View) {
-  components[tag.toLowerCase()] = View;
-};
-
-const compile = function (node, $ctx) {
-  $ctx.$children = $ctx.$children || [];
-
-  for (const childNode of Array.from(node.childNodes)) {
-    if (component.isComponent(childNode)) { // this is component
-      const View = components[childNode.tagName.toLowerCase()];
-      const instance = new View({$el: $(childNode)});
-      $ctx.$children.push(instance);
-      compile(childNode, instance);
-    } else { // this is element
-      compile(childNode, $ctx);
-    }
-  }
-
-  return $ctx.$children;
+const component = function (name, View) {
+  components[name.toLowerCase()] = View;
 };
 
 Object.assign(component, {
-  components,
   compile($ctx) {
-    return compile($ctx.$el[0], $ctx);
-  },
-  isComponent(node) {
-    return node && node.nodeType === 1 && components[node.tagName.toLowerCase()];
-  },
-  findEl(tag) {
-    if (!tag) {
-      return;
-    }
-
-    const iterator = function (node) {
-      if (element.getTagName(node) === tag.toLowerCase()) {
-        return node;
+    $ctx.$el = $ctx.$el || $('<div></div>');
+    $ctx.$template && $ctx.$el.html($($ctx.$template));
+    $ctx.$components = Object.assign({}, components, $ctx.$components);
+    const iterator = function (node, $ctx) {
+      if (node == null) {
+        return;
       }
-      const childNodes = Array.prototype.slice.call(node.childNodes);
-      for (const childNode of childNodes) {
-        if (iterator(childNode)) {
-          return childNode;
+
+      $ctx.$el.$children = $ctx.$el.$children || [];
+      $ctx.$children = $ctx.$children || [];
+
+      for (const childNode of Array.from(node.childNodes)) {
+        if (childNode &&
+          childNode.nodeType === 1 &&
+          $ctx.$components[childNode.tagName.toLowerCase()]) {
+          const View = $ctx.$components[childNode.tagName.toLowerCase()];
+          const instance = new View;
+          $(childNode).replaceWith(instance.$el);
+          $ctx.$children.push(instance);
+        } else {
+          $ctx.$el.$children.push($(childNode));
+          iterator(childNode, $ctx);
         }
       }
-    };
+    }
 
-    return iterator(document.body);
+    iterator($ctx.$el[0], $ctx);
   },
-  findTag(View) {
-    if (!View) {
-      return ;
-    }
+  destroy($ctx) {
+    $ctx.$el.$children = null;
+    $ctx.$children = null;
 
-    for (const tag in components) {
-      if (components[tag] === View) {
-        return tag;
-      }
-    }
+    console.log('component destroy')
+
   }
 });
 

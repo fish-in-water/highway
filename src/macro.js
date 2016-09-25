@@ -1,50 +1,64 @@
-import {inject} from './utils/grocery'
+const macros = [];
 
-const macros = {};
-
-const macro = function (macro, handler) {
-  macros[macro] = handler;
-};
-
-const compile = function (node, $ctx) {
-  const children = node.$children || [];
-  for (const child of Array.from(children)) {
-    compile(child[0], $ctx);
-  }
-
-  if (macro.isText(node)) {
-    let wholeText = node.wholeText;
-    const $el = $(node).parent();
-    for (const macro in macros) {
-      const regexp = new RegExp(macro, 'mgi')///\[\[key]]/mgi //new RegExp(macro, 'mgi');
-      if (regexp.test(wholeText)) {
-        wholeText = wholeText.replace(regexp, function ($0) {
-          return inject(macros[macro], {
-            $el,
-            $text: wholeText,
-            $ctx,
-            $exp: $0
-          })();
-        });
-        $el.html(wholeText);
-      }
-    }
-
-  }
+const macro = function (exp, macro) {
+  macros.push({
+    exp,
+    macro
+  })
 };
 
 Object.assign(macro, {
-  macros,
   compile($ctx) {
-    compile($ctx.$el[0], $ctx);
+    $ctx.$macros = Object.assign({}, macros, $ctx.macros);
+    $ctx.$macros._instances = [];
+
+    const iterator = function ($el, $ctx) {
+      for (const $child of $el.$children || []) {
+        iterator($child, $ctx);
+      }
+
+      if ($el[0].nodeType === 3) {
+        const text = $el.text();
+        if (text == null || text === '') {
+          return;
+        }
+
+        const instances = [];
+        const $parent = $el.parent();
+        const update = function () {
+          if (instances && instances.length) {
+            const newHtml = instances.reduce(function (text, instance) {
+              return instance.$replace ? instance.$replace(text) : text;
+            }, text);
+            $parent.html(newHtml);
+          }
+        };
+
+        for (const {exp, macro} of macros) {
+          const matches = text.match(new RegExp(exp, 'gm'));
+          if (matches) {
+            for (const match of matches) {
+              const instance = macro({
+                $ctx,
+                $el,
+                $exp: match,
+                $update: update
+              });
+              instance.$mount && instance.$mount();
+              instances.push(instance);
+            }
+          }
+        }
+
+        update();
+      }
+    };
+
+    iterator($ctx.$el, $ctx);
   },
-  isText(node) {
-    return node.nodeType === 3;
-  },
-  extend(handler) {
-    return handler;
+  destroy($ctx) {
+    console.log('macros destroy');
   }
 });
 
 export default macro;
-

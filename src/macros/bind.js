@@ -1,17 +1,32 @@
-import {deconstruction, secureHtml} from '../utils/grocery';
-import fill from './fill';
-import macro from '../macro';
+import {deconstruct, secureHtml} from '../utils';
 
-const bind = macro.extend(function ($el, $ctx, $text, $exp) {
-  const {prop, secure} = deconstruction($exp);
-  $ctx.$scope.watch(prop, function () {
-    $el.html($text.replace(/{{{(\S+)}}}/, function ($0, $1) {
-      return $ctx.$scope.get($1);
-    }).replace(/{{(\S+)}}/, function ($0, $1) {
-      return secureHtml($ctx.$scope.get($1));
-    }));
-  });
-  return secure ? secureHtml($ctx.$scope.get(prop)) : $ctx.$scope.get(prop);
-});
+const bind = function ({$ctx, $exp, $update}) {
+  const {prop, watch, secure} = deconstruct($exp);
+  if (watch) {
+    return {
+      $mount() {
+        $ctx.$scope.$watch(prop, $update);
+      },
+      $unmount() {
+        $ctx.$scope.$unwatch(prop, $update);
+      },
+      $replace($text) {
+        return $text.replace($exp, function () {
+          const value = $ctx.$scope.$get(prop);
+          return secure ? secureHtml(value) : value;
+        });
+      }
+    };
+  } else {
+    const value = $ctx.$scope.$get(prop);
+    return {
+      $replace($text) {
+        return $text.replace($exp, function () {
+          return secure ? secureHtml(value) : value;
+        });
+      }
+    };
+  }
+};
 
 export default bind;
