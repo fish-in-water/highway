@@ -11,20 +11,27 @@ const installServices = function () {
 };
 
 const installDirectives = function () {
+  const ef = require('./directives/if');
+  const repeat = require('./directives/repeat');
   const on = require('./directives/on');
   const bind = require('./directives/bind');
   const value = require('./directives/value');
+  const show = require('./directives/show');
+  const hide = require('./directives/hide');
 
+  directive('hi-if', ef.default, directive.PRIOR.EMERGENCY);
+  directive('hi-repeat', repeat.default, directive.PRIOR.EMERGENCY);
   directive('hi-on', on.default);
   directive('hi-bind', bind.default);
   directive('hi-value', value.default);
+  directive('hi-show', show.default);
+  directive('hi-hide', hide.default);
 };
 
 const installMacros = function () {
   const bind = require('./macros/bind');
 
-  macro('\\[?\\[\\[(\\S+)]]]?', bind.default);
-  macro('\\{?\\{\\{(\\S+)}}}?', bind.default);
+  macro('\\[?\\[\\[(\\S+)]]]?|\\{?\\{\\{(\\S+)}}}?', bind.default);
 };
 
 installServices();

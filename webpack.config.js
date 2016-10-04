@@ -22,7 +22,8 @@ module.exports = {
   },
   externals: {
     'Zepto': 'Zepto'
-  }
+  },
+  devtool: 'source-map'
   //plugins: [
   //  new webpack.DefinePlugin({
   //    'process.env': {
@@ -30,5 +31,5 @@ module.exports = {
   //    }
   //  })
   //],
-  //devtool: 'source-map'
+
 }

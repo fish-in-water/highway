@@ -8,7 +8,12 @@ var MyForm = Highway.extend({
 });
 
 var MyList = Highway.extend({
-  $template: $('#t-my-list').html()
+  $template: $('#t-my-list').html(),
+  $scope: {
+    name: 'xuxia',
+    age: 200,
+    male: true
+  }
 });
 
 var MyService = function ($ctx) {
@@ -23,7 +28,23 @@ var app = new Highway({
   $el: $('#my-app'),
   $scope: {
     name: 'xuxia',
-    age: 200
+    age: 200,
+    male: true,
+    female: false,
+    books: [
+      {
+        id: '001',
+        name: 'yingyu'
+      },
+      {
+        id: '002',
+        name: 'shuxue'
+      },
+      {
+        id: '003',
+        name: 'yuwen'
+      }
+    ]
   },
   $components: {
     'my-form': MyForm,
@@ -41,6 +62,9 @@ var app = new Highway({
 
   },
   clickMe() {
+
+    this.$scope.$set('male', !this.$scope.$get('male'));
+    this.$scope.$set('female', !this.$scope.$get('female'));
   },
   destroy() {
     this.$destroy();

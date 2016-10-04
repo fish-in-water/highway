@@ -4,7 +4,7 @@ const scope = function ($ctx) {
   let watchers = new MapList;
   $ctx.$scope = Object.assign(Object.create({
     $get(prop) {
-      return $ctx.$scope[prop] || '';
+      return $ctx.$scope[prop];
     },
 
     $set(prop, newVal) {

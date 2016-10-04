@@ -1,24 +1,79 @@
 import {extend} from './utils';
+import element from './element';
 import component from './component';
 import service from './service';
 import directive from './directive';
 import macro from './macro';
 
-const privates = {
-  compile($ctx) {
-    $ctx.$willmount && $ctx.$willmount();
+class View {
+  static extend = extend
 
-    component.compile($ctx);
+  constructor(options) {
+    Object.assign(this, options);
 
-    service.compile($ctx);
+    this.$willmount();
 
-    directive.compile($ctx);
+    service.compile(this);
 
-    macro.compile($ctx);
+    element.compile(this.$el, this);
 
-    $ctx.$didmount && $ctx.$didmount();
-  },
-  destroy($ctx) {
+    directive.compile(this.$el, this, directive.PRIOR.EMERGENCY);
+
+    component.compile(this.$el, this);
+
+    directive.compile(this.$el, this);
+
+    macro.compile(this.$el, this);
+
+    this.$didmount();
+  }
+
+  $compile($el) {
+
+    macro.compile($el, this);
+
+
+
+    //element.compile($el, this);
+
+    //directive.compile(this, directive.PRIOR.EMERGENCY, $el);
+
+    //element.append($el, this);
+
+    //directive.compile(this, directive.PRIOR.EMERGENCY);
+
+
+
+    //directive.compile(this, directive.PRIOR.EMERGENCY);
+
+    //component.compile(this);
+		//
+    //directive.compile(this);
+		//
+    //macro.compile(this);
+  }
+
+  $willmount() {
+
+  }
+
+  $didmount() {
+
+  }
+
+  $willunmount() {
+
+  }
+
+  $didunmount() {
+
+  }
+
+  $remove($el) {
+    element.remove($el, this);
+  }
+
+  $destroy() {
     $ctx.$willunmount && $ctx.$willunmount();
 
     component.destroy($ctx);
@@ -30,35 +85,6 @@ const privates = {
     macro.destroy($ctx);
 
     $ctx.$didunmount && $ctx.$didunmount();
-  }
-};
-
-class View {
-  static extend = extend
-
-  constructor(options) {
-    Object.assign(this, options);
-    privates.compile(this);
-  }
-
-  $willmount($ctx) {
-
-  }
-
-  $didmount($ctx) {
-
-  }
-
-  $willunmount($ctx) {
-
-  }
-
-  $didunmount($ctx) {
-
-  }
-
-  $destroy() {
-    privates.destroy(this);
   }
 }
 

@@ -113,3 +113,14 @@ export function secureHtml(html) {
     return html;
   }
 }
+
+export function getAttrs($el) {
+  const attrs = {};
+  const node = $el[0];
+  for (const attr in node.attributes) {
+    if (node.attributes.hasOwnProperty(attr)) {
+      attrs[node.attributes[attr].name] = node.attributes[attr].value;
+    }
+  }
+  return attrs;
+}

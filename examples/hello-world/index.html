@@ -4,32 +4,59 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <title>sample</title>
+  <style>
+    .summary {
+      background-color: red;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
-<div id="my-app" hi-on:click="clickMe">
-  <h2>To Do App</h2>
-  <div>Hi, {{name}}, [[name]], you age is {{age}}</div>
+<div id="my-app">
+
+  <div>1</div>
+  <div hi-if="male">I am {{name}}, [[age]]</div>
+  <div>2</div>
+  <div hi-if="female">
+    <p>I am female</p>
+  </div>
+  <div>3</div>
+  <button hi-on:click="clickMe">Destroy</button>
+  <!--
+  <ul>
+    <li hi-repeat="book in books">
+      id is:{{book.id}}, name is:{{book.name}}
+    </li>
+  </ul>
+  -->
+  <!--
+  <h2 hi-if="male">To Do App</h2>
+  <button hi-on:click="clickMe">Destroy</button>
+  <notice hi-if="male"></notice>
+  <div class='summary' hi-show="male">Hi, {{name}}, [[name]], you age is {{age}}</div>
   <div>
   <div hi-bind="{{name}}"></div>
     <div>My name is <input type="text" hi-value="{{name}}"></div>
     <div>My age is <input type="text" hi-value="{{age}}"></div>
   </div>
-  <button hi-on:click="destroy">Destroy</button>
+  <button hi-on:click="clickMe">Destroy</button>
   <notice></notice>
   <my-form></my-form>
-  <my-list></my-list>
+  -->
+  <my-list hi-if="male"></my-list>
 </div>
 <script id="my-app-bak" hi-on:click="clickMe">
 //  <h2>To Do App</h2>
-//  <div>Hi, {{name}}</div>
+//  <div class='summary' hi-show="male">Hi, {{name}}, [[name]], you age is {{age}}</div>
 //  <div>
-//    <div hi-bind="{{name}}"></div>
+//  <div hi-bind="{{name}}"></div>
 //    <div>My name is <input type="text" hi-value="{{name}}"></div>
-//  </div>
-//  <button hi-on:click="destroy">Destroy</button>
-//  <notice></notice>
-//  <my-form></my-form>
-//  <my-list></my-list>
+//    <div>My age is <input type="text" hi-value="{{age}}"></div>
+//    </div>
+//    <button hi-on:click="clickMe">Destroy</button>
+//    <notice></notice>
+//    <my-form></my-form>
+//    <my-list></my-list>
 </script>
 <script id="t-notice" type="text/template">
   <div>This is notice1</div>

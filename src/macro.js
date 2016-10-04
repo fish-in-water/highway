@@ -1,16 +1,16 @@
-const macros = [];
+const macros = {};
 
 const macro = function (exp, macro) {
-  macros.push({
-    exp,
-    macro
-  })
+  macros[exp] = macro;
 };
 
 Object.assign(macro, {
-  compile($ctx) {
-    $ctx.$macros = Object.assign({}, macros, $ctx.macros);
-    $ctx.$macros._instances = [];
+  compile($el, $ctx) {
+    // if is root
+    if ($el === $ctx.$el) {
+      $ctx.$macros = Object.assign({}, macros, $ctx.macros);
+      $ctx.$macros._instances = [];
+    }
 
     const iterator = function ($el, $ctx) {
       for (const $child of $el.$children || []) {
@@ -34,11 +34,11 @@ Object.assign(macro, {
           }
         };
 
-        for (const {exp, macro} of macros) {
+        for (const exp in macros) {
           const matches = text.match(new RegExp(exp, 'gm'));
           if (matches) {
             for (const match of matches) {
-              const instance = macro({
+              const instance = macros[exp]({
                 $ctx,
                 $el,
                 $exp: match,
@@ -54,7 +54,7 @@ Object.assign(macro, {
       }
     };
 
-    iterator($ctx.$el, $ctx);
+    iterator($el, $ctx);
   },
   destroy($ctx) {
     console.log('macros destroy');
