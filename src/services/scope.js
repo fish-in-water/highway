@@ -19,7 +19,7 @@ const scope = function ($ctx) {
       return watchers.add(prop, handler);
     },
 
-    $unwatch(prop, hanlder) {
+    $unwatch(prop, handler) {
       return watchers.remove(prop, handler);
     },
 

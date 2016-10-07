@@ -7,20 +7,19 @@ const component = function (name, View) {
 };
 
 Object.assign(component, {
+  initial($ctx) {
+    $ctx.$components = Object.assign({}, components, $ctx.$components);
+    $ctx.$components.$children = $ctx.$components.$children || [];
+  },
   compile($el, $ctx) {
-    // if is root
-    if ($el === $ctx.$el) {
-      $ctx.$components = Object.assign({}, components, $ctx.$components);
-      $ctx.$components.$children = $ctx.$components.$children || [];
-    }
 
     const iterator = ($el, $ctx) => {
       if (!$el || !$el.length || !$el[0]) {
         return;
       }
 
-      for (const childNode of Array.from($el[0].childNodes || [])) {
-        if (this.isComponent(childNode, $ctx)) {
+      for (const childNode of Array.from($el.children())) {
+        if (this.isComponent($(childNode), $ctx)) {
           const instance = this.createComponent(childNode, $ctx);
           instance.$parent = $ctx;
           $ctx.$components.$children.push(instance);
@@ -33,7 +32,7 @@ Object.assign(component, {
       this.createComponent($ctx.$el, $ctx);
     }
 
-    iterator($ctx.$el, $ctx);
+    iterator($el, $ctx);
   },
   isComponent($el, $ctx) {
     const node = $el[0];

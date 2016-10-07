@@ -1,36 +1,36 @@
 const macros = {};
+import component from './component';
 
 const macro = function (exp, macro) {
   macros[exp] = macro;
 };
 
 Object.assign(macro, {
+  initial($ctx) {
+    $ctx.$macros = Object.assign({}, macros, $ctx.macros);
+    $ctx.$macros._instances = [];
+  },
   compile($el, $ctx) {
-    // if is root
-    if ($el === $ctx.$el) {
-      $ctx.$macros = Object.assign({}, macros, $ctx.macros);
-      $ctx.$macros._instances = [];
-    }
 
     const iterator = function ($el, $ctx) {
-      for (const $child of $el.$children || []) {
-        iterator($child, $ctx);
+
+      if (component.isComponent($el, $ctx)) {
+        return;
       }
 
-      if ($el[0].nodeType === 3) {
-        const text = $el.text();
+      if (!$el.children().length) {
+        const text = $el.html();
         if (text == null || text === '') {
           return;
         }
 
         const instances = [];
-        const $parent = $el.parent();
         const update = function () {
           if (instances && instances.length) {
             const newHtml = instances.reduce(function (text, instance) {
               return instance.$replace ? instance.$replace(text) : text;
             }, text);
-            $parent.html(newHtml);
+            $el.html(newHtml);
           }
         };
 
@@ -51,6 +51,10 @@ Object.assign(macro, {
         }
 
         update();
+      }
+
+      for (const childNode of Array.from($el.children())) {
+        iterator($(childNode), $ctx);
       }
     };
 

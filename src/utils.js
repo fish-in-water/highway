@@ -1,3 +1,8 @@
+let counter = 0;
+export function unique(prefix) {
+  return `${prefix || ''}${counter++}`;
+}
+
 export function extend(options) {
   const Parent = this;
   class Child extends Parent {

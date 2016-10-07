@@ -1,5 +1,12 @@
 var Notice = Highway.extend({
-  $template: $('#t-notice').html()
+  $template: $('#t-notice').html(),
+  $scope: {
+    male: true
+  },
+  clickMe() {
+    this.$scope.$set('male', !this.$scope.$get('male'));
+    this.$scope.$set('female', !this.$scope.$get('female'));
+  }
 });
 Highway.component('notice', Notice);
 
@@ -23,6 +30,8 @@ var MyService = function ($ctx) {
     }
   }
 }
+
+//alert($('#itest')[0] == $('.ktest')[0])
 
 var app = new Highway({
   $el: $('#my-app'),
@@ -62,7 +71,6 @@ var app = new Highway({
 
   },
   clickMe() {
-
     this.$scope.$set('male', !this.$scope.$get('male'));
     this.$scope.$set('female', !this.$scope.$get('female'));
   },

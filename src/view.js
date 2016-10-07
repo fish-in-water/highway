@@ -13,44 +13,38 @@ class View {
 
     this.$willmount();
 
-    service.compile(this);
+    this.initial();
 
-    element.compile(this.$el, this);
-
-    directive.compile(this.$el, this, directive.PRIOR.EMERGENCY);
-
-    component.compile(this.$el, this);
-
-    directive.compile(this.$el, this);
-
-    macro.compile(this.$el, this);
+    this.$compile(this.$el);
 
     this.$didmount();
   }
 
+  initial() {
+    element.initial(this);
+
+    service.initial(this);
+
+    directive.initial(this);
+
+    component.initial(this);
+
+    macro.initial(this);
+  }
+
   $compile($el) {
 
+    element.compile($el, this);
+
+    service.compile($el, this);
+
+    directive.compile($el, this, directive.PRIOR.EMERGENCY);
+
+    component.compile($el, this);
+
+    directive.compile($el, this);
+
     macro.compile($el, this);
-
-
-
-    //element.compile($el, this);
-
-    //directive.compile(this, directive.PRIOR.EMERGENCY, $el);
-
-    //element.append($el, this);
-
-    //directive.compile(this, directive.PRIOR.EMERGENCY);
-
-
-
-    //directive.compile(this, directive.PRIOR.EMERGENCY);
-
-    //component.compile(this);
-		//
-    //directive.compile(this);
-		//
-    //macro.compile(this);
   }
 
   $willmount() {
@@ -70,21 +64,23 @@ class View {
   }
 
   $remove($el) {
+    directive.remove($el, this);
+
     element.remove($el, this);
   }
 
   $destroy() {
-    $ctx.$willunmount && $ctx.$willunmount();
+    this.$willunmount && this.$willunmount();
 
-    component.destroy($ctx);
+    component.destroy(this);
 
-    service.destroy($ctx);
+    service.destroy(this);
 
-    directive.destroy($ctx);
+    directive.destroy(this);
 
-    macro.destroy($ctx);
+    macro.destroy(this);
 
-    $ctx.$didunmount && $ctx.$didunmount();
+    this.$didunmount && this.$didunmount();
   }
 }
 

@@ -13,37 +13,22 @@
 </head>
 <body>
 <div id="my-app">
-
-  <div>1</div>
-  <div hi-if="male">I am {{name}}, [[age]]</div>
-  <div>2</div>
-  <div hi-if="female">
-    <p>I am female</p>
-  </div>
-  <div>3</div>
-  <button hi-on:click="clickMe">Destroy</button>
-  <!--
-  <ul>
-    <li hi-repeat="book in books">
-      id is:{{book.id}}, name is:{{book.name}}
-    </li>
-  </ul>
-  -->
-  <!--
-  <h2 hi-if="male">To Do App</h2>
+  <h2 hi-if="male">I am male</h2>
+  <h2 hi-if="female">I am female</h2>
   <button hi-on:click="clickMe">Destroy</button>
   <notice hi-if="male"></notice>
-  <div class='summary' hi-show="male">Hi, {{name}}, [[name]], you age is {{age}}</div>
+  <div class='summary'>Hi, {{name}}, [[name]], you age is {{age}}</div>
   <div>
-  <div hi-bind="{{name}}"></div>
+    <h2 hi-if="female">I am female</h2>
+    <div hi-bind="{{name}}"></div>
     <div>My name is <input type="text" hi-value="{{name}}"></div>
     <div>My age is <input type="text" hi-value="{{age}}"></div>
   </div>
   <button hi-on:click="clickMe">Destroy</button>
   <notice></notice>
   <my-form></my-form>
-  -->
-  <my-list hi-if="male"></my-list>
+
+
 </div>
 <script id="my-app-bak" hi-on:click="clickMe">
 //  <h2>To Do App</h2>
@@ -62,6 +47,7 @@
   <div>This is notice1</div>
   <div>This is notice2</div>
   <div>This is notice3</div>
+  <button hi-on:click="clickMe">Destroy</button>
 </script>
 <script id="t-my-form" type="text/template">
   <div>This is form</div>
