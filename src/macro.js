@@ -1,6 +1,8 @@
-const macros = {};
 import component from './component';
+import element from './element';
+import {unique, MapList} from './utils';
 
+const macros = {};
 const macro = function (exp, macro) {
   macros[exp] = macro;
 };
@@ -8,9 +10,9 @@ const macro = function (exp, macro) {
 Object.assign(macro, {
   initial($ctx) {
     $ctx.$macros = Object.assign({}, macros, $ctx.macros);
-    $ctx.$macros._instances = [];
+    $ctx.$macros._instances = new MapList;
   },
-  compile($el, $ctx) {
+  compile($el, $scope, $ctx) {
 
     const iterator = function ($el, $ctx) {
 
@@ -37,15 +39,18 @@ Object.assign(macro, {
         for (const exp in macros) {
           const matches = text.match(new RegExp(exp, 'gm'));
           if (matches) {
+            const id = element.getId($el, true);
             for (const match of matches) {
               const instance = macros[exp]({
                 $ctx,
                 $el,
                 $exp: match,
-                $update: update
+                $update: update,
+                $scope
               });
               instance.$mount && instance.$mount();
               instances.push(instance);
+              $ctx.$macros._instances.add(id, instance);
             }
           }
         }
@@ -60,8 +65,41 @@ Object.assign(macro, {
 
     iterator($el, $ctx);
   },
+  remove($el, $ctx) {
+
+    const iterator = function ($el, $ctx) {
+      if (component.isComponent($el, $ctx)) {
+        return;
+      }
+
+      for (const childNode of Array.from($el.children())) {
+        iterator($(childNode), $ctx);
+      }
+
+      const id = element.getId($el);
+      if (id != null) {
+        const instances = $ctx.$macros._instances.find(id);
+        for (const instance of instances) {
+          instance.$unmount && instance.$unmount();
+        }
+        $ctx.$macros._instances.remove(id);
+      }
+    };
+
+    iterator($el, $ctx);
+  },
   destroy($ctx) {
-    console.log('macros destroy');
+    const keys = $ctx.$macros._instances.keys();
+    for (const key in keys) {
+      const instances = $ctx.$macros._instances.find(key);
+      for (const instance of instances) {
+        instance.$unmount && instance.$unmount();
+      }
+    }
+    $ctx.$macros._instances.clear();
+    $ctx.$macros._instances = null;
+    $ctx.$macros = null;
+
   }
 });
 

@@ -3,6 +3,15 @@ export function unique(prefix) {
   return `${prefix || ''}${counter++}`;
 }
 
+export function isArray(obj) {
+  return Object.prototype.toString.call(obj) === '[object Array]';
+}
+
+export function isObject(obj) {
+  return obj instanceof Object;
+  //return Object.prototype.toString.call(obj) === '[object Object]';
+}
+
 export function extend(options) {
   const Parent = this;
   class Child extends Parent {
@@ -54,6 +63,10 @@ export class MapList {
   }
 
   find(key, value) {
+    if (key == null) {
+      return [];
+    }
+
     const data = this.data;
     const list = data[key] || [];
     const result = [];
@@ -68,8 +81,17 @@ export class MapList {
   clear() {
     const data = this.data;
     for (const k in data) {
-      this.delete(k);
+      this.remove(k);
     }
+  }
+
+
+  keys() {
+    const keys = [];
+    for (const key in this.data) {
+      keys.push(key);
+    }
+    return keys;
   }
 }
 
@@ -78,16 +100,16 @@ export function deconstruct(exp) {
   let watch = false;
   let secure = true;
 
-  if (/{{{(\S+)}}}/.test(exp)) {
+  if (/{{{\s*[\s\S]+\s*}}}/.test(exp)) {
     watch = true;
     secure = false;
-  } else if (/{{(\S+)}}/.test(exp)) {
+  } else if (/{{\s*[\s\S]+\s*}}/.test(exp)) {
     watch = true;
     secure = true;
-  } else if (/\[\[\[(\S+)]]]/.test(exp)) {
+  } else if (/\[\[\[\s*[\s\S]+\s*]]]/.test(exp)) {
     watch = false;
     secure = false;
-  } else if (/\[\[(\S+)]]/.test(exp)) {
+  } else if (/\[\[\s*[\s\S]+\s*]]/.test(exp)) {
     watch = false;
     secure = true;
   } else {
@@ -113,7 +135,7 @@ export function secureHtml(html) {
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#x27;')
-      .replace(/ /g, '&nbsp;');rn
+      .replace(/ /g, '&nbsp;');
   } else {
     return html;
   }

@@ -1,9 +1,9 @@
 import text from './text';
 
-const input = function ({$ctx, $el, $arg, $exp}) { //$ctx, $el, $arg, $exp
+const input = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
   switch ($el.attr('type').toLowerCase()) {
     case 'text':
-      return text({$ctx, $el, $arg, $exp});
+      return text({$ctx, $el, $arg, $exp, $scope});
   }
 };
 

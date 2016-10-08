@@ -13,6 +13,23 @@
 </head>
 <body>
 <div id="my-app">
+  <h2 hi-if="male">I am {{info.name}}</h2>
+  <h2 hi-if="female">I am female
+    <notice></notice>
+  </h2>
+  <button hi-on:click="clickMe">Destroy</button>
+  <!--
+  <div>My name is:</div>
+  <div hi-bind="{{info.name}}"></div>
+  <ul>
+    <li>1</li>
+    <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}} owner:{{info.name}}</li>
+    <li>2</li>
+  </ul>
+  <button hi-on:click="clickMe">Destroy</button>
+
+
+
   <h2 hi-if="male">I am male</h2>
   <h2 hi-if="female">I am female</h2>
   <button hi-on:click="clickMe">Destroy</button>
@@ -27,7 +44,7 @@
   <button hi-on:click="clickMe">Destroy</button>
   <notice></notice>
   <my-form></my-form>
-
+  -->
 
 </div>
 <script id="my-app-bak" hi-on:click="clickMe">
@@ -47,7 +64,6 @@
   <div>This is notice1</div>
   <div>This is notice2</div>
   <div>This is notice3</div>
-  <button hi-on:click="clickMe">Destroy</button>
 </script>
 <script id="t-my-form" type="text/template">
   <div>This is form</div>

@@ -10,14 +10,18 @@ Object.assign(service, {
     for (const service in $ctx.$services) {
       const instance = $ctx.$services[service]($ctx);
       $ctx.$services[service] = instance;
-      instance.$mount && instance.$mount();
+      instance.$mount && instance.$mount($ctx);
     }
   },
-  compile($ctx) {
+  compile($el, $scope, $ctx) {
 
   },
   destroy($ctx) {
-    console.log('service destroy')
+    for (const instance in $ctx.$services) {
+      instance.$unmount && instance.$unmount();
+    }
+
+    $ctx.$services = null;
   }
 });
 

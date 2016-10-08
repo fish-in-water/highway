@@ -1,20 +1,20 @@
 import {deconstruct, secureHtml} from '../utils';
 
-const bind = function ({$ctx, $el, $arg, $exp}) { //$ctx, $el, $arg, $exp
+const bind = function ({$el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
   const {prop, watch, secure} = deconstruct($exp);
   const watcher = function (value) {
     $el.html(secure ? secureHtml(value) : value);
   };
 
-  watcher($ctx.$scope.$get(prop));
+  watcher($scope.$get(prop));
 
   if (watch) {
     return {
       $mount() {
-        $ctx.$scope.$watch(prop, watcher);
+        $scope.$watch(prop, watcher);
       },
       $unmount() {
-        $ctx.$scope.$unwatch(prop, watcher);
+        $scope.$unwatch(prop, watcher);
       }
     };
   }

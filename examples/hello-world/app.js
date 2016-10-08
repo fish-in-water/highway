@@ -1,3 +1,15 @@
+//var obj1 = {
+//  test: 'test1'
+//}
+//
+//var obj2 = Object.assign(obj1, {
+//  test: 'test2'
+//})
+//
+//debugger;
+
+
+
 var Notice = Highway.extend({
   $template: $('#t-notice').html(),
   $scope: {
@@ -40,6 +52,10 @@ var app = new Highway({
     age: 200,
     male: true,
     female: false,
+    info: {
+      name: 'xuxia',
+      age: 200,
+    },
     books: [
       {
         id: '001',
@@ -71,6 +87,13 @@ var app = new Highway({
 
   },
   clickMe() {
+    var books = this.$scope.$get('books');
+    books.push({
+      id: '003',
+      name: 'yuwen'
+    });
+    this.$scope.$set('books', books);
+
     this.$scope.$set('male', !this.$scope.$get('male'));
     this.$scope.$set('female', !this.$scope.$get('female'));
   },
@@ -78,6 +101,8 @@ var app = new Highway({
     this.$destroy();
   }
 });
+
+
 
 
 //debugger;

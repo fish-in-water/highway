@@ -1,5 +1,6 @@
-import {unique, inject, getAttrs, MapList} from './utils';
 import component from './component';
+import element from './element';
+import {unique, inject, getAttrs, MapList} from './utils';
 
 const PRIOR = {
   EMERGENCY: -9,
@@ -27,7 +28,7 @@ Object.assign(directive, {
     $ctx.$directives = Object.assign({}, directives, $ctx.$directives);
     $ctx.$directives._instances = new MapList;
   },
-  compile($el, $ctx, priority) {
+  compile($el, $scope, $ctx, priority) {
     const iterator = function ($el, $ctx, priority) {
       if (component.isComponent($el, $ctx)) {
         return;
@@ -46,18 +47,19 @@ Object.assign(directive, {
 
         const directive = $ctx.$directives[attr];
         if (directive && (directive.priority || PRIOR.DEFAULT) === priority) {
-          $el.id = unique('e');
-
+          const id = element.getId($el, true);
           const instance = directive({
             $ctx,
             $el,
             $arg: arg,
-            $exp: attrs[ori]
+            $exp: attrs[ori],
+            $scope,
+            $directive: attr
           });
 
           if (instance) {
             instance.$mount && instance.$mount();
-            $ctx.$directives._instances.add($el.id, instance);
+            $ctx.$directives._instances.add(id, instance);
           }
         }
       }
@@ -87,18 +89,30 @@ Object.assign(directive, {
         iterator($(childNode), $ctx);
       }
 
-      const instances = $ctx.$directives._instances.find($el.id);
-      for (const instance of instances) {
-        instance.$unmount && instance.$unmount();
+      const id = element.getId($el);
+      if (id != null) {
+        const instances = $ctx.$directives._instances.find(id);
+        for (const instance of instances) {
+          instance.$unmount && instance.$unmount();
+        }
+        $ctx.$directives._instances.remove(id);
       }
-      $ctx.$directives._instances.remove($el[0]);
     };
 
     iterator($el, $ctx);
   },
   destroy($ctx) {
-    console.log('directive destroy')
+    const keys = $ctx.$directives._instances.keys();
+    for (const key in keys) {
+      const instances = $ctx.$directives._instances.find(key);
+      for (const instance of instances) {
+        instance.$unmount && instance.$unmount();
+      }
+    }
 
+    $ctx.$directives._instances.clear();
+    $ctx.$directives._instances = null;
+    $ctx.$directives = null;
   }
 });
 
