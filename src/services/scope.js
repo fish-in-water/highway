@@ -105,18 +105,11 @@ const scope = function ($ctx) {
         const keys = watchers.keys();
         for (const key of keys) {
           if (reg.test(key)) {
-
             const oldValue = oldSeries[key];
             const newValue = newSeries[key];
             if (newValue !== oldValue) {
               this.$fire(key, newValue, oldValue);
             }
-						//
-            //if (isObject(oldValue) && isObject(newValue)) {
-            //  if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
-            //    this.$fire(key, newValue, oldValue);
-            //  }
-            //}
           }
         }
 

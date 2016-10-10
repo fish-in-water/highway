@@ -2,7 +2,7 @@ import {deconstruct, secureHtml, isArray} from '../utils';
 
 const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
   const {prop, watch} = deconstruct($exp);
-  const $clone = $el.clone().removeAttr($directive);
+  const $clone = $el.clone().removeAttr($directive).removeAttr('hi-id');
   const $prev = $el.prev();
   const $next = $el.next();
   const $parent = $el.parent();
@@ -30,11 +30,13 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
   };
 
   const watcher = function (value) {
+
     clear();
 
     if (value && isArray(value) && value.length) {
 
       for (let i = 0, ii = value.length; i < ii; i++) {
+
         (function () {
           const data = {};
           data[itemProp] = value[i];

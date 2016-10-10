@@ -39,7 +39,6 @@ Object.assign(macro, {
         for (const exp in macros) {
           const matches = text.match(new RegExp(exp, 'gm'));
           if (matches) {
-            const id = element.getId($el, true);
             for (const match of matches) {
               const instance = macros[exp]({
                 $ctx,
@@ -48,9 +47,9 @@ Object.assign(macro, {
                 $update: update,
                 $scope
               });
-              instance.$mount && instance.$mount();
+              instance.$mount && instance.$mount($ctx);
               instances.push(instance);
-              $ctx.$macros._instances.add(id, instance);
+              $ctx.$macros._instances.add(element.getId($el, true), instance);
             }
           }
         }
@@ -80,7 +79,7 @@ Object.assign(macro, {
       if (id != null) {
         const instances = $ctx.$macros._instances.find(id);
         for (const instance of instances) {
-          instance.$unmount && instance.$unmount();
+          instance.$unmount && instance.$unmount($ctx);
         }
         $ctx.$macros._instances.remove(id);
       }
@@ -93,7 +92,7 @@ Object.assign(macro, {
     for (const key in keys) {
       const instances = $ctx.$macros._instances.find(key);
       for (const instance of instances) {
-        instance.$unmount && instance.$unmount();
+        instance.$unmount && instance.$unmount($ctx);
       }
     }
     $ctx.$macros._instances.clear();

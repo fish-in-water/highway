@@ -69,6 +69,16 @@ var app = new Highway({
         id: '003',
         name: 'yuwen'
       }
+    ],
+    students: [
+      {
+        id: '001',
+        name: 'xuxia'
+      },
+      {
+        id: '002',
+        name: 'huwei'
+      }
     ]
   },
   $components: {

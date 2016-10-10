@@ -18,7 +18,7 @@ Object.assign(service, {
   },
   destroy($ctx) {
     for (const instance in $ctx.$services) {
-      instance.$unmount && instance.$unmount();
+      instance.$unmount && instance.$unmount($ctx);
     }
 
     $ctx.$services = null;

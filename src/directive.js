@@ -47,7 +47,6 @@ Object.assign(directive, {
 
         const directive = $ctx.$directives[attr];
         if (directive && (directive.priority || PRIOR.DEFAULT) === priority) {
-          const id = element.getId($el, true);
           const instance = directive({
             $ctx,
             $el,
@@ -58,8 +57,8 @@ Object.assign(directive, {
           });
 
           if (instance) {
-            instance.$mount && instance.$mount();
-            $ctx.$directives._instances.add(id, instance);
+            instance.$mount && instance.$mount($ctx);
+            $ctx.$directives._instances.add(element.getId($el, true), instance);
           }
         }
       }
@@ -93,7 +92,7 @@ Object.assign(directive, {
       if (id != null) {
         const instances = $ctx.$directives._instances.find(id);
         for (const instance of instances) {
-          instance.$unmount && instance.$unmount();
+          instance.$unmount && instance.$unmount($ctx);
         }
         $ctx.$directives._instances.remove(id);
       }
@@ -106,7 +105,7 @@ Object.assign(directive, {
     for (const key in keys) {
       const instances = $ctx.$directives._instances.find(key);
       for (const instance of instances) {
-        instance.$unmount && instance.$unmount();
+        instance.$unmount && instance.$unmount(this);
       }
     }
 

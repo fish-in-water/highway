@@ -13,10 +13,10 @@
 </head>
 <body>
 <div id="my-app">
-  <h2 hi-if="male">I am {{info.name}}</h2>
-  <h2 hi-if="female">I am female
-    <notice></notice>
-  </h2>
+  <ul>
+    <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}} owner:{{info.name}}</li>
+    <li hi-repeat="{{student in students}}">id:{{student.id}} name:{{student.name}} owner:{{info.name}}</li>
+  </ul>
   <button hi-on:click="clickMe">Destroy</button>
   <!--
   <div>My name is:</div>
