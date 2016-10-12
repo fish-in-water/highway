@@ -96,6 +96,11 @@ var app = new Highway({
   $macros: {
 
   },
+  $pipes: {
+    'fixed': function () {
+      return '11111'
+    }
+  },
   clickMe() {
     var books = this.$scope.$get('books');
     books.push({
@@ -106,6 +111,7 @@ var app = new Highway({
 
     this.$scope.$set('male', !this.$scope.$get('male'));
     this.$scope.$set('female', !this.$scope.$get('female'));
+    this.$scope.$set('info.name', 'huwei');
   },
   destroy() {
     this.$destroy();

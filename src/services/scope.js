@@ -1,4 +1,5 @@
 import {MapList, isArray, isObject} from '../utils';
+import pipe from '../pipe';
 
 const scope = function ($ctx) {
   const factory = function (obj) {
@@ -139,6 +140,10 @@ const scope = function ($ctx) {
         for (const handler of handlers) {
           handler(newVal, oldVal);
         }
+      },
+
+      $pipe(val, pipes) {
+        return pipe.compile(val, pipes, $ctx);
       },
 
       $mount($ctx) {

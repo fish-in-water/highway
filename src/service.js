@@ -13,9 +13,9 @@ Object.assign(service, {
       instance.$mount && instance.$mount($ctx);
     }
   },
-  compile($el, $scope, $ctx) {
-
-  },
+  //compile($el, $scope, $ctx) {
+	//
+  //},
   destroy($ctx) {
     for (const instance in $ctx.$services) {
       instance.$unmount && instance.$unmount($ctx);
@@ -26,3 +26,12 @@ Object.assign(service, {
 });
 
 export default service;
+
+// install build-in
+import scope from './services/scope';
+service('$scope', scope);
+
+
+
+
+

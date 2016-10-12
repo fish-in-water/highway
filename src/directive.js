@@ -116,3 +116,20 @@ Object.assign(directive, {
 });
 
 export default directive;
+
+// install build-in
+import ef from './directives/if';
+import repeat from './directives/repeat';
+import on from './directives/on';
+import bind from './directives/bind';
+import value from './directives/value';
+import show from './directives/show';
+import hide from './directives/hide';
+
+directive('hi-if', ef, directive.PRIOR.EMERGENCY);
+directive('hi-repeat', repeat, directive.PRIOR.EMERGENCY);
+directive('hi-on', on);
+directive('hi-bind', bind);
+directive('hi-value', value);
+directive('hi-show', show);
+directive('hi-hide', hide);

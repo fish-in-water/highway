@@ -30,7 +30,18 @@ Object.assign(macro, {
         const update = function () {
           if (instances && instances.length) {
             const newHtml = instances.reduce(function (text, instance) {
-              return instance.$replace ? instance.$replace(text) : text;
+              const $iterator = instance.$iterator;
+              if (!$iterator) {
+                return text;
+              }
+
+              if ($.isFunction($iterator)) {
+                return $iterator(text);
+              } else {
+                return text.replace($iterator.$exp, $iterator.$value);
+              }
+
+              //return instance.$iterator ? instance.$iterator(text) : text;
             }, text);
             $el.html(newHtml);
           }
@@ -103,3 +114,7 @@ Object.assign(macro, {
 });
 
 export default macro;
+
+// install build-in
+import bind from './macros/bind';
+macro('\\[?\\[\\[(\\S+)]]]?|\\{?\\{\\{(\\S+)}}}?', bind);

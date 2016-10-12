@@ -4,6 +4,7 @@ import component from './component';
 import service from './service';
 import directive from './directive';
 import macro from './macro';
+import pipe from './pipe';
 
 class View {
   static extend = extend
@@ -15,6 +16,8 @@ class View {
 
     {
       element.initial(this);
+
+      pipe.initial(this);
 
       service.initial(this);
 

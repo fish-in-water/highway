@@ -10,7 +10,7 @@ const bind = function ({$exp, $update, $scope}) {
       $unmount() {
         $scope.$unwatch(prop, $update);
       },
-      $replace($text) {
+      $iterator($text) {
         return $text.replace($exp, function () {
           const value = $scope.$get(prop);
           return secure ? secureHtml(value) : value;
@@ -20,12 +20,18 @@ const bind = function ({$exp, $update, $scope}) {
   } else {
     const value = $scope.$get(prop);
     return {
-      $replace($text) {
-        return $text.replace($exp, function () {
-          return secure ? secureHtml(value) : value;
-        });
+      $iterator: {
+        $exp,
+        $value: secure ? secureHtml(value) : value
       }
-    };
+    }
+    //return {
+    //  $replace($text) {
+    //    return $text.replace($exp, function () {
+    //      return secure ? secureHtml(value) : value;
+    //    });
+    //  }
+    //};
   }
 };
 

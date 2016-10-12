@@ -96,7 +96,9 @@ export class MapList {
 }
 
 export function deconstruct(exp) {
-  const prop = exp.replace(/[\[\]\{\}]/gi, '');
+  const exps = exp.replace(/[\[\]\{\}]/gi, '').split('|').map(function (attr) {
+    return attr.trim();
+  });
   let watch = false;
   let secure = true;
 
@@ -118,9 +120,10 @@ export function deconstruct(exp) {
   }
 
   return {
-    prop,
+    prop: exps[0],
     watch,
-    secure
+    secure,
+    pipes: exps.slice(1)
   }
 }
 

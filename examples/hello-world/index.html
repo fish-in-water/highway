@@ -12,29 +12,33 @@
   </style>
 </head>
 <body>
-<div id="my-app">
+<div id="my-app"><!--
+  <div hi-bind="{{info.name | uppercase}}"></div>
+
+
+  <div hi-bind="{{age | fixed:2}}"></div>
+  <li hi-repeat="{{student in students | filter:name=xuxia}}">id:{{student.id}} name:{{student.name}}</li>
+  -->
   <ul>
     <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}} owner:{{info.name}}</li>
-    <li hi-repeat="{{student in students}}">id:{{student.id}} name:{{student.name}} owner:{{info.name}}</li>
+    <li hi-repeat="{{student in students}}">id:{{student.id}} name:{{student.name}}</li>
   </ul>
   <button hi-on:click="clickMe">Destroy</button>
   <!--
   <div>My name is:</div>
-  <div hi-bind="{{info.name}}"></div>
+  <div hi-bind="{{info.name | lowercase}}"></div>
   <ul>
     <li>1</li>
-    <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}} owner:{{info.name}}</li>
+    <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}}</li>
     <li>2</li>
   </ul>
   <button hi-on:click="clickMe">Destroy</button>
-
-
 
   <h2 hi-if="male">I am male</h2>
   <h2 hi-if="female">I am female</h2>
   <button hi-on:click="clickMe">Destroy</button>
   <notice hi-if="male"></notice>
-  <div class='summary'>Hi, {{name}}, [[name]], you age is {{age}}</div>
+  <div class='summary'>Hi, {{info.name}}, [[info.name]], you age is {{age}}</div>
   <div>
     <h2 hi-if="female">I am female</h2>
     <div hi-bind="{{name}}"></div>
@@ -72,7 +76,7 @@
   <div>This is list</div>
 </script>
 
-<script type="text/javascript" src="../../lib/zepto/zepto.js"></script>
+<script type="text/javascript" src="../lib/zepto/zepto.js"></script>
 <script type="text/javascript" src="../../dest/highway.js"></script>
 <script type="text/javascript" src="app.js"></script>
 </body>
