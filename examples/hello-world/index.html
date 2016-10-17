@@ -12,7 +12,9 @@
   </style>
 </head>
 <body>
-<div id="my-app"><!--
+<div id="my-app">
+
+  <!--
   <div hi-bind="{{info.name | uppercase}}"></div>
 
 
@@ -20,9 +22,12 @@
   <li hi-repeat="{{student in students | filter:name=xuxia}}">id:{{student.id}} name:{{student.name}}</li>
   -->
   <ul>
-    <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}} owner:{{info.name}}</li>
-    <li hi-repeat="{{student in students}}">id:{{student.id}} name:{{student.name}}</li>
+    <li hi-repeat="{{book in books | sort: 'id' 'asc'}}">id:{{book.id}} name:{{book.name}}</li>
   </ul>
+  <ul>
+    <li hi-repeat="{{book in books | filter: field = 'xxx' }}">id:{{book.id}} name:{{book.name}}</li>
+  </ul>
+
   <button hi-on:click="clickMe">Destroy</button>
   <!--
   <div>My name is:</div>
@@ -76,7 +81,7 @@
   <div>This is list</div>
 </script>
 
-<script type="text/javascript" src="../lib/zepto/zepto.js"></script>
+<script type="text/javascript" src="../../lib/zepto/zepto.js"></script>
 <script type="text/javascript" src="../../dest/highway.js"></script>
 <script type="text/javascript" src="app.js"></script>
 </body>

@@ -1,4 +1,4 @@
-import {extend} from './utils';
+import {extend, assign} from './utils';
 import element from './element';
 import component from './component';
 import service from './service';
@@ -10,7 +10,7 @@ class View {
   static extend = extend
 
   constructor(options) {
-    Object.assign(this, options);
+    assign(this, options);
 
     this.$willmount();
 
@@ -41,11 +41,12 @@ class View {
 
     directive.compile($el, $scope, this, directive.PRIOR.EMERGENCY);
 
-    component.compile($el, $scope, this);
+		component.compile($el, $scope, this);
 
-    directive.compile($el, $scope, this);
+		directive.compile($el, $scope, this);
 
-    macro.compile($el, $scope, this);
+		macro.compile($el, $scope, this);
+
   }
 
   $willmount() {
@@ -65,6 +66,7 @@ class View {
   }
 
   $remove($el) {
+
     component.remove($el, this);
 
     macro.remove($el, this);
@@ -72,6 +74,7 @@ class View {
     directive.remove($el, this);
 
     element.remove($el, this);
+
   }
 
   $destroy() {

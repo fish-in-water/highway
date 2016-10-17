@@ -1,4 +1,4 @@
-import {getAttrs, MapList} from './utils';
+import {assign, getAttrs, MapList} from './utils';
 import element from './element';
 
 const components = {};
@@ -7,9 +7,9 @@ const component = function (name, View) {
   components[name.toLowerCase()] = View;
 };
 
-Object.assign(component, {
+assign(component, {
   initial($ctx) {
-    $ctx.$components = Object.assign({}, components, $ctx.$components);
+    $ctx.$components = assign({}, components, $ctx.$components);
     $ctx.$components._instances = new MapList;
     //$ctx.$components.$children = $ctx.$components.$children || [];
   },
@@ -20,7 +20,7 @@ Object.assign(component, {
         return;
       }
 
-      for (const childNode of Array.from($el.children())) {
+      for (const childNode of Array.prototype.slice.call($el.children())) {
         if (this.isComponent($(childNode), $ctx)) {
           const instance = this.createComponent(childNode, $ctx);
           instance.$parent = $ctx;
@@ -53,7 +53,7 @@ Object.assign(component, {
   createComponent(node, $ctx) {
     const tagName = node.tagName.toLowerCase();
     const View = $ctx.$components[tagName];
-    const $el = $('<div></div>').attr(Object.assign({'hi-component': tagName}, getAttrs($(node))));
+    const $el = $('<div></div>').attr(assign({'hi-component': tagName}, getAttrs($(node))));
     $(node).replaceWith($el);
     const instance = new View({$el});
     return instance;

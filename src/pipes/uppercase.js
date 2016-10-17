@@ -1,6 +1,6 @@
 const lowercase = function () {
   return {
-    $iterator($value) {
+    $iterator({$value}) {
       if ($value == null) {
         return $value;
       }

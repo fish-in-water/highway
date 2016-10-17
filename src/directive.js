@@ -1,6 +1,6 @@
 import component from './component';
 import element from './element';
-import {unique, inject, getAttrs, MapList} from './utils';
+import {assign, includes, unique, inject, getAttrs, MapList} from './utils';
 
 const PRIOR = {
   EMERGENCY: -9,
@@ -11,7 +11,7 @@ const priorities = [];
 const directives = {};
 
 const directive = function (name, directive, priority = PRIOR.DEFAULT) {
-  if (!priorities.includes(priority)) {
+  if (!includes(priorities, priority)) {
     priorities.push(priority);
     priorities.sort(function (prev, next) {
       return prev - next;
@@ -22,10 +22,10 @@ const directive = function (name, directive, priority = PRIOR.DEFAULT) {
   directives[name] = directive;
 };
 
-Object.assign(directive, {
+assign(directive, {
   PRIOR,
   initial($ctx) {
-    $ctx.$directives = Object.assign({}, directives, $ctx.$directives);
+    $ctx.$directives = assign({}, directives, $ctx.$directives);
     $ctx.$directives._instances = new MapList;
   },
   compile($el, $scope, $ctx, priority) {
@@ -40,7 +40,7 @@ Object.assign(directive, {
         const index = attr.indexOf(':');
         const ori = attr;
         let arg = void 0;
-        if (-1 != index) {
+        if (index != -1) {
           attr = ori.substring(0, index);
           arg = ori.substring(index + 1);
         }
@@ -63,7 +63,7 @@ Object.assign(directive, {
         }
       }
 
-      for (const childNode of Array.from($el.children())) {
+      for (const childNode of Array.prototype.slice.call($el.children())) {
         iterator($(childNode), $ctx, priority);
       }
     }
@@ -84,7 +84,7 @@ Object.assign(directive, {
         return;
       }
 
-      for (const childNode of Array.from($el.children())) {
+      for (const childNode of Array.prototype.slice.call($el.children())) {
         iterator($(childNode), $ctx);
       }
 

@@ -1,4 +1,4 @@
-import {MapList, isArray, isObject} from '../utils';
+import {assign, isArray, isObject, MapList} from '../utils';
 import pipe from '../pipe';
 
 const scope = function ($ctx) {
@@ -6,7 +6,7 @@ const scope = function ($ctx) {
     let series = {};
     let watchers = new MapList;
 
-    return Object.assign(Object.create({
+    return assign(Object.create({
 
       $create(obj) {
         return factory(obj);
@@ -75,9 +75,9 @@ const scope = function ($ctx) {
         if (where.scope === this) {
           const val = series[prop];
           if (isArray(val)) {
-            return Object.assign([], val);
+            return assign([], val);
           } else if (isObject(val)) {
-            return Object.assign({}, val);
+            return assign({}, val);
           } else {
             return val;
           }
@@ -96,7 +96,7 @@ const scope = function ($ctx) {
             }
           }
 
-          Object.assign(this, newVal);
+          assign(this, newVal);
         }
 
         const oldSeries = series;

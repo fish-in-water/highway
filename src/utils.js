@@ -1,6 +1,20 @@
+import $ from 'Zepto';
+
 let counter = 0;
 export function unique(prefix) {
   return `${prefix || ''}${counter++}`;
+}
+
+export const assign = $.extend;
+
+export function includes(arr, val) {
+  for (var i = 0, ii = arr.length; i < ii; i++) {
+    if (arr[i] === val) {
+      return true;
+    }
+  }
+
+  return false;
 }
 
 export function isArray(obj) {
@@ -19,7 +33,7 @@ export function extend(options) {
       super(options);
     }
   }
-  Object.assign(Child.prototype, options);
+  this.assign(Child.prototype, options);
   return Child;
 }
 

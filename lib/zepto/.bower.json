@@ -17,6 +17,5 @@
   },
   "_source": "https://github.com/components/zepto.git",
   "_target": "^1.1.6",
-  "_originalSource": "zepto",
-  "_direct": true
+  "_originalSource": "zepto"
 }

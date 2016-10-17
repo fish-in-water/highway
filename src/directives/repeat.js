@@ -1,7 +1,7 @@
 import {deconstruct, secureHtml, isArray} from '../utils';
 
 const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
-  const {prop, watch} = deconstruct($exp);
+  const {prop, watch, pipes} = deconstruct($exp);
   const $clone = $el.clone().removeAttr($directive).removeAttr('hi-id');
   const $prev = $el.prev();
   const $next = $el.next();
@@ -31,6 +31,8 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
 
   const watcher = function (value) {
 
+    value = $ctx.$scope.$pipe(value, pipes);
+
     clear();
 
     if (value && isArray(value) && value.length) {
@@ -49,19 +51,27 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
 
           // create new element
           const $el = $clone.clone();
-          if ($el.length && $next.parent().length) {
-            $el.insertBefore($next);
-          } else if ($prev.length && $prev.parent().length) {
-            $el.insertAfter($prev);
-          } else {
-            $el.prependTo($parent);
-          }
-          $els.push($el);
 
           // compile
           $ctx.$compile($el, scope);
 
+          $els.push($el);
+
         })();
+      }
+
+      if ($el.length && $next.parent().length) {
+        for (const $el of $els) {
+          $el.insertBefore($next);
+        }
+      } else if ($prev.length && $prev.parent().length) {
+        for (const $el of $els.reverse()) {
+          $el.insertAfter($prev);
+        }
+      } else {
+        for (const $el of $els) {
+          $el.appendTo($parent);
+        }
       }
     }
   };

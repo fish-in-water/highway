@@ -1,15 +1,15 @@
 import component from './component';
 import element from './element';
-import {unique, MapList} from './utils';
+import {unique, assign, MapList} from './utils';
 
 const macros = {};
 const macro = function (exp, macro) {
   macros[exp] = macro;
 };
 
-Object.assign(macro, {
+assign(macro, {
   initial($ctx) {
-    $ctx.$macros = Object.assign({}, macros, $ctx.macros);
+    $ctx.$macros = assign({}, macros, $ctx.macros);
     $ctx.$macros._instances = new MapList;
   },
   compile($el, $scope, $ctx) {
@@ -68,7 +68,7 @@ Object.assign(macro, {
         update();
       }
 
-      for (const childNode of Array.from($el.children())) {
+      for (const childNode of Array.prototype.slice.call($el.children())) {
         iterator($(childNode), $ctx);
       }
     };
@@ -82,7 +82,7 @@ Object.assign(macro, {
         return;
       }
 
-      for (const childNode of Array.from($el.children())) {
+      for (const childNode of Array.prototype.slice.call($el.children())) {
         iterator($(childNode), $ctx);
       }
 

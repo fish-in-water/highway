@@ -17,7 +17,7 @@ const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
       } else if ($prev.length && $prev.parent().length) {
         $new.insertAfter($prev);
       } else {
-        $new.prependTo($parent);
+        $new.appendTo($parent);
       }
       $ctx.$compile($new);
       $scope.$unwatch(prop, watcher);

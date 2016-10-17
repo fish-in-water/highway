@@ -1,12 +1,14 @@
+import {assign} from './utils';
+
 const services = {};
 
 const service = function (name, service) {
   services[name] = service;
 };
 
-Object.assign(service, {
+assign(service, {
   initial($ctx) {
-    $ctx.$services = Object.assign({}, services, $ctx.$services);
+    $ctx.$services = assign({}, services, $ctx.$services);
     for (const service in $ctx.$services) {
       const instance = $ctx.$services[service]($ctx);
       $ctx.$services[service] = instance;
