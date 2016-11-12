@@ -20,6 +20,8 @@ const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
         $new.appendTo($parent);
       }
       $ctx.$compile($new);
+      //$new.attr('hi-compiled', 'true');
+
       $scope.$unwatch(prop, watcher);
     } else {
       $ctx.$remove($new);
@@ -32,13 +34,15 @@ const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
   }
 
   if (watch) {
+    let unwatcher = null;
     return {
       $mount() {
-        $scope.$watch(prop, watcher);
+        unwatcher = $scope.$watch(prop, watcher);
       },
       $unmount() {
-        $scope.$unwatch(prop, watcher);
-      }
+        unwatcher();
+      },
+      $halt: true
     };
   }
 };

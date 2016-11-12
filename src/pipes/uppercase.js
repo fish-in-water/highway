@@ -1,13 +1,13 @@
-const lowercase = function () {
+const uppercase = function () {
   return {
-    $iterator({$value}) {
+    $iterator($value) {
       if ($value == null) {
         return $value;
       }
 
-      return $value.toUpperCase();
+      return ($value + '').toUpperCase();
     }
   }
 };
 
-export default lowercase;
+export default uppercase;

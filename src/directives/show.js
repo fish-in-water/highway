@@ -1,23 +1,11 @@
-import {deconstruct, secureHtml} from '../utils';
+import directive from '../directive';
+import {secureHtml} from '../utils';
 
-const show = function ({$el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
-  const {prop, watch} = deconstruct($exp);
-  const watcher = function (value) {
-    $el.css('display', value ? '' : 'none');
-  };
-
-  watcher($scope.$get(prop));
-
-  if (watch) {
-    return {
-      $mount() {
-        $scope.$watch(prop, watcher);
-      },
-      $unmount() {
-        $scope.$unwatch(prop, watcher);
-      }
-    };
-  }
+const show = function ({$el, $exp, $scope, $ctx}) { //$ctx, $el, $arg, $exp
+  return directive.pattern($exp, $scope, $ctx, function ({newVal, secure}) {
+    newVal = secure ? secureHtml(newVal) : newVal;
+    $el.css('display', newVal? '' : 'none');
+  });
 };
 
 export default show;

@@ -1,7 +1,11 @@
-import {deconstruct, secureHtml, isArray} from '../utils';
+import pipe from '../pipe';
+import {deconstruct, secureHtml, isArray, isObject, assign} from '../utils';
+
+let counter = 0;
 
 const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
-  const {prop, watch, pipes} = deconstruct($exp);
+  const {prop, watch, secure, pipes} = deconstruct($exp);
+
   const $clone = $el.clone().removeAttr($directive).removeAttr('hi-id');
   const $prev = $el.prev();
   const $next = $el.next();
@@ -30,18 +34,19 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
   };
 
   const watcher = function (value) {
-
-    value = $ctx.$scope.$pipe(value, pipes);
-
     clear();
 
     if (value && isArray(value) && value.length) {
-
       for (let i = 0, ii = value.length; i < ii; i++) {
 
         (function () {
           const data = {};
-          data[itemProp] = value[i];
+          if (isObject(value[i])) {
+            data[itemProp] = assign(value[i], {$index: i});
+          } else {
+            data[itemProp] = value[i];
+          }
+
 
           // create new scope
           const scope = $scope.$create(data);
@@ -54,6 +59,8 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
 
           // compile
           $ctx.$compile($el, scope);
+
+          $el.attr('hi-compiled', 'true');
 
           $els.push($el);
 
@@ -76,19 +83,31 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
     }
   };
 
-  watcher($ctx.$scope.$get(arrayProp));
+  const pipeline = pipe.compile({
+    prop: arrayProp, watch, secure
+  }, pipes, $scope, watcher, $ctx);
+
+  watcher(pipeline($scope.$get(arrayProp)));
 
   if (watch) {
+    let unwatcher = null;
     return {
       $mount() {
-        $scope.$watch(arrayProp, watcher);
+        unwatcher = $scope.$watch(arrayProp, function (value) {
+          watcher(pipeline(value))
+        });
       },
       $unmount() {
-        $scope.$unwatch(arrayProp, watcher);
+        pipeline.destroy();
 
         clear();
-      }
+
+        unwatcher();
+      },
+      $halt: true
     };
+  } else {
+    pipeline.destroy();
   }
 };
 

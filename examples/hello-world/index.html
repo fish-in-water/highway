@@ -5,33 +5,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <title>sample</title>
   <style>
-    .summary {
+    .bg-red {
       background-color: red;
-      display: inline-block;
+    }
+
+    .bg-green {
+      background-color: green;
+    }
+
+    .bg-blue {
+      background-color: blue;
+    }
+
+    .fs-12 {
+      font-size: 12px;
+    }
+
+    .fs-16 {
+      font-size: 16px;
+    }
+
+    .fs-20 {
+      font-size: 20px;
+    }
+
+    .fs-30 {
+      font-size: 30px;
     }
   </style>
 </head>
 <body>
 <div id="my-app">
+  <ul>
+    <li hi-repeat="{{book in books | limit: 3 | sort: id asc}}">id:{{book.id}} name:{{book.name}}</li>
+  </ul>
+  <!--
+  <input type="date" name="bday">
+  <input type="text" hi-value="{{name}}">
+  <input type="password" hi-value="{{password}}">
+  <notice></notice>
+  <button hi-on:click="clickMe">broadcast</button>
+  <!--
+  <div hi-bind="birthday | date: dateFormat"></div>
+  <div hi-bind="money | number: 2"></div>
 
   <!--
-  <div hi-bind="{{info.name | uppercase}}"></div>
-
-
-  <div hi-bind="{{age | fixed:2}}"></div>
-  <li hi-repeat="{{student in students | filter:name=xuxia}}">id:{{student.id}} name:{{student.name}}</li>
-  -->
   <ul>
-    <li hi-repeat="{{book in books | sort: 'id' 'asc'}}">id:{{book.id}} name:{{book.name}}</li>
+    <li hi-repeat="[[book in books | sort: sortBy 'desc' | limit: 2 | filter: 'name' *= 'b' or 'id' = '002']]">id:{{book.id}} name:{{book.name}}</li>
+  </ul>
+
+  <!--
+  <div hi-bind="birthday"></div>
+  <div hi-class="{{ {'red': 'bg-red', 'green': 'bg-green'}[bgColor];{'fs20': 'fs-20', 'fs30': 'fs-30'}[fontSize] }}">111</div>
+  <div hi-class="{{bgColor, fontSize}}">111</div>
+  <img hi-attr:src="{{imgUrl}}">111</img>
+  <div hi-css:background-color="{{bgColor}}">111</div>
+  <button hi-on:click="clickMe">Destroy</button>
+
+
+  <!--<div hi-bind="{{info.name | lowercase}}"></div>-->
+  <!--<div hi-bind="{{info.name | uppercase}}"></div>-->
+
+  <!--
+  <ul>
+    <li hi-repeat="{{book in books | sort: sortBy 'desc' | limit: 3 | filter: 'name' *= 'b' or 'id' = '002'}}">id:{{book.id}} name:{{book.name}}</li>
+  </ul>
+
+  <div hi-bind="books | json"></div>
+
+
+  <button hi-on:click="clickMe">Destroy</button>
+
+
+  <div hi-bind="{{age}}"></div>
+  <li hi-repeat="{{student in students | filter:name=xuxia}}">id:{{student.id}} name:{{student.name}}</li>
+
+  <ul>
+    <li hi-repeat="{{book in books | limit: 3 | sort: id asc}}">id:{{book.id}} name:{{book.name}}</li>
   </ul>
   <ul>
-    <li hi-repeat="{{book in books | filter: field = 'xxx' }}">id:{{book.id}} name:{{book.name}}</li>
+    <li hi-repeat="{{book in books | filter: field = xxx }}">id:{{book.id}} name:{{book.name}}</li>
   </ul>
 
   <button hi-on:click="clickMe">Destroy</button>
-  <!--
+
   <div>My name is:</div>
-  <div hi-bind="{{info.name | lowercase}}"></div>
+  <div hi-bind="{{info.name | uppercase}}"></div>
+  <div>My name is <input type="text" hi-value="{{info.name}}"></div>
   <ul>
     <li>1</li>
     <li hi-repeat="{{book in books}}">id:{{book.id}} name:{{book.name}}</li>
@@ -50,10 +110,12 @@
     <div>My name is <input type="text" hi-value="{{name}}"></div>
     <div>My age is <input type="text" hi-value="{{age}}"></div>
   </div>
+
   <button hi-on:click="clickMe">Destroy</button>
   <notice></notice>
   <my-form></my-form>
   -->
+
 
 </div>
 <script id="my-app-bak" hi-on:click="clickMe">
@@ -70,6 +132,7 @@
 //    <my-list></my-list>
 </script>
 <script id="t-notice" type="text/template">
+  <button hi-on:click="clickMe">emit</button>
   <div>This is notice1</div>
   <div>This is notice2</div>
   <div>This is notice3</div>

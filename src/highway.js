@@ -8,6 +8,7 @@ import pipe from './pipe';
 
 const highway = assign(View, {
   component,
+  directive,
   service,
   macro,
   pipe

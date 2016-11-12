@@ -1,99 +1,39 @@
 import {extend, assign} from './utils';
-import element from './element';
-import component from './component';
-import service from './service';
-import directive from './directive';
-import macro from './macro';
-import pipe from './pipe';
+import compiler from './compiler';
 
 class View {
-  static extend = extend
+  static extend = extend;
 
   constructor(options) {
+
     assign(this, options);
 
-    this.$willmount();
+    this.$willmount && this.$willmount();
 
-    {
-      element.initial(this);
+    compiler.initial(this).compile(this.$el, this.$scope, this);
 
-      pipe.initial(this);
+    this.$mount && this.$mount();
 
-      service.initial(this);
-
-      directive.initial(this);
-
-      component.initial(this);
-
-      macro.initial(this);
-    }
-
-    this.$compile(this.$el, this.$scope);
-
-    this.$didmount();
+    this.$didmount && this.$didmount();
   }
 
   $compile($el, $scope = this.$scope) {
 
-    //service.compile($el, $scope, this);
-
-    element.compile($el, $scope, this);
-
-    directive.compile($el, $scope, this, directive.PRIOR.EMERGENCY);
-
-		component.compile($el, $scope, this);
-
-		directive.compile($el, $scope, this);
-
-		macro.compile($el, $scope, this);
-
-  }
-
-  $willmount() {
-
-  }
-
-  $didmount() {
-
-  }
-
-  $willunmount() {
-
-  }
-
-  $didunmount() {
-
+    compiler.compile($el, $scope, this);
   }
 
   $remove($el) {
 
-    component.remove($el, this);
-
-    macro.remove($el, this);
-
-    directive.remove($el, this);
-
-    element.remove($el, this);
-
+    compiler.remove($el, this);
   }
 
   $destroy() {
 
     this.$willunmount && this.$willunmount();
 
-    this.$remove(this.$el);
+    compiler.remove(this.$el, this).destroy(this);
 
-    {
-      component.destroy(this);
-
-      macro.destroy(this);
-
-      directive.destroy(this);
-
-      service.destroy(this);
-
-      element.destroy(this);
-    }
+    this.$unmount && this.$unmount();
 
     this.$didunmount && this.$didunmount();
   }

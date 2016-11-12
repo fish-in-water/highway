@@ -1,6 +1,7 @@
 import component from './component';
 import element from './element';
-import {assign, includes, unique, inject, getAttrs, MapList} from './utils';
+import pipe from './pipe';
+import {assign, includes, unique, inject, getAttrs, deconstruct, secureHtml, MapList} from './utils';
 
 const PRIOR = {
   EMERGENCY: -9,
@@ -28,14 +29,16 @@ assign(directive, {
     $ctx.$directives = assign({}, directives, $ctx.$directives);
     $ctx.$directives._instances = new MapList;
   },
-  compile($el, $scope, $ctx, priority) {
-    const iterator = function ($el, $ctx, priority) {
+  compile($el, $scope, $ctx) {
+
+    const handler = function ($el, $ctx, priority) {
+
       if (component.isComponent($el, $ctx)) {
-        return;
+        return $el;
       }
 
       const attrs = getAttrs($el);
-      for (let attr in attrs) {
+      for (var attr in attrs) {
 
         const index = attr.indexOf(':');
         const ori = attr;
@@ -46,7 +49,67 @@ assign(directive, {
         }
 
         const directive = $ctx.$directives[attr];
-        if (directive && (directive.priority || PRIOR.DEFAULT) === priority) {
+        if (directive && directive.priority === priority) {
+          const instance = directive({
+            $ctx,
+            $el,
+            $arg: arg,
+            $exp: attrs[ori],
+            $scope,
+            $directive: attr
+          });
+
+          if (instance) {
+            instance.$mount && instance.$mount($ctx);
+            $ctx.$directives._instances.add(element.getId($el, true), instance);
+
+            // halt compile
+            if (instance.$halt) {
+              return null;
+            }
+
+            // if $el changed after compile
+            if (instance.$el) {
+              $el = instance.$el;
+            }
+          }
+        }
+      }
+
+      return $el;
+    };
+
+    $el = priorities.reduce(function ($el, priority) {
+      if (!$el) {
+        return null;
+      }
+
+      return handler($el, $ctx, priority);
+    }, $el);
+
+    return $el;
+
+    /*
+    const iterator = function ($el, $ctx, priority) {
+
+      if ($el.attr('hi-compiled') || component.isComponent($el, $ctx)) {
+        return;
+      }
+
+      const attrs = getAttrs($el);
+      for (var attr in attrs) {
+
+        const index = attr.indexOf(':');
+        const ori = attr;
+        let arg = void 0;
+        if (index != -1) {
+          attr = ori.substring(0, index);
+          arg = ori.substring(index + 1);
+        }
+
+        const directive = $ctx.$directives[attr];
+        if (directive && directive.priority === priority) {
+
           const instance = directive({
             $ctx,
             $el,
@@ -66,7 +129,9 @@ assign(directive, {
       for (const childNode of Array.prototype.slice.call($el.children())) {
         iterator($(childNode), $ctx, priority);
       }
-    }
+    };
+
+    //iterator($el, $ctx, priority);
 
     if (priority != null) {
       iterator($el, $ctx, priority);
@@ -77,8 +142,52 @@ assign(directive, {
         }
       }
     }
+
+    */
+  },
+  pattern($exp, $scope, $ctx, $update) {
+    const {prop, watch, secure, pipes} = deconstruct($exp);
+    const wather = function (newVal, oldVal) {
+      $update({newVal, oldVal, secure}); //secure ? secureHtml(value) : value
+    };
+    const pipeline = pipe.compile({
+      prop, watch, secure
+    }, pipes, $scope, wather, $ctx);
+
+    wather(pipeline($scope.$get(prop)));
+
+    if (watch) {
+      let unwatcher = null;
+      return {
+        $mount() {
+          unwatcher = $scope.$watch(prop, function (newVal, oldVal) {
+            wather(pipeline(newVal), pipeline(oldVal));
+          });
+        },
+        $unmount() {
+          unwatcher();
+          pipeline.destroy();
+        }
+      };
+    } else {
+      pipeline.destroy();
+    }
   },
   remove($el, $ctx) {
+    if (component.isComponent($el, $ctx)) {
+      return;
+    }
+
+    const id = element.getId($el);
+    if (id != null) {
+      const instances = $ctx.$directives._instances.find(id);
+      for (const instance of instances) {
+        instance.$unmount && instance.$unmount($ctx);
+      }
+      $ctx.$directives._instances.remove(id);
+    }
+
+    /*
     const iterator = function ($el, $ctx) {
       if (component.isComponent($el, $ctx)) {
         return;
@@ -99,6 +208,7 @@ assign(directive, {
     };
 
     iterator($el, $ctx);
+    */
   },
   destroy($ctx) {
     const keys = $ctx.$directives._instances.keys();
@@ -125,6 +235,15 @@ import bind from './directives/bind';
 import value from './directives/value';
 import show from './directives/show';
 import hide from './directives/hide';
+import disable from './directives/disable';
+import enable from './directives/enable';
+import readonly from './directives/readonly';
+import src from './directives/src';
+import href from './directives/href';
+import klass from './directives/klass';
+import attr from './directives/attr';
+import css from './directives/css';
+import data from './directives/data';
 
 directive('hi-if', ef, directive.PRIOR.EMERGENCY);
 directive('hi-repeat', repeat, directive.PRIOR.EMERGENCY);
@@ -133,3 +252,12 @@ directive('hi-bind', bind);
 directive('hi-value', value);
 directive('hi-show', show);
 directive('hi-hide', hide);
+directive('hi-disable', disable);
+directive('hi-enable', enable);
+directive('hi-readonly', readonly);
+directive('hi-src', src);
+directive('hi-href', href);
+directive('hi-class', klass);
+directive('hi-attr', attr);
+directive('hi-css', css);
+directive('hi-data', data);

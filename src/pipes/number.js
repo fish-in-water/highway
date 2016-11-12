@@ -1,12 +1,16 @@
 import {deconstruct, secureHtml, isNumeric} from '../utils';
 
-const limit = function ({$source: {
-    prop: sourceProp, watch: sourceWatch, secure: sourceSecure
+const number = function ({$source: {
+  prop: sourceProp, watch: sourceWatch, secure: sourceSecure
   }, $exp, $scope, $pipeline, $update}) {
 
   const {prop} = deconstruct($exp);
   const iterator = function ($value) {
-    return $value.slice(0, (isNumeric($exp) ? $exp: $scope.$get($exp)) - 0);
+    if (isNumeric($value)) {
+      return ($value).toFixed($exp - 0);
+    } else {
+      return $value;
+    }
   };
 
   if (sourceWatch && isNumeric(prop)) {
@@ -29,4 +33,4 @@ const limit = function ({$source: {
   }
 };
 
-export default limit;
+export default number;

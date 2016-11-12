@@ -14,6 +14,60 @@ assign(macro, {
   },
   compile($el, $scope, $ctx) {
 
+    if (!$el.children().length) {
+      const text = $el.html();
+      if (text == null || text === '') {
+        return;
+      }
+
+      const instances = [];
+      const update = function () {
+        if (!instances || !instances.length) {
+          return;
+        }
+
+        const newHtml = instances.reduce(function (text, instance) {
+          const $iterator = instance.$iterator;
+          if (!$iterator) {
+            return text;
+          }
+
+          if ($.isFunction($iterator)) {
+            return $iterator(text);
+          } else {
+            return text.replace($iterator.$exp, $iterator.$value);
+          }
+
+          //return instance.$iterator ? instance.$iterator(text) : text;
+        }, text);
+
+        $el.html(newHtml == null ? '' : newHtml);
+      };
+
+      for (const exp in macros) {
+        const matches = text.match(new RegExp(exp, 'gm'));
+        if (matches) {
+          for (const match of matches) {
+            const instance = macros[exp]({
+              $ctx,
+              $el,
+              $exp: match,
+              $update: update,
+              $scope
+            });
+            instance.$mount && instance.$mount($ctx);
+            instances.push(instance);
+            $ctx.$macros._instances.add(element.getId($el, true), instance);
+          }
+        }
+      }
+
+      update();
+    }
+
+    return $el;
+
+    /*
     const iterator = function ($el, $ctx) {
 
       if (component.isComponent($el, $ctx)) {
@@ -28,23 +82,26 @@ assign(macro, {
 
         const instances = [];
         const update = function () {
-          if (instances && instances.length) {
-            const newHtml = instances.reduce(function (text, instance) {
-              const $iterator = instance.$iterator;
-              if (!$iterator) {
-                return text;
-              }
-
-              if ($.isFunction($iterator)) {
-                return $iterator(text);
-              } else {
-                return text.replace($iterator.$exp, $iterator.$value);
-              }
-
-              //return instance.$iterator ? instance.$iterator(text) : text;
-            }, text);
-            $el.html(newHtml);
+          if (!instances || !instances.length) {
+            return;
           }
+
+          const newHtml = instances.reduce(function (text, instance) {
+            const $iterator = instance.$iterator;
+            if (!$iterator) {
+              return text;
+            }
+
+            if ($.isFunction($iterator)) {
+              return $iterator(text);
+            } else {
+              return text.replace($iterator.$exp, $iterator.$value);
+            }
+
+            //return instance.$iterator ? instance.$iterator(text) : text;
+          }, text);
+
+          $el.html(newHtml == null ? '' : newHtml);
         };
 
         for (const exp in macros) {
@@ -74,9 +131,24 @@ assign(macro, {
     };
 
     iterator($el, $ctx);
+    */
   },
   remove($el, $ctx) {
+    if (component.isComponent($el, $ctx)) {
+      return;
+    }
 
+    const id = element.getId($el);
+    if (id != null) {
+      let instances = $ctx.$macros._instances.find(id);
+      for (const instance of instances) {
+        instance.$unmount && instance.$unmount($ctx);
+      }
+      $ctx.$macros._instances.remove(id);
+    }
+
+
+    /*
     const iterator = function ($el, $ctx) {
       if (component.isComponent($el, $ctx)) {
         return;
@@ -88,7 +160,7 @@ assign(macro, {
 
       const id = element.getId($el);
       if (id != null) {
-        const instances = $ctx.$macros._instances.find(id);
+        let instances = $ctx.$macros._instances.find(id);
         for (const instance of instances) {
           instance.$unmount && instance.$unmount($ctx);
         }
@@ -97,6 +169,7 @@ assign(macro, {
     };
 
     iterator($el, $ctx);
+    */
   },
   destroy($ctx) {
     const keys = $ctx.$macros._instances.keys();

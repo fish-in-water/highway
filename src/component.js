@@ -9,12 +9,49 @@ const component = function (name, View) {
 
 assign(component, {
   initial($ctx) {
-    $ctx.$components = assign({}, components, $ctx.$components);
+    $ctx.$children = [];
+
+    //const tmp = {};
+    //for (const component in $ctx.$components || {}) {
+    //  components[component.toLowerCase] = $ctx.$components[component];
+    //}
+    $ctx.$components = assign({}, components, (() => {
+      const components = {};
+      for (const name in $ctx.$components) {
+        components[name.toLowerCase()] = $ctx.$components[name];
+      }
+      return components;
+    })());
+
     $ctx.$components._instances = new MapList;
+    $ctx.$components.$refs = {};
     //$ctx.$components.$children = $ctx.$components.$children || [];
   },
   compile($el, $scope, $ctx) {
+    if (!this.isComponent($el, $ctx)) {
+      return $el;
+    }
 
+    // if is root
+    if ($el === $ctx.$el) {
+      this.createComponent($el, $ctx, null);
+    } else {
+      const instance = this.createComponent($el, $ctx, $ctx);
+      $ctx.$components._instances.add(element.getId(instance.$el, true), instance);
+      $ctx.$children = $ctx.$components._instances.values();
+
+      const ref = instance.$el.attr('hi-ref');
+      if (ref) {
+        $ctx.$components.$refs[ref] = instance;
+      }
+    }
+
+    return null;
+
+    // child components
+
+
+    /*
     const iterator = ($el, $ctx) => {
       if (!$el || !$el.length || !$el[0]) {
         return;
@@ -23,8 +60,16 @@ assign(component, {
       for (const childNode of Array.prototype.slice.call($el.children())) {
         if (this.isComponent($(childNode), $ctx)) {
           const instance = this.createComponent(childNode, $ctx);
-          instance.$parent = $ctx;
+          //instance.$parent = $ctx;
           $ctx.$components._instances.add(element.getId(instance.$el, true), instance);
+          $ctx.$children = $ctx.$components._instances.values();
+
+          const ref = instance.$el.attr('hi-ref');
+          if (ref) {
+            $ctx.$components.$refs[ref] = instance;
+          }
+        } else {
+          iterator($(childNode), $ctx);
         }
       }
     };
@@ -35,6 +80,7 @@ assign(component, {
     }
 
     iterator($el, $ctx);
+    */
   },
   isComponent($el, $ctx) {
 
@@ -50,24 +96,48 @@ assign(component, {
       node.nodeType === 1 &&
       !!$ctx.$components[node.tagName.toLowerCase()];
   },
-  createComponent(node, $ctx) {
-    const tagName = node.tagName.toLowerCase();
+  createComponent($el, $ctx, $parent) {
+    const tagName = $el[0].tagName.toLowerCase();
     const View = $ctx.$components[tagName];
-    const $el = $('<div></div>').attr(assign({'hi-component': tagName}, getAttrs($(node))));
-    $(node).replaceWith($el);
-    const instance = new View({$el});
+    const $new = $('<div></div>').html($el.html()).attr(assign({'hi-component': tagName}, getAttrs($el)));
+    $el.replaceWith($new);
+    const instance = new View({$el: $new, $parent});
     return instance;
   },
   remove($el, $ctx) {
+    if (!component.isComponent($el, $ctx)) {
+      return;
+    }
+
+    const id = element.getId($el);
+    if (id != null) {
+      $ctx.$components._instances.find(id).forEach(function (instance) {
+        instance.$destroy();
+
+        const ref = instance.$el.attr('hi-ref');
+        if (ref) {
+          delete $ctx.$components.$refs[ref];
+        }
+      });
+      $ctx.$components._instances.remove(id);
+      $ctx.$children = $ctx.$components._instances.values();
+    }
+
+    /*
     const iterator = function ($el, $ctx) {
       if (component.isComponent($el, $ctx)) {
         const id = element.getId($el);
         if (id != null) {
-          const instances = $ctx.$components._instances.find(id);
-          for (const instance of instances) {
+          $ctx.$components._instances.find(id).forEach(function (instance) {
             instance.$destroy();
-          }
+
+            const ref = instance.$el.attr('hi-ref');
+            if (ref) {
+              delete $ctx.$components.$refs[ref];
+            }
+          });
           $ctx.$components._instances.remove(id);
+          $ctx.$children = $ctx.$components._instances.values();
         }
 
         return;
@@ -79,17 +149,13 @@ assign(component, {
     };
 
     iterator($el, $ctx);
+    */
   },
   destroy($ctx) {
-    const keys = $ctx.$components._instances.keys();
-    for (const key in keys) {
-      const instances = $ctx.$directives._instances.find(key);
-      for (const instance of instances) {
-        instance.$destroy();
-      }
-    }
+    $ctx.$components._instances.values().forEach(function (instance) {
+      instance.$destroy();
+    });
 
-    $ctx.$el.$children = null;
     $ctx.$children = null;
   }
 });

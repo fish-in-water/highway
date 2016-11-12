@@ -25,13 +25,6 @@ const bind = function ({$exp, $update, $scope}) {
         $value: secure ? secureHtml(value) : value
       }
     }
-    //return {
-    //  $replace($text) {
-    //    return $text.replace($exp, function () {
-    //      return secure ? secureHtml(value) : value;
-    //    });
-    //  }
-    //};
   }
 };
 

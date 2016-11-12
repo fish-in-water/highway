@@ -1,23 +1,12 @@
-import {deconstruct, secureHtml} from '../utils';
+import directive from '../directive';
+import {secureHtml, isObject, isEqual} from '../utils';
 
-const bind = function ({$el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
-  const {prop, watch, secure, pipes} = deconstruct($exp);
-  const watcher = function (value) {
-    $el.html(secure ? secureHtml(value) : value);
-  };
-
-  watcher($scope.$pipe($scope.$get(prop), pipes));
-
-  if (watch) {
-    return {
-      $mount() {
-        $scope.$watch(prop, watcher);
-      },
-      $unmount() {
-        $scope.$unwatch(prop, watcher);
-      }
-    };
-  }
+const bind = function ({$el, $exp, $scope, $ctx}) { //$ctx, $el, $arg, $exp
+  return directive.pattern($exp, $scope, $ctx, function ({newVal, secure}) {
+    newVal = secure ? secureHtml(newVal) : newVal;
+    newVal = isObject(newVal) ? newVal.toString() : newVal;
+    $el.html(newVal);
+  });
 };
 
 export default bind;

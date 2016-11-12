@@ -1,4 +1,4 @@
-import {assign, isArray, isObject, MapList} from '../utils';
+import {assign, isArray, isObject, isDate, isEqual, secureHtml, MapList} from '../utils';
 import pipe from '../pipe';
 
 const scope = function ($ctx) {
@@ -51,18 +51,19 @@ const scope = function ($ctx) {
         const matches = prop.match(/^(?:\$parent).([\s\S]*)/);
         if (matches) {
           return {
-            scope: this.$parent.$scope,
+            scope: $ctx.$parent.$scope,
             prop: matches[1]
           }
         }
 
-        const first = prop.match(/^([^.\[\]])+/)[0];
-        if (typeof series[first] === 'undefined' && this.$parent) {
-          return {
-            scope: this.$parent,
-            prop
-          }
-        }
+        // scope chains
+        //const first = prop.match(/^([^.\[\]])+/)[0];
+        //if (typeof series[first] === 'undefined' && this.$parent) {
+        //  return {
+        //    scope: $ctx.$parent.$scope,
+        //    prop
+        //  }
+        //}
 
         return {
           scope: this,
@@ -71,24 +72,81 @@ const scope = function ($ctx) {
       },
 
       $get(prop = '') {
+        const matches = prop.match(/^['"]([\s\S]*)['"]$/)
+        if (matches) {
+          return matches[1];
+        }
+
         const where = this.$where(prop);
         if (where.scope === this) {
           const val = series[prop];
-          if (isArray(val)) {
+          if (isObject(val)) {
+            if (isArray(val)) {
+              return assign([], val, true);
+            } else {
+              return assign({}, val, true);
+            }
+          } else {
+            return val;
+          }
+          /*
+          if (isDate(val)) {
+            return new Date(val);
+          } else if (isArray(val)) {
             return assign([], val);
           } else if (isObject(val)) {
             return assign({}, val);
           } else {
             return val;
           }
+          */
         } else {
           return where.scope.$get(where.prop);
         }
       },
 
       $set(prop = '', newVal = void 0) {
+        const matches = prop.match(/^['"]([\s\S]*)['"]$/)
+        if (matches) {
+          return matches[1];
+        }
+
         if (prop) {
-          this[prop] = newVal;
+          const iterator = function (path, val, obj) {
+            const props = path.split('.');
+            const tmp = props.shift();
+            const matches = tmp.match(/([^\[]+)\[(\d+)]/);
+            //array
+            if (matches) {
+              const prop = matches[1];
+              const index = matches[2] - 0;
+              if (obj[prop] == null) {
+                obj[prop] = [];
+              }
+
+              if (!props.length) {
+                obj[prop][index] = val;
+              } else {
+                if (obj[prop][index] == null) {
+                  obj[prop][index] = {};
+                }
+                iterator(props.join('.'), val, obj[prop][index]);
+              }
+            } else {
+              const prop = tmp;
+              if (!props.length) {
+                obj[prop] = val;
+              } else {
+                if (obj[prop] == null) {
+                  obj[prop] = {};
+                }
+                iterator(props.join('.'), val, obj[prop]);
+              }
+            }
+          };
+
+          iterator(prop, newVal, this);
+
         } else {
           for (const key in this) {
             if (this.hasOwnProperty(key)) {
@@ -108,7 +166,8 @@ const scope = function ($ctx) {
           if (reg.test(key)) {
             const oldValue = oldSeries[key];
             const newValue = newSeries[key];
-            if (newValue !== oldValue) {
+
+            if (!isEqual(newValue, oldValue)) {
               this.$fire(key, newValue, oldValue);
             }
           }
@@ -146,18 +205,20 @@ const scope = function ($ctx) {
         return pipe.compile(val, pipes, $ctx);
       },
 
-      $mount($ctx) {
+      $mount() {
         series = this.$series(this);
       },
 
-      $unmount($ctx) {
+      $unmount() {
         series = null;
         watchers.clear();
       }
     }), obj);
-  }
+  };
 
   $ctx.$scope = factory($ctx.$scope);
+  $ctx.$get = $ctx.$scope.$get.bind($ctx.$scope);
+  $ctx.$set = $ctx.$scope.$set.bind($ctx.$scope);
 
   return $ctx.$scope;
 };

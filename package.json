@@ -5,8 +5,8 @@
   "main": "dest/highway.js",
   "scripts": {
     "dev": "webpack-dev-server",
-    "unit": "karma start",
-    "e2e": ""
+    "unit": "karma start ./karma.conf.js",
+    "e2e": "casperjs test --concise ./test/e2e"
   },
   "repository": {
     "type": "git",

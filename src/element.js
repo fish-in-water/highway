@@ -7,7 +7,7 @@ const element = {
     $ctx.$template && $ctx.$el.html($($ctx.$template));
   },
   compile($el, $scope, $ctx) {
-    return $el;
+
   },
   remove($el, $ctx) {
     $el.remove();

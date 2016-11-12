@@ -15,9 +15,13 @@ var Notice = Highway.extend({
   $scope: {
     male: true
   },
+  $mount() {
+    this.$on('myevent', function (data) {
+      debugger;
+    });
+  },
   clickMe() {
-    this.$scope.$set('male', !this.$scope.$get('male'));
-    this.$scope.$set('female', !this.$scope.$get('female'));
+    this.$emit('myevent', {a: 'a'});
   }
 });
 Highway.component('notice', Notice);
@@ -52,22 +56,30 @@ var app = new Highway({
     age: 200,
     male: true,
     female: false,
+    birthday: new Date,
+    bgColor: 'red',
+    fontSize: 'fs20',
+    dateFormat: 'yyyy-MM-dd hh:mm:ss',
     info: {
-      name: 'xuxia',
+      name: true,
       age: 200,
     },
+    money: 100000,
+    imgUrl: '//gw.alicdn.com/tps/TB1FDOHLVXXXXcZXFXXXXXXXXXX-183-129.png?imgtag=avatar',
+    sortBy: 'id',
+    limit: 2,
     books: [
       {
+        id: '003',
+        name: 'buwen'
+      },
+      {
         id: '001',
-        name: 'yingyu'
+        name: 'abhuxue'
       },
       {
         id: '002',
-        name: 'shuxue'
-      },
-      {
-        id: '003',
-        name: 'yuwen'
+        name: 'cingyu'
       }
     ],
     students: [
@@ -96,12 +108,32 @@ var app = new Highway({
   $macros: {
 
   },
-  $pipes: {
-    'fixed': function () {
-      return '11111'
-    }
+  $mount() {
+    //this.$interval(function () {
+    //  this.$scope.$set('birthday', new Date);
+    //}, 1000);
+
+    this.$on('myevent', function (data) {
+      alert(1);
+    });
   },
   clickMe() {
+    alert(this.$scope.$get('password'));
+
+    //this.$broadcast('myevent', {a: 'a'});
+
+
+
+    // src="//m.baidu.com/static/index/plus/plus_logo.png"
+    //this.$scope.$set('bgColor', 'green');
+    //this.$scope.$set('fontSize', 'fs30');
+    //this.$scope.$set('imgUrl', "//m.baidu.com/static/index/plus/plus_logo.png");
+
+    //this.$scope.$set('sortBy', 'name');
+    //this.$scope.$set('limit', 1);
+
+    return;
+
     var books = this.$scope.$get('books');
     books.push({
       id: '003',

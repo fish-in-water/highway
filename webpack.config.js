@@ -21,7 +21,7 @@ module.exports = {
     ]
   },
   externals: {
-    'Zepto': 'Zepto'
+    //'Zepto': 'Zepto'
   },
   devtool: 'source-map'
   //plugins: [

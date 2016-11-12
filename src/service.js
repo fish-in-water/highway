@@ -31,9 +31,16 @@ export default service;
 
 // install build-in
 import scope from './services/scope';
+import event from './services/event';
+import timeout from './services/timeout';
+import interval from './services/interval';
+import http from './services/http';
+import find from './services/find';
+
 service('$scope', scope);
-
-
-
-
+service('$event', event);
+service('$timeout', timeout);
+service('$interval', interval);
+service('$http', http);
+service('$find', find);
 

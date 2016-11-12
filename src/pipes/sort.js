@@ -1,28 +1,54 @@
-import {isArray} from '../utils';
+import {deconstruct, secureHtml} from '../utils';
 
-const orderby = function () {
-  return {
-    $iterator({$value, $exp}) {
+const sort = function ({$source: {
+    prop: sourceProp, watch: sourceWatch, secure: sourceSecure
+  }, $exp, $scope, $pipeline, $update}) {
 
-      if (!$exp) {
-        return $value;
+  const matches = $exp.match(/(\S+)\s+(\S+)/);
+  const {prop: fieldProp} = deconstruct(matches[1]);
+  const {prop: ascProp} = deconstruct(matches[2] || "'asc'");
+  const iterator = function ($value) {
+    const field = $scope.$get(fieldProp);
+    const asc = $scope.$get(ascProp);
+
+    return $value.sort(function (a, b) {
+      if (a[field] > b[field]) {
+        return asc ? 1 : -1;
+      } else if (a[field] < b[field]) {
+        return asc ? -1 : 1;
+      } else {
+        return 0;
       }
+    })
+  };
 
-      if (!isArray($value)) {
-        return $value;
+
+  if (sourceWatch) {
+    let fieldUnwatcher;
+    let ascUnwatcher;
+    return {
+      $mount() {
+        fieldUnwatcher = $scope.$watch(fieldProp, function () {
+          $update($pipeline($scope.$get(sourceProp), sourceSecure));
+        });
+
+        ascUnwatcher = $scope.$watch(ascProp, function () {
+          $update($pipeline($scope.$get(sourceProp), sourceSecure));
+        });
+      },
+      $iterator: iterator,
+      $unmount() {
+        fieldUnwatcher();
+        ascUnwatcher();
       }
-
-      const matches = $exp.match(/(\S+)\s+(\S+)/);
-      const field = matches[1];
-      const asc = !matches[2] || matches[2].toLowerCase() === 'asc';
-
-      const result =  $value.sort(function (a, b) {
-        return asc ? a[field] - b[field] : a[field] - b[field];
-      })
-
-      return result;
     }
+  } else {
+    return {
+      $iterator: iterator
+    };
   }
+
+
 };
 
-export default orderby;
+export default sort;
