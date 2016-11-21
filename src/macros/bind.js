@@ -12,13 +12,14 @@ const bind = function ({$exp, $update, $scope}) {
       },
       $iterator($text) {
         return $text.replace($exp, function () {
-          const value = $scope.$get(prop);
+          let value = $scope.$get(prop);
+          value = value == null ? '' : value;
           return secure ? secureHtml(value) : value;
         });
       }
     };
   } else {
-    const value = $scope.$get(prop);
+    let value = $scope.$get(prop);
     return {
       $iterator: {
         $exp,

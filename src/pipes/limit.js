@@ -6,7 +6,7 @@ const limit = function ({$source: {
 
   const {prop} = deconstruct($exp);
   const iterator = function ($value) {
-    return $value.slice(0, (isNumeric($exp) ? $exp: $scope.$get($exp)) - 0);
+    return ($value || []).slice(0, (isNumeric($exp) ? $exp: $scope.$get($exp)) - 0);
   };
 
   if (sourceWatch && isNumeric(prop)) {

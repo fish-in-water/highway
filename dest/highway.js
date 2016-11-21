@@ -8130,15 +8130,15 @@
 	
 	var _view2 = _interopRequireDefault(_view);
 	
-	var _component = __webpack_require__(303);
+	var _component = __webpack_require__(304);
 	
 	var _component2 = _interopRequireDefault(_component);
 	
-	var _service = __webpack_require__(304);
+	var _service = __webpack_require__(305);
 	
 	var _service2 = _interopRequireDefault(_service);
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -8146,7 +8146,7 @@
 	
 	var _macro2 = _interopRequireDefault(_macro);
 	
-	var _pipe = __webpack_require__(306);
+	var _pipe = __webpack_require__(307);
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
@@ -8527,7 +8527,7 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _compiler = __webpack_require__(342);
+	var _compiler = __webpack_require__(302);
 	
 	var _compiler2 = _interopRequireDefault(_compiler);
 	
@@ -8594,9 +8594,157 @@
 	  value: true
 	});
 	
+	var _element = __webpack_require__(303);
+	
+	var _element2 = _interopRequireDefault(_element);
+	
+	var _component = __webpack_require__(304);
+	
+	var _component2 = _interopRequireDefault(_component);
+	
+	var _service = __webpack_require__(305);
+	
+	var _service2 = _interopRequireDefault(_service);
+	
+	var _directive = __webpack_require__(321);
+	
+	var _directive2 = _interopRequireDefault(_directive);
+	
+	var _macro = __webpack_require__(340);
+	
+	var _macro2 = _interopRequireDefault(_macro);
+	
+	var _pipe = __webpack_require__(307);
+	
+	var _pipe2 = _interopRequireDefault(_pipe);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var compiler = {
+	  initial: function initial($ctx) {
+	
+	    _element2.default.initial($ctx);
+	
+	    _pipe2.default.initial($ctx);
+	
+	    _service2.default.initial($ctx);
+	
+	    _directive2.default.initial($ctx);
+	
+	    _component2.default.initial($ctx);
+	
+	    _macro2.default.initial($ctx);
+	
+	    return this;
+	  },
+	  compile: function compile($el, $scope, $ctx) {
+	
+	    var iterator = function iterator($el, $scope, $ctx) {
+	      if (!$el || !$el.length) {
+	        return;
+	      }
+	
+	      if (_component2.default.isComponent($el, $ctx)) {
+	        _component2.default.compile($el, $scope, $ctx);
+	      } else {
+	        if ($el = _directive2.default.compile($el, $scope, $ctx)) {
+	          if ($el = _macro2.default.compile($el, $scope, $ctx)) {
+	            for (var _iterator = Array.prototype.slice.call($el.children()), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+	              var _ref;
+	
+	              if (_isArray) {
+	                if (_i >= _iterator.length) break;
+	                _ref = _iterator[_i++];
+	              } else {
+	                _i = _iterator.next();
+	                if (_i.done) break;
+	                _ref = _i.value;
+	              }
+	
+	              var childNode = _ref;
+	
+	              iterator($(childNode), $scope, $ctx);
+	            }
+	          }
+	        }
+	      }
+	    };
+	
+	    iterator($el, $scope, $ctx);
+	
+	    return this;
+	  },
+	  remove: function remove($el, $ctx) {
+	    var iterator = function iterator($el, $ctx) {
+	      if (!$el || !$el.length) {
+	        return;
+	      }
+	
+	      if (_component2.default.isComponent($el, $ctx)) {
+	        _component2.default.remove($el, $ctx);
+	      } else {
+	        for (var _iterator2 = Array.prototype.slice.call($el.children()), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+	          var _ref2;
+	
+	          if (_isArray2) {
+	            if (_i2 >= _iterator2.length) break;
+	            _ref2 = _iterator2[_i2++];
+	          } else {
+	            _i2 = _iterator2.next();
+	            if (_i2.done) break;
+	            _ref2 = _i2.value;
+	          }
+	
+	          var childNode = _ref2;
+	
+	          iterator($(childNode), $ctx);
+	        }
+	
+	        _macro2.default.remove($el, $ctx);
+	
+	        _directive2.default.remove($el, $ctx);
+	
+	        _element2.default.remove($el, $ctx);
+	      }
+	    };
+	
+	    iterator($el, $ctx);
+	
+	    return this;
+	  },
+	  destroy: function destroy($ctx) {
+	
+	    _macro2.default.destroy($ctx);
+	
+	    _component2.default.destroy($ctx);
+	
+	    _directive2.default.destroy($ctx);
+	
+	    _service2.default.destroy($ctx);
+	
+	    _pipe2.default.destroy($ctx);
+	
+	    _element2.default.destroy($ctx);
+	
+	    return this;
+	  }
+	};
+	
+	exports.default = compiler;
+
+/***/ },
+/* 303 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _utils = __webpack_require__(300);
 	
-	var _component = __webpack_require__(303);
+	var _component = __webpack_require__(304);
 	
 	var _component2 = _interopRequireDefault(_component);
 	
@@ -8630,7 +8778,7 @@
 	exports.default = element;
 
 /***/ },
-/* 303 */
+/* 304 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8641,7 +8789,7 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _element = __webpack_require__(302);
+	var _element = __webpack_require__(303);
 	
 	var _element2 = _interopRequireDefault(_element);
 	
@@ -8799,7 +8947,7 @@
 	exports.default = component;
 
 /***/ },
-/* 304 */
+/* 305 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8810,27 +8958,27 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _scope = __webpack_require__(305);
+	var _scope = __webpack_require__(306);
 	
 	var _scope2 = _interopRequireDefault(_scope);
 	
-	var _event = __webpack_require__(315);
+	var _event = __webpack_require__(316);
 	
 	var _event2 = _interopRequireDefault(_event);
 	
-	var _timeout = __webpack_require__(316);
+	var _timeout = __webpack_require__(317);
 	
 	var _timeout2 = _interopRequireDefault(_timeout);
 	
-	var _interval = __webpack_require__(317);
+	var _interval = __webpack_require__(318);
 	
 	var _interval2 = _interopRequireDefault(_interval);
 	
-	var _http = __webpack_require__(318);
+	var _http = __webpack_require__(319);
 	
 	var _http2 = _interopRequireDefault(_http);
 	
-	var _find = __webpack_require__(319);
+	var _find = __webpack_require__(320);
 	
 	var _find2 = _interopRequireDefault(_find);
 	
@@ -8876,7 +9024,7 @@
 	service('$find', _find2.default);
 
 /***/ },
-/* 305 */
+/* 306 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8887,7 +9035,7 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _pipe = __webpack_require__(306);
+	var _pipe = __webpack_require__(307);
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
@@ -9143,7 +9291,7 @@
 	exports.default = scope;
 
 /***/ },
-/* 306 */
+/* 307 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9154,35 +9302,35 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _lowercase = __webpack_require__(307);
+	var _lowercase = __webpack_require__(308);
 	
 	var _lowercase2 = _interopRequireDefault(_lowercase);
 	
-	var _uppercase = __webpack_require__(308);
+	var _uppercase = __webpack_require__(309);
 	
 	var _uppercase2 = _interopRequireDefault(_uppercase);
 	
-	var _sort = __webpack_require__(309);
+	var _sort = __webpack_require__(310);
 	
 	var _sort2 = _interopRequireDefault(_sort);
 	
-	var _limit = __webpack_require__(310);
+	var _limit = __webpack_require__(311);
 	
 	var _limit2 = _interopRequireDefault(_limit);
 	
-	var _filter = __webpack_require__(311);
+	var _filter = __webpack_require__(312);
 	
 	var _filter2 = _interopRequireDefault(_filter);
 	
-	var _json = __webpack_require__(312);
+	var _json = __webpack_require__(313);
 	
 	var _json2 = _interopRequireDefault(_json);
 	
-	var _date = __webpack_require__(313);
+	var _date = __webpack_require__(314);
 	
 	var _date2 = _interopRequireDefault(_date);
 	
-	var _number = __webpack_require__(314);
+	var _number = __webpack_require__(315);
 	
 	var _number2 = _interopRequireDefault(_number);
 	
@@ -9291,7 +9439,7 @@
 	pipe('number', _number2.default);
 
 /***/ },
-/* 307 */
+/* 308 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9314,7 +9462,7 @@
 	exports.default = lowercase;
 
 /***/ },
-/* 308 */
+/* 309 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9337,7 +9485,7 @@
 	exports.default = uppercase;
 
 /***/ },
-/* 309 */
+/* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9420,7 +9568,7 @@
 	exports.default = sort;
 
 /***/ },
-/* 310 */
+/* 311 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9447,7 +9595,7 @@
 	      prop = _deconstruct.prop;
 	
 	  var iterator = function iterator($value) {
-	    return $value.slice(0, ((0, _utils.isNumeric)($exp) ? $exp : $scope.$get($exp)) - 0);
+	    return ($value || []).slice(0, ((0, _utils.isNumeric)($exp) ? $exp : $scope.$get($exp)) - 0);
 	  };
 	
 	  if (sourceWatch && (0, _utils.isNumeric)(prop)) {
@@ -9480,7 +9628,7 @@
 	exports.default = limit;
 
 /***/ },
-/* 311 */
+/* 312 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9655,7 +9803,7 @@
 	exports.default = filter;
 
 /***/ },
-/* 312 */
+/* 313 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9681,7 +9829,7 @@
 	exports.default = json;
 
 /***/ },
-/* 313 */
+/* 314 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -9767,7 +9915,7 @@
 	exports.default = date;
 
 /***/ },
-/* 314 */
+/* 315 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9831,7 +9979,7 @@
 	exports.default = number;
 
 /***/ },
-/* 315 */
+/* 316 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9934,7 +10082,7 @@
 	exports.default = event;
 
 /***/ },
-/* 316 */
+/* 317 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9969,7 +10117,7 @@
 	exports.default = timeout;
 
 /***/ },
-/* 317 */
+/* 318 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10004,7 +10152,7 @@
 	exports.default = timeout;
 
 /***/ },
-/* 318 */
+/* 319 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10036,7 +10184,7 @@
 	exports.default = http;
 
 /***/ },
-/* 319 */
+/* 320 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10057,7 +10205,7 @@
 	exports.default = find;
 
 /***/ },
-/* 320 */
+/* 321 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10068,37 +10216,37 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _component = __webpack_require__(303);
+	var _component = __webpack_require__(304);
 	
 	var _component2 = _interopRequireDefault(_component);
 	
-	var _element = __webpack_require__(302);
+	var _element = __webpack_require__(303);
 	
 	var _element2 = _interopRequireDefault(_element);
 	
-	var _pipe = __webpack_require__(306);
+	var _pipe = __webpack_require__(307);
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
 	var _utils = __webpack_require__(300);
 	
-	var _if = __webpack_require__(321);
+	var _if = __webpack_require__(322);
 	
 	var _if2 = _interopRequireDefault(_if);
 	
-	var _repeat = __webpack_require__(322);
+	var _repeat = __webpack_require__(323);
 	
 	var _repeat2 = _interopRequireDefault(_repeat);
 	
-	var _on = __webpack_require__(323);
+	var _on = __webpack_require__(324);
 	
 	var _on2 = _interopRequireDefault(_on);
 	
-	var _bind = __webpack_require__(324);
+	var _bind = __webpack_require__(325);
 	
 	var _bind2 = _interopRequireDefault(_bind);
 	
-	var _value = __webpack_require__(325);
+	var _value = __webpack_require__(326);
 	
 	var _value2 = _interopRequireDefault(_value);
 	
@@ -10418,7 +10566,7 @@
 	directive('hi-data', _data2.default);
 
 /***/ },
-/* 321 */
+/* 322 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10431,11 +10579,11 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _element = __webpack_require__(302);
+	var _element = __webpack_require__(303);
 	
 	var _element2 = _interopRequireDefault(_element);
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -10506,7 +10654,7 @@
 	exports.default = ef;
 
 /***/ },
-/* 322 */
+/* 323 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10517,7 +10665,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _pipe = __webpack_require__(306);
+	var _pipe = __webpack_require__(307);
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
@@ -10723,7 +10871,7 @@
 	exports.default = repeat;
 
 /***/ },
-/* 323 */
+/* 324 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -10755,7 +10903,7 @@
 	exports.default = on;
 
 /***/ },
-/* 324 */
+/* 325 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10764,7 +10912,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -10791,7 +10939,7 @@
 	exports.default = bind;
 
 /***/ },
-/* 325 */
+/* 326 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10800,13 +10948,9 @@
 	  value: true
 	});
 	
-	var _input = __webpack_require__(326);
+	var _input = __webpack_require__(327);
 	
 	var _input2 = _interopRequireDefault(_input);
-	
-	var _textarea = __webpack_require__(328);
-	
-	var _textarea2 = _interopRequireDefault(_textarea);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -10819,16 +10963,16 @@
 	  //$ctx, $el, $arg, $exp
 	  switch ($el[0].nodeName.toLowerCase()) {
 	    case 'input':
-	      return (0, _input2.default)({ $ctx: $ctx, $el: $el, $arg: $arg, $exp: $exp, $scope: $scope });
 	    case 'textarea':
-	      return (0, _textarea2.default)({ $ctx: $ctx, $el: $el, $arg: $arg, $exp: $exp, $scope: $scope });
+	    case 'select':
+	      return (0, _input2.default)({ $ctx: $ctx, $el: $el, $arg: $arg, $exp: $exp, $scope: $scope });
 	  }
 	};
 	
 	exports.default = value;
 
 /***/ },
-/* 326 */
+/* 327 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10837,7 +10981,7 @@
 	  value: true
 	});
 	
-	var _text = __webpack_require__(327);
+	var _text = __webpack_require__(328);
 	
 	var _text2 = _interopRequireDefault(_text);
 	
@@ -10852,11 +10996,12 @@
 	      $exp = _ref.$exp,
 	      $scope = _ref.$scope;
 	  //$ctx, $el, $arg, $exp
-	  switch ($el.attr('type').toLowerCase()) {
+	  switch (($el.attr('type') || '').toLowerCase()) {
 	    case 'text':
 	    case 'number':
 	    case 'tel':
 	    case 'password':
+	    default:
 	      return (0, _text2.default)({ $ctx: $ctx, $el: $el, $arg: $arg, $exp: $exp, $scope: $scope });
 	  }
 	};
@@ -10864,7 +11009,7 @@
 	exports.default = input;
 
 /***/ },
-/* 327 */
+/* 328 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -10875,7 +11020,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _pipe = __webpack_require__(306);
+	var _pipe = __webpack_require__(307);
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
@@ -10940,26 +11085,6 @@
 	exports.default = text;
 
 /***/ },
-/* 328 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _text = __webpack_require__(327);
-	
-	var _text2 = _interopRequireDefault(_text);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var textarea = _text2.default;
-	
-	exports.default = textarea;
-
-/***/ },
 /* 329 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -10969,7 +11094,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11004,7 +11129,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11038,7 +11163,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11077,7 +11202,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11116,7 +11241,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11155,7 +11280,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11189,7 +11314,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11225,7 +11350,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11372,7 +11497,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11412,7 +11537,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11448,7 +11573,7 @@
 	  value: true
 	});
 	
-	var _directive = __webpack_require__(320);
+	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
@@ -11486,11 +11611,11 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _component = __webpack_require__(303);
+	var _component = __webpack_require__(304);
 	
 	var _component2 = _interopRequireDefault(_component);
 	
-	var _element = __webpack_require__(302);
+	var _element = __webpack_require__(303);
 	
 	var _element2 = _interopRequireDefault(_element);
 	
@@ -11754,6 +11879,7 @@
 	      $iterator: function $iterator($text) {
 	        return $text.replace($exp, function () {
 	          var value = $scope.$get(prop);
+	          value = value == null ? '' : value;
 	          return secure ? (0, _utils.secureHtml)(value) : value;
 	        });
 	      }
@@ -11770,154 +11896,6 @@
 	};
 	
 	exports.default = bind;
-
-/***/ },
-/* 342 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _element = __webpack_require__(302);
-	
-	var _element2 = _interopRequireDefault(_element);
-	
-	var _component = __webpack_require__(303);
-	
-	var _component2 = _interopRequireDefault(_component);
-	
-	var _service = __webpack_require__(304);
-	
-	var _service2 = _interopRequireDefault(_service);
-	
-	var _directive = __webpack_require__(320);
-	
-	var _directive2 = _interopRequireDefault(_directive);
-	
-	var _macro = __webpack_require__(340);
-	
-	var _macro2 = _interopRequireDefault(_macro);
-	
-	var _pipe = __webpack_require__(306);
-	
-	var _pipe2 = _interopRequireDefault(_pipe);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var compiler = {
-	  initial: function initial($ctx) {
-	
-	    _element2.default.initial($ctx);
-	
-	    _pipe2.default.initial($ctx);
-	
-	    _service2.default.initial($ctx);
-	
-	    _directive2.default.initial($ctx);
-	
-	    _component2.default.initial($ctx);
-	
-	    _macro2.default.initial($ctx);
-	
-	    return this;
-	  },
-	  compile: function compile($el, $scope, $ctx) {
-	
-	    var iterator = function iterator($el, $scope, $ctx) {
-	      if (!$el || !$el.length) {
-	        return;
-	      }
-	
-	      if (_component2.default.isComponent($el, $ctx)) {
-	        _component2.default.compile($el, $scope, $ctx);
-	      } else {
-	        if ($el = _directive2.default.compile($el, $scope, $ctx)) {
-	          if ($el = _macro2.default.compile($el, $scope, $ctx)) {
-	            for (var _iterator = Array.prototype.slice.call($el.children()), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	              var _ref;
-	
-	              if (_isArray) {
-	                if (_i >= _iterator.length) break;
-	                _ref = _iterator[_i++];
-	              } else {
-	                _i = _iterator.next();
-	                if (_i.done) break;
-	                _ref = _i.value;
-	              }
-	
-	              var childNode = _ref;
-	
-	              iterator($(childNode), $scope, $ctx);
-	            }
-	          }
-	        }
-	      }
-	    };
-	
-	    iterator($el, $scope, $ctx);
-	
-	    return this;
-	  },
-	  remove: function remove($el, $ctx) {
-	    var iterator = function iterator($el, $ctx) {
-	      if (!$el || !$el.length) {
-	        return;
-	      }
-	
-	      if (_component2.default.isComponent($el, $ctx)) {
-	        _component2.default.remove($el, $ctx);
-	      } else {
-	        for (var _iterator2 = Array.prototype.slice.call($el.children()), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-	          var _ref2;
-	
-	          if (_isArray2) {
-	            if (_i2 >= _iterator2.length) break;
-	            _ref2 = _iterator2[_i2++];
-	          } else {
-	            _i2 = _iterator2.next();
-	            if (_i2.done) break;
-	            _ref2 = _i2.value;
-	          }
-	
-	          var childNode = _ref2;
-	
-	          iterator($(childNode), $ctx);
-	        }
-	
-	        _macro2.default.remove($el, $ctx);
-	
-	        _directive2.default.remove($el, $ctx);
-	
-	        _element2.default.remove($el, $ctx);
-	      }
-	    };
-	
-	    iterator($el, $ctx);
-	
-	    return this;
-	  },
-	  destroy: function destroy($ctx) {
-	
-	    _macro2.default.destroy($ctx);
-	
-	    _component2.default.destroy($ctx);
-	
-	    _directive2.default.destroy($ctx);
-	
-	    _service2.default.destroy($ctx);
-	
-	    _pipe2.default.destroy($ctx);
-	
-	    _element2.default.destroy($ctx);
-	
-	    return this;
-	  }
-	};
-	
-	exports.default = compiler;
 
 /***/ }
 /******/ ]);
