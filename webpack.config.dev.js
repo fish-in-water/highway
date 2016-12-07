@@ -1,4 +1,5 @@
-var path = require('path')
+var path = require('path');
+var webpack = require('webpack');
 
 module.exports = {
   entry: {
@@ -23,13 +24,9 @@ module.exports = {
   externals: {
     //'Zepto': 'Zepto'
   },
-  devtool: 'source-map'
-  //plugins: [
-  //  new webpack.DefinePlugin({
-  //    'process.env': {
-  //      NODE_ENV: '"development"'
-  //    }
-  //  })
-  //],
-
-}
+  devtool: 'source-map',
+  plugins: [
+    //压缩打包的文件
+    // new webpack.optimize.UglifyJsPlugin({})
+  ]
+};

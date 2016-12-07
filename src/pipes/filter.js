@@ -1,4 +1,4 @@
-import {deconstruct, secureHtml, isNumeric} from '../utils';
+  import {deconstruct, secureHtml, isNumeric} from '../utils';
 
 // =,!=,^=,$=,*=
 
@@ -6,7 +6,7 @@ const SYMBOLS = {
   EQUAL: '=',
   STRICT_EQUAL: '==',
   NOT_EQUAL: '!=',
-  NOT_STRICT_EQUAL: '!=',
+  STRICT_NOT_EQUAL: '!==',
   START_WITH: '^=',
   END_WITH: '$=',
   CONTAINS: '*='
@@ -42,7 +42,7 @@ const filter = function ({$source: {
       } else if (symbol === SYMBOLS.NOT_EQUAL &&
         obj[prop] != val) {
         return true;
-      } else if (symbol === SYMBOLS.NOT_EQUAL &&
+      } else if (symbol === SYMBOLS.STRICT_NOT_EQUAL &&
         obj[prop] !== val) {
         return true;
       } else if (symbol === SYMBOLS.START_WITH &&

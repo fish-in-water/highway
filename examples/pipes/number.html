@@ -1,0 +1,33 @@
+<!-- examples/pipes/number.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>number</title>
+</head>
+<body>
+<div id="app">
+  <p hi-bind="incoming | number: '2'"></p>
+  <p>{{incoming | number: fixed}}</p>
+  <button hi-on:click="change">change</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      incoming: 200,
+      fixed: 3,
+    },
+    change() {
+      this.$set('fixed', 4);
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,17 +1,30 @@
 import component from './component';
 import element from './element';
 import pipe from './pipe';
-import {assign, includes, unique, inject, getAttrs, deconstruct, secureHtml, MapList} from './utils';
+import {assign, includes, getAttrs, deconstruct, MapList} from './utils';
 
+// 优先级常量, 最高-9, 默认0
 const PRIOR = {
   EMERGENCY: -9,
   DEFAULT: 0
 };
 
+// 优先级
 const priorities = [];
+
+// 全局指令
 const directives = {};
 
-const directive = function (name, directive, priority = PRIOR.DEFAULT) {
+/**
+ * 指令模块
+ * 指令模块解析DOM上定义的属性并进行实例化
+ * @param name 指令名
+ * @param factory 工厂函数
+ * @param priority 优先级
+ */
+const directive = function (name, factory, priority = PRIOR.DEFAULT) {
+
+  // 创建优先级
   if (!includes(priorities, priority)) {
     priorities.push(priority);
     priorities.sort(function (prev, next) {
@@ -19,44 +32,52 @@ const directive = function (name, directive, priority = PRIOR.DEFAULT) {
     });
   }
 
-  directive.priority = priority;
-  directives[name] = directive;
+  // 工厂函数上附加优先级
+  factory.priority = priority;
+  directives[name] = factory;
 };
 
 assign(directive, {
   PRIOR,
   initial($ctx) {
+
+    // 加载全局指令、局部指令至当前上下文
     $ctx.$directives = assign({}, directives, $ctx.$directives);
+
+    // 记录指令实例,便于销毁释放
     $ctx.$directives._instances = new MapList;
   },
   compile($el, $scope, $ctx) {
 
     const handler = function ($el, $ctx, priority) {
 
+      // 是否为组件
       if (component.isComponent($el, $ctx)) {
         return $el;
       }
 
+      // 获得当前元素的所有ATTR属性并进行编译
       const attrs = getAttrs($el);
       for (var attr in attrs) {
-
+        let name, arg;
         const index = attr.indexOf(':');
-        const ori = attr;
-        let arg = void 0;
         if (index != -1) {
-          attr = ori.substring(0, index);
-          arg = ori.substring(index + 1);
+          name = attr.substring(0, index);
+          arg = attr.substring(index + 1);
+        } else {
+          name = attr;
+          arg = null;
         }
 
-        const directive = $ctx.$directives[attr];
-        if (directive && directive.priority === priority) {
-          const instance = directive({
+        const factory = $ctx.$directives[name];
+        if (factory && factory.priority === priority) {
+          const instance = factory({
             $ctx,
             $el,
             $arg: arg,
-            $exp: attrs[ori],
+            $exp: attrs[attr],
             $scope,
-            $directive: attr
+            $directive: name
           });
 
           if (instance) {
@@ -79,6 +100,7 @@ assign(directive, {
       return $el;
     };
 
+    // 根据指令优先级由高至低进行编译
     $el = priorities.reduce(function ($el, priority) {
       if (!$el) {
         return null;
@@ -89,61 +111,6 @@ assign(directive, {
 
     return $el;
 
-    /*
-    const iterator = function ($el, $ctx, priority) {
-
-      if ($el.attr('hi-compiled') || component.isComponent($el, $ctx)) {
-        return;
-      }
-
-      const attrs = getAttrs($el);
-      for (var attr in attrs) {
-
-        const index = attr.indexOf(':');
-        const ori = attr;
-        let arg = void 0;
-        if (index != -1) {
-          attr = ori.substring(0, index);
-          arg = ori.substring(index + 1);
-        }
-
-        const directive = $ctx.$directives[attr];
-        if (directive && directive.priority === priority) {
-
-          const instance = directive({
-            $ctx,
-            $el,
-            $arg: arg,
-            $exp: attrs[ori],
-            $scope,
-            $directive: attr
-          });
-
-          if (instance) {
-            instance.$mount && instance.$mount($ctx);
-            $ctx.$directives._instances.add(element.getId($el, true), instance);
-          }
-        }
-      }
-
-      for (const childNode of Array.prototype.slice.call($el.children())) {
-        iterator($(childNode), $ctx, priority);
-      }
-    };
-
-    //iterator($el, $ctx, priority);
-
-    if (priority != null) {
-      iterator($el, $ctx, priority);
-    } else {
-      for (const tmp of priorities) {
-        if (tmp !== PRIOR.EMERGENCY) {
-          iterator($el, $ctx, tmp);
-        }
-      }
-    }
-
-    */
   },
   pattern($exp, $scope, $ctx, $update) {
     const {prop, watch, secure, pipes} = deconstruct($exp);
@@ -186,29 +153,6 @@ assign(directive, {
       }
       $ctx.$directives._instances.remove(id);
     }
-
-    /*
-    const iterator = function ($el, $ctx) {
-      if (component.isComponent($el, $ctx)) {
-        return;
-      }
-
-      for (const childNode of Array.prototype.slice.call($el.children())) {
-        iterator($(childNode), $ctx);
-      }
-
-      const id = element.getId($el);
-      if (id != null) {
-        const instances = $ctx.$directives._instances.find(id);
-        for (const instance of instances) {
-          instance.$unmount && instance.$unmount($ctx);
-        }
-        $ctx.$directives._instances.remove(id);
-      }
-    };
-
-    iterator($el, $ctx);
-    */
   },
   destroy($ctx) {
     const keys = $ctx.$directives._instances.keys();
@@ -227,7 +171,7 @@ assign(directive, {
 
 export default directive;
 
-// install build-in
+// 内建指令
 import ef from './directives/if';
 import repeat from './directives/repeat';
 import on from './directives/on';

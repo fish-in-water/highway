@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>sample</title>
+
+</head>
+<body>
+<div id="app">
+  <p>two way bind is: ${ratio}$</p>
+  <p>one way bind is: $[ratio]$</p>
+  <button hi-on:click="change">Change</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.min.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const percentage = function ({$exp, $update, $scope}) {
+    const prop = $exp.replace(/[\\${}\[\] ]/g, '');
+    const handler = function () {
+      return ($scope.$get(prop) - 0) * 100 + '%';
+    };
+
+    // 双向绑定
+    if (/\$\{[^\\}]+\}\$/.test($exp)) {
+      return {
+        $mount() {
+          $scope.$watch(prop, $update);
+        },
+        $unmount() {
+          $scope.$unwatch(prop, $update);
+        },
+        $iterator($text) {
+          return $text.replace($exp, function () {
+            return handler();
+          });
+        }
+      }
+    } else {
+      return {
+        $iterator: {
+          $value: handler()
+        }
+      }
+    }
+  };
+
+  // 全局宏指令
+  //Highway.macro('\\$\\{[^$]+\\}\\$|\\$\\[[^$]+\\]\\$', percentage)
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      ratio: 0.95
+    },
+    // 局部宏指令
+    $macros: {
+      '\\$\\{[^$]+\\}\\$|\\$\\[[^$]+\\]\\$': percentage
+    },
+    change() {
+      this.$set('ratio', '0.90')
+    }
+  });
+
+</script>
+</body>
+</html>

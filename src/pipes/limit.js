@@ -9,12 +9,12 @@ const limit = function ({$source: {
     return ($value || []).slice(0, (isNumeric($exp) ? $exp: $scope.$get($exp)) - 0);
   };
 
-  if (sourceWatch && isNumeric(prop)) {
+  if (sourceWatch) {
     let unwatcher = null;
     return {
       $mount() {
         unwatcher = $scope.$watch(prop, function () {
-          $update($pipeline($scope.$secure(sourceProp, sourceSecure)));
+          $update($pipeline(sourceProp ? secureHtml($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
         });
       },
       $iterator: iterator,

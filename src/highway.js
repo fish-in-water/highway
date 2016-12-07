@@ -6,6 +6,9 @@ import directive from './directive';
 import macro from './macro';
 import pipe from './pipe';
 
+/**
+ * Highway MVVM
+ */
 const highway = assign(View, {
   component,
   directive,

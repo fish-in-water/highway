@@ -12,13 +12,19 @@ const sort = function ({$source: {
     const asc = $scope.$get(ascProp);
 
     return $value.sort(function (a, b) {
-      if (a[field] > b[field]) {
-        return asc ? 1 : -1;
-      } else if (a[field] < b[field]) {
-        return asc ? -1 : 1;
+      if (asc === 'asc') {
+        return a[field] > b[field] ? 1 : -1;
       } else {
-        return 0;
+        return a[field] > b[field] ? -1 : 1;
       }
+
+      // if (a[field] > b[field]) {
+      //   return asc === 'asc' ? 1 : -1;
+      // } else if (a[field] < b[field]) {
+      //   return asc === 'asc' ? 1 : -1;
+      // } else {
+      //   return 0;
+      // }
     })
   };
 

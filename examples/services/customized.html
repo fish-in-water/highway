@@ -1,0 +1,69 @@
+<!-- examples/services/customized.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>customized</title>
+</head>
+<body>
+<div id="app">
+  <button hi-on:click="clickMe">destroy me</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.min.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const cookie = function ({$ctx}) {
+    return $ctx.$cookie = {
+      $mount() {
+        console.log('>>> cookie services mounted')
+      },
+      $get(key) {
+        const reg = new RegExp(`(^| )${key}=([^;]*)(;|$)`);
+        const matches = document.cookie.match(reg);
+        if(matches) {
+          return matches[2]
+        }
+
+      },
+      $set(key, value) {
+        document.cookie = `${key}=${value}`;
+      },
+      $unmount() {
+        console.log('>>> cookie services unmounted')
+      },
+      destroy() {
+        this.$destory();
+      }
+    }
+  };
+
+  // 全局管道
+  //Highway.service('$cookie', cookie);
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      ratio: 0.95
+    },
+    // 局部管道
+    $services: {
+      $cookie: cookie
+    },
+    $mount() {
+      this.$cookie.$set('cookie_0', 'highway');
+      this.$cookie.$set('cookie_1', 'hello world');
+
+      // 可通过$service引用
+      console.log('cookie_1 value is:' + this.$services['$cookie'].$get('cookie_1'));
+    },
+    clickMe() {
+      this.$destroy();
+    }
+  });
+</script>
+</body>
+</html>

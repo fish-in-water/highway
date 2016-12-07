@@ -1,0 +1,50 @@
+<!-- examples/pipes/customized.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>customized</title>
+</head>
+<body>
+<div id="app">
+  <p hi-bind="ratio | percentage"></p>
+  <button hi-on:click="change">change</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const percentage = function ({$exp, $update, $scope}) {
+    return {
+      $iterator($value) {
+        if ($value == null) {
+          return $value;
+        }
+
+        return ($value - 0) * 100 + '%';
+      }
+    }
+  };
+
+  // 全局管道
+  //Highway.pipe('percentage', percentage);
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      ratio: 0.95
+    },
+    // 局部管道
+    $pipes: {
+      percentage
+    },
+    change() {
+      this.$set('ratio', '0.90')
+    }
+  });
+</script>
+</body>
+</html>

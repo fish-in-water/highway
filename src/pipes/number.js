@@ -7,18 +7,18 @@ const number = function ({$source: {
   const {prop} = deconstruct($exp);
   const iterator = function ($value) {
     if (isNumeric($value)) {
-      return ($value).toFixed($exp - 0);
+      return ($value).toFixed($scope.$get($exp) - 0);
     } else {
       return $value;
     }
   };
 
-  if (sourceWatch && isNumeric(prop)) {
+  if (sourceWatch) {
     let unwatcher = null;
     return {
       $mount() {
         unwatcher = $scope.$watch(prop, function () {
-          $update($pipeline($scope.$secure(sourceProp, sourceSecure)));
+          $update($pipeline(sourceProp ? secureHtml($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
         });
       },
       $iterator: iterator,

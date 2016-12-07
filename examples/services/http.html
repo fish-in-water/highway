@@ -1,0 +1,41 @@
+<!-- examples/services/http.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>interval</title>
+</head>
+<body>
+<div id="app">
+  <ul>
+    <li hi-repeat="user in users">id: {{user.id}}, name: {{user.name}}</li>
+  </ul>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+
+    },
+    $mount() {
+      this.$http({
+        type: 'get',
+        url: './users.json',
+        success: (data, status, xhr) => {
+          this.$set('users', data.users)
+        },
+        error: (xhr, errorType, error) => {
+          alert('error');
+        }
+      })
+    }
+  });
+</script>
+</body>
+</html>

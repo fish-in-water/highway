@@ -1,7 +1,7 @@
 import {assign, isArray, isObject, isDate, isEqual, secureHtml, MapList} from '../utils';
 import pipe from '../pipe';
 
-const scope = function ($ctx) {
+const scope = function ({$ctx}) {
   const factory = function (obj) {
     let series = {};
     let watchers = new MapList;
@@ -9,7 +9,9 @@ const scope = function ($ctx) {
     return assign(Object.create({
 
       $create(obj) {
-        return factory(obj);
+        const scope = factory(obj);
+        scope.$parent = this;
+        return scope;
       },
 
       $series(data) {
@@ -79,11 +81,24 @@ const scope = function ($ctx) {
 
         const where = this.$where(prop);
         if (where.scope === this) {
-          const val = series[prop];
+          const val = (() => {
+            let val = series[prop];
+            let scope = this;
+            while (typeof val === 'undefined' && scope.$parent) {
+              scope = scope.$parent;
+              val = scope.$get(prop);
+            }
+
+            return val;
+          }).call(this);
+
+
           if (isObject(val)) {
-            if (isArray(val)) {
+            if (isDate(val)) {
+              return new Date(val);
+            } else if (isArray(val)) {
               return assign([], val, true);
-            } else {
+            }  else {
               return assign({}, val, true);
             }
           } else {
@@ -160,10 +175,15 @@ const scope = function ($ctx) {
         const oldSeries = series;
         const newSeries = series = this.$series(this);
 
-        const reg = new RegExp(`^${prop}`);
+        //const reg = new RegExp(`^${prop}`);
         const keys = watchers.keys();
         for (const key of keys) {
-          if (reg.test(key)) {
+          const props = prop.split('.');
+          const keys = key.split('.');
+
+          if (0 === key.indexOf(prop) &&
+            props[props.length - 1] === keys[props.length - 1]) {
+
             const oldValue = oldSeries[key];
             const newValue = newSeries[key];
 
@@ -201,17 +221,19 @@ const scope = function ($ctx) {
         }
       },
 
-      $pipe(val, pipes) {
-        return pipe.compile(val, pipes, $ctx);
-      },
+      // $pipe(val, pipes) {
+      //   return pipe.compile(val, pipes, $ctx);
+      // },
 
       $mount() {
         series = this.$series(this);
+        return this;
       },
 
       $unmount() {
         series = null;
         watchers.clear();
+        return this;
       }
     }), obj);
   };
@@ -219,6 +241,9 @@ const scope = function ($ctx) {
   $ctx.$scope = factory($ctx.$scope);
   $ctx.$get = $ctx.$scope.$get.bind($ctx.$scope);
   $ctx.$set = $ctx.$scope.$set.bind($ctx.$scope);
+  $ctx.$watch = $ctx.$scope.$watch.bind($ctx.$scope);
+  $ctx.$unwatch = $ctx.$scope.$unwatch.bind($ctx.$scope);
+  $ctx.$fire = $ctx.$scope.$fire.bind($ctx.$scope);
 
   return $ctx.$scope;
 };

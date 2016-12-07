@@ -1,6 +1,6 @@
 import {assign} from '../utils';
 
-const timeout = function ($ctx) {
+const timeout = function ({$ctx}) {
   const ids = [];
 
   $ctx.$timeout = assign(function (handler, delay) {

@@ -1,0 +1,36 @@
+<!-- examples/pipes/date.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>json</title>
+</head>
+<body>
+<div id="app">
+  <div hi-bind="user.birthday | date: 'yyyy-MM-dd hh:mm:ss'"></div>
+  <div hi-bind="user.birthday | date: format"></div>
+  <button hi-on:click="change">change</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      user: {
+        birthday: new Date,
+      },
+      format: 'yyyy-MM-dd hh:mm:ss'
+
+    },
+    change() {
+      this.$set('format', 'yyyy/MM/dd hh:mm:ss')
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 import pipe from '../../../pipe';
 import {deconstruct, secureHtml} from '../../../utils';
 
-const text = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
+const text = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
   const watcher = function (value) {
     $el.val(secure ? secureHtml(value) : value);

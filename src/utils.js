@@ -57,17 +57,17 @@ export function isEqual(val0, val1) {
     return val0 === val1;
   }
 
-  if (isPlainObject(val0) && isPlainObject(val1)) {
-    const merge = assign({}, val0, val1, true);
-    for (const key in merge) {
-      if (merge.hasOwnProperty(key)) {
-        if (!isEqual(merge[key], val1[key])) {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
+  // if (isPlainObject(val0) && isPlainObject(val1)) {
+  //   const merge = assign({}, val0, val1, true);
+  //   for (const key in merge) {
+  //     if (merge.hasOwnProperty(key)) {
+  //       if (!isEqual(merge[key], val1[key])) {
+  //         return false;
+  //       }
+  //     }
+  //   }
+  //   return true;
+  // }
 
   return false;
 }

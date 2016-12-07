@@ -1,6 +1,6 @@
 import {assign, MapList} from '../utils';
 
-const event = function ($ctx) {
+const event = function ({$ctx}) {
   let events = new MapList;
 
   $ctx.$on = function (name, handler) {

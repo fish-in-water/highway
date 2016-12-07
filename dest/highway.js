@@ -8142,7 +8142,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _macro = __webpack_require__(340);
+	var _macro = __webpack_require__(347);
 	
 	var _macro2 = _interopRequireDefault(_macro);
 	
@@ -8152,6 +8152,9 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	/**
+	 * Highway MVVM
+	 */
 	var highway = (0, _utils.assign)(_view2.default, {
 	  component: _component2.default,
 	  directive: _directive2.default,
@@ -8254,17 +8257,17 @@
 	    return val0 === val1;
 	  }
 	
-	  if (isPlainObject(val0) && isPlainObject(val1)) {
-	    var merge = assign({}, val0, val1, true);
-	    for (var key in merge) {
-	      if (merge.hasOwnProperty(key)) {
-	        if (!isEqual(merge[key], val1[key])) {
-	          return false;
-	        }
-	      }
-	    }
-	    return true;
-	  }
+	  // if (isPlainObject(val0) && isPlainObject(val1)) {
+	  //   const merge = assign({}, val0, val1, true);
+	  //   for (const key in merge) {
+	  //     if (merge.hasOwnProperty(key)) {
+	  //       if (!isEqual(merge[key], val1[key])) {
+	  //         return false;
+	  //       }
+	  //     }
+	  //   }
+	  //   return true;
+	  // }
 	
 	  return false;
 	}
@@ -8535,45 +8538,52 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	/**
+	 * 视图层
+	 */
 	var View = function () {
+	
+	  /**
+	   * 构造
+	   * @param options 参数
+	   */
 	  function View(options) {
 	    _classCallCheck(this, View);
 	
 	    (0, _utils.assign)(this, options);
 	
+	    // $willmount hook
 	    this.$willmount && this.$willmount();
 	
+	    // compiler, initial -> compile
 	    _compiler2.default.initial(this).compile(this.$el, this.$scope, this);
 	
+	    // $mount hook，最常用
 	    this.$mount && this.$mount();
 	
+	    // $didmount hook
 	    this.$didmount && this.$didmount();
 	  }
 	
+	  /**
+	   * 销毁
+	   */
+	
+	
 	  _createClass(View, [{
-	    key: '$compile',
-	    value: function $compile($el) {
-	      var $scope = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : this.$scope;
-	
-	
-	      _compiler2.default.compile($el, $scope, this);
-	    }
-	  }, {
-	    key: '$remove',
-	    value: function $remove($el) {
-	
-	      _compiler2.default.remove($el, this);
-	    }
-	  }, {
 	    key: '$destroy',
 	    value: function $destroy() {
 	
+	      // $willunmount hook
 	      this.$willunmount && this.$willunmount();
 	
+	      // compiler, remove -> destroy
 	      _compiler2.default.remove(this.$el, this).destroy(this);
 	
+	      // $unmount hook, 最常用
 	      this.$unmount && this.$unmount();
 	
+	      // $didunmount hook
 	      this.$didunmount && this.$didunmount();
 	    }
 	  }]);
@@ -8610,7 +8620,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _macro = __webpack_require__(340);
+	var _macro = __webpack_require__(347);
 	
 	var _macro2 = _interopRequireDefault(_macro);
 	
@@ -8620,35 +8630,75 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	/**
+	 * 编译器
+	 * 对元素（模板）、管道、服务、指令、组件、宏编译服务进行挂载与编译
+	 * 编译器进行编译工作时，对指定DOM元素进行递归遍历编译
+	 * @type {{initial: (($ctx?)), compile: (($el?, $scope?, $ctx?)), remove: (($el?, $ctx?)), destroy: (($ctx?))}}
+	 */
 	var compiler = {
+	
+	  /**
+	   * 初始化
+	   * @param $ctx 上下文
+	   */
 	  initial: function initial($ctx) {
 	
+	    // 元素
 	    _element2.default.initial($ctx);
 	
+	    // 管道
 	    _pipe2.default.initial($ctx);
 	
+	    // 服务
 	    _service2.default.initial($ctx);
 	
+	    // 指令
 	    _directive2.default.initial($ctx);
 	
-	    _component2.default.initial($ctx);
-	
+	    // 宏指令
 	    _macro2.default.initial($ctx);
+	
+	    // 组件
+	    _component2.default.initial($ctx);
 	
 	    return this;
 	  },
+	
+	
+	  /**
+	    * 对DOM进行遍历并编译
+	    * @param $el 元素
+	    * @param $scope 作用域
+	    * @param $ctx 上下文
+	    */
 	  compile: function compile($el, $scope, $ctx) {
 	
+	    /**
+	       * 迭代
+	       * @param $el 元素
+	       * @param $scope 作用域
+	       * @param $ctx 上下文
+	       */
 	    var iterator = function iterator($el, $scope, $ctx) {
 	      if (!$el || !$el.length) {
 	        return;
 	      }
 	
+	      // 如果是组件,则进行组件编译
 	      if (_component2.default.isComponent($el, $ctx)) {
-	        _component2.default.compile($el, $scope, $ctx);
+	
+	        // 组件编译
+	        _component2.default.compile($el, $ctx);
 	      } else {
+	
+	        // 指令编译
 	        if ($el = _directive2.default.compile($el, $scope, $ctx)) {
+	
+	          // 宏指令编译
 	          if ($el = _macro2.default.compile($el, $scope, $ctx)) {
+	
+	            // 子元素
 	            for (var _iterator = Array.prototype.slice.call($el.children()), _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
 	              var _ref;
 	
@@ -8674,15 +8724,34 @@
 	
 	    return this;
 	  },
+	
+	
+	  /**
+	    * 对DOM元素进行销毁并删除
+	    * @param $el 元素
+	    * @param $ctx 上下文
+	    * @returns {compiler.remove}
+	    */
 	  remove: function remove($el, $ctx) {
+	
+	    /**
+	       * 迭代器
+	       * @param $el 元素
+	       * @param $ctx 上下文
+	       */
 	    var iterator = function iterator($el, $ctx) {
 	      if (!$el || !$el.length) {
 	        return;
 	      }
 	
+	      // 如果是组件
 	      if (_component2.default.isComponent($el, $ctx)) {
+	
+	        // 组件销毁
 	        _component2.default.remove($el, $ctx);
 	      } else {
+	
+	        // 遍历子元素
 	        for (var _iterator2 = Array.prototype.slice.call($el.children()), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
 	          var _ref2;
 	
@@ -8700,10 +8769,13 @@
 	          iterator($(childNode), $ctx);
 	        }
 	
+	        // 宏指令销毁
 	        _macro2.default.remove($el, $ctx);
 	
+	        // 指令销毁
 	        _directive2.default.remove($el, $ctx);
 	
+	        // 元素销毁
 	        _element2.default.remove($el, $ctx);
 	      }
 	    };
@@ -8714,16 +8786,22 @@
 	  },
 	  destroy: function destroy($ctx) {
 	
-	    _macro2.default.destroy($ctx);
-	
+	    // 组件
 	    _component2.default.destroy($ctx);
 	
+	    // 宏指令
+	    _macro2.default.destroy($ctx);
+	
+	    // 指令
 	    _directive2.default.destroy($ctx);
 	
+	    // 服务
 	    _service2.default.destroy($ctx);
 	
+	    // 管道
 	    _pipe2.default.destroy($ctx);
 	
+	    // 元素
 	    _element2.default.destroy($ctx);
 	
 	    return this;
@@ -8750,15 +8828,39 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	/**
+	 * 元素模块
+	 * 负责对$el的编译处理,同时提供一部分元素相关工具函数
+	 * @type {{initial: (($ctx)), compile: (($el, $scope, $ctx)), remove: (($el, $ctx)), getId: (($el, generate?)), destroy: (($ctx))}}
+	 */
 	var element = {
+	  /**
+	    * 初始化
+	    * @param $ctx 上下文
+	    */
 	  initial: function initial($ctx) {
+	    // 如不存在则初始化一个
 	    $ctx.$el = $ctx.$el || $('<div></div>');
+	
+	    // 如果传入$template参数,则进行模板初始化
 	    $ctx.$template && $ctx.$el.html($($ctx.$template));
 	  },
-	  compile: function compile($el, $scope, $ctx) {},
+	
+	  /**
+	    * 删除
+	    * @param $el 元素
+	    * @param $ctx 上下文
+	    */
 	  remove: function remove($el, $ctx) {
 	    $el.remove();
 	  },
+	
+	  /**
+	    * 获取元素唯一ID
+	    * @param $el 元素
+	    * @param generate 如不存在ID,是否生成
+	    * @returns {*}
+	    */
 	  getId: function getId($el) {
 	    var generate = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 	
@@ -8768,6 +8870,11 @@
 	    }
 	    return id;
 	  },
+	
+	  /**
+	    * 销毁
+	    * @param $ctx
+	    */
 	  destroy: function destroy($ctx) {
 	    $ctx.$el.remove();
 	    $ctx.$el = null;
@@ -8795,20 +8902,39 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	// 全局组件
 	var components = {};
 	
+	/**
+	 * 组件模块
+	 * 组件模块完成视图中组件(子视图)的编译
+	 * 普通视图通过component模块加载(指定标签名),即变成组件
+	 * 例如
+	 * <my-app>
+	 *   <query>
+	 *   </query>
+	 *   <todos>
+	 *   </todos>
+	 * </my-app>
+	 * my-app视图拥有query, todos两个组件
+	 * 视图的组件化是非常重要的,有效避免重复开发
+	 * @param name 组件名称
+	 * @param View 视图
+	 */
 	var component = function component(name, View) {
 	  components[name.toLowerCase()] = View;
 	};
 	
 	(0, _utils.assign)(component, {
-	  initial: function initial($ctx) {
-	    $ctx.$children = [];
 	
-	    //const tmp = {};
-	    //for (const component in $ctx.$components || {}) {
-	    //  components[component.toLowerCase] = $ctx.$components[component];
-	    //}
+	  /**
+	    * 组件初始化
+	    * @param $ctx
+	    */
+	  initial: function initial($ctx) {
+	    //$ctx.$children = [];
+	
+	    // 完成对全局组件、局部组件加载
 	    $ctx.$components = (0, _utils.assign)({}, components, function () {
 	      var components = {};
 	      for (var name in $ctx.$components) {
@@ -8817,23 +8943,52 @@
 	      return components;
 	    }());
 	
+	    // 组件实例,便于组件实例的释放销毁
 	    $ctx.$components._instances = new _utils.MapList();
+	
+	    /**
+	       * 记录子组件引用,通过hi-href='key'命令,达到引用子视图的目的
+	       * 例如
+	       * <my-app>
+	       *   <query hi-href='query'>
+	       *   </query>
+	       *   <todos hi-href='todos'>
+	       *   </todos>
+	       * </my-app>
+	       * 在my-app视图中,就可以使用this.$components.$refs['query']引用子视图
+	       */
 	    $ctx.$components.$refs = {};
-	    //$ctx.$components.$children = $ctx.$components.$children || [];
 	  },
-	  compile: function compile($el, $scope, $ctx) {
+	
+	
+	  /**
+	    * 编译
+	    * @param $el 元素
+	    * @param $scope 作用域
+	    * @param $ctx 上下文
+	    * @returns {*}
+	    */
+	  compile: function compile($el, $ctx) {
+	
+	    // 最对组件进行编译
 	    if (!this.isComponent($el, $ctx)) {
 	      return $el;
 	    }
 	
-	    // if is root
+	    // 根节点就是一个标签
 	    if ($el === $ctx.$el) {
+	
+	      // 创建组件,但是并不认为是子组件
 	      this.createComponent($el, $ctx, null);
 	    } else {
-	      var instance = this.createComponent($el, $ctx, $ctx);
-	      $ctx.$components._instances.add(_element2.default.getId(instance.$el, true), instance);
-	      $ctx.$children = $ctx.$components._instances.values();
 	
+	      // 创建当前视图的子组件
+	      var instance = this.createComponent($el, $ctx, $ctx);
+	
+	      // 保存实例对象,便于整体销毁、局部销毁时释放
+	      $ctx.$components._instances.add(_element2.default.getId(instance.$el, true), instance);
+	
+	      // 如有hi-ref指令,则需要在$ctx.$components.$refs中加入,便于视图引用
 	      var ref = instance.$el.attr('hi-ref');
 	      if (ref) {
 	        $ctx.$components.$refs[ref] = instance;
@@ -8841,106 +8996,90 @@
 	    }
 	
 	    return null;
-	
-	    // child components
-	
-	
-	    /*
-	    const iterator = ($el, $ctx) => {
-	      if (!$el || !$el.length || !$el[0]) {
-	        return;
-	      }
-	       for (const childNode of Array.prototype.slice.call($el.children())) {
-	        if (this.isComponent($(childNode), $ctx)) {
-	          const instance = this.createComponent(childNode, $ctx);
-	          //instance.$parent = $ctx;
-	          $ctx.$components._instances.add(element.getId(instance.$el, true), instance);
-	          $ctx.$children = $ctx.$components._instances.values();
-	           const ref = instance.$el.attr('hi-ref');
-	          if (ref) {
-	            $ctx.$components.$refs[ref] = instance;
-	          }
-	        } else {
-	          iterator($(childNode), $ctx);
-	        }
-	      }
-	    };
-	     //if root is component
-	    if (this.isComponent($ctx.$el, $ctx)) {
-	      this.createComponent($ctx.$el, $ctx);
-	    }
-	     iterator($el, $ctx);
-	    */
 	  },
+	
+	
+	  /**
+	    * 是否为组件
+	    * 根据DOM对象判断是否为组件
+	    * 判断依据主要有两个
+	    * 1、 根据当前元素ID在_instances中是否能查询出对象实例(针对已实例化的子组件)
+	    * 2、 则标签名是否能在$ctx.$components配置中找到(针对未实例化的子组件)
+	    * @param $el 元素
+	    * @param $ctx 上下文
+	    * @returns {*}
+	    */
 	  isComponent: function isComponent($el, $ctx) {
 	
-	    // if created
+	    // 在实例中能否根据ID找到
 	    var instances = $ctx.$components._instances.find(_element2.default.getId($el));
 	    if (instances && instances.length) {
 	      return true;
 	    }
 	
-	    // not created
+	    // 看下标签能否在$ctx.$components中找到
 	    var node = $el[0];
 	    return node && node.nodeType === 1 && !!$ctx.$components[node.tagName.toLowerCase()];
 	  },
+	
+	
+	  /**
+	    * 创建组件
+	    * @param $el 元素
+	    * @param $ctx 上下文
+	    * @param $parent 父视图
+	    */
 	  createComponent: function createComponent($el, $ctx, $parent) {
 	    var tagName = $el[0].tagName.toLowerCase();
 	    var View = $ctx.$components[tagName];
+	    // hi-component打这个属性为了更容易识别(因为编译后标签名就被替换了)
 	    var $new = $('<div></div>').html($el.html()).attr((0, _utils.assign)({ 'hi-component': tagName }, (0, _utils.getAttrs)($el)));
 	    $el.replaceWith($new);
 	    var instance = new View({ $el: $new, $parent: $parent });
 	    return instance;
 	  },
+	
+	
+	  /**
+	    * 删除组件
+	    * @param $el 元素
+	    * @param $ctx 上下文
+	    */
 	  remove: function remove($el, $ctx) {
+	
+	    // 是否为组件
 	    if (!component.isComponent($el, $ctx)) {
 	      return;
 	    }
 	
+	    // 根据ID找到实例并销毁
 	    var id = _element2.default.getId($el);
 	    if (id != null) {
+	
 	      $ctx.$components._instances.find(id).forEach(function (instance) {
 	        instance.$destroy();
 	
+	        // 删除引用
 	        var ref = instance.$el.attr('hi-ref');
 	        if (ref) {
 	          delete $ctx.$components.$refs[ref];
 	        }
 	      });
 	      $ctx.$components._instances.remove(id);
-	      $ctx.$children = $ctx.$components._instances.values();
 	    }
-	
-	    /*
-	    const iterator = function ($el, $ctx) {
-	      if (component.isComponent($el, $ctx)) {
-	        const id = element.getId($el);
-	        if (id != null) {
-	          $ctx.$components._instances.find(id).forEach(function (instance) {
-	            instance.$destroy();
-	             const ref = instance.$el.attr('hi-ref');
-	            if (ref) {
-	              delete $ctx.$components.$refs[ref];
-	            }
-	          });
-	          $ctx.$components._instances.remove(id);
-	          $ctx.$children = $ctx.$components._instances.values();
-	        }
-	         return;
-	      }
-	       for (const childNode of Array.from($el.children())) {
-	        iterator($(childNode), $ctx);
-	      }
-	    };
-	     iterator($el, $ctx);
-	    */
 	  },
+	
+	
+	  /**
+	    * 销毁
+	    * @param $ctx 上下文
+	    */
 	  destroy: function destroy($ctx) {
+	
+	    // 所有实例进行销毁
 	    $ctx.$components._instances.values().forEach(function (instance) {
 	      instance.$destroy();
 	    });
-	
-	    $ctx.$children = null;
 	  }
 	});
 	
@@ -8986,17 +9125,17 @@
 	
 	var services = {};
 	
-	var service = function service(name, _service) {
-	  services[name] = _service;
+	var service = function service(name, factory) {
+	  services[name] = factory;
 	};
 	
 	(0, _utils.assign)(service, {
 	  initial: function initial($ctx) {
 	    $ctx.$services = (0, _utils.assign)({}, services, $ctx.$services);
-	    for (var _service2 in $ctx.$services) {
-	      var instance = $ctx.$services[_service2]($ctx);
-	      $ctx.$services[_service2] = instance;
-	      instance.$mount && instance.$mount($ctx);
+	    for (var name in $ctx.$services) {
+	      var instance = $ctx.$services[name]({ $ctx: $ctx });
+	      $ctx.$services[name] = instance;
+	      instance.$mount && instance.$mount({ $ctx: $ctx });
 	    }
 	  },
 	
@@ -9004,8 +9143,9 @@
 	  //
 	  //},
 	  destroy: function destroy($ctx) {
-	    for (var instance in $ctx.$services) {
-	      instance.$unmount && instance.$unmount($ctx);
+	    for (var name in $ctx.$services) {
+	      var instance = $ctx.$services[name];
+	      instance.$unmount && instance.$unmount({ $ctx: $ctx });
 	    }
 	
 	    $ctx.$services = null;
@@ -9041,14 +9181,18 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var scope = function scope($ctx) {
+	var scope = function scope(_ref) {
+	  var $ctx = _ref.$ctx;
+	
 	  var factory = function factory(obj) {
 	    var series = {};
 	    var watchers = new _utils.MapList();
 	
 	    return (0, _utils.assign)(Object.create({
 	      $create: function $create(obj) {
-	        return factory(obj);
+	        var scope = factory(obj);
+	        scope.$parent = this;
+	        return scope;
 	      },
 	      $series: function $series(data) {
 	        var series = {};
@@ -9110,6 +9254,8 @@
 	        };
 	      },
 	      $get: function $get() {
+	        var _this = this;
+	
 	        var prop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	
 	        var matches = prop.match(/^['"]([\s\S]*)['"]$/);
@@ -9119,9 +9265,21 @@
 	
 	        var where = this.$where(prop);
 	        if (where.scope === this) {
-	          var val = series[prop];
+	          var val = function () {
+	            var val = series[prop];
+	            var scope = _this;
+	            while (typeof val === 'undefined' && scope.$parent) {
+	              scope = scope.$parent;
+	              val = scope.$get(prop);
+	            }
+	
+	            return val;
+	          }.call(this);
+	
 	          if ((0, _utils.isObject)(val)) {
-	            if ((0, _utils.isArray)(val)) {
+	            if ((0, _utils.isDate)(val)) {
+	              return new Date(val);
+	            } else if ((0, _utils.isArray)(val)) {
 	              return (0, _utils.assign)([], val, true);
 	            } else {
 	              return (0, _utils.assign)({}, val, true);
@@ -9145,7 +9303,7 @@
 	        }
 	      },
 	      $set: function $set() {
-	        var _this = this;
+	        var _this2 = this;
 	
 	        var prop = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 	        var newVal = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : void 0;
@@ -9190,7 +9348,7 @@
 	              }
 	            };
 	
-	            iterator(prop, newVal, _this);
+	            iterator(prop, newVal, _this2);
 	          })();
 	        } else {
 	          for (var key in this) {
@@ -9205,23 +9363,27 @@
 	        var oldSeries = series;
 	        var newSeries = series = this.$series(this);
 	
-	        var reg = new RegExp('^' + prop);
+	        //const reg = new RegExp(`^${prop}`);
 	        var keys = watchers.keys();
 	        for (var _iterator = keys, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	          var _ref;
+	          var _ref2;
 	
 	          if (_isArray) {
 	            if (_i >= _iterator.length) break;
-	            _ref = _iterator[_i++];
+	            _ref2 = _iterator[_i++];
 	          } else {
 	            _i = _iterator.next();
 	            if (_i.done) break;
-	            _ref = _i.value;
+	            _ref2 = _i.value;
 	          }
 	
-	          var _key = _ref;
+	          var _key = _ref2;
 	
-	          if (reg.test(_key)) {
+	          var props = prop.split('.');
+	          var _keys = _key.split('.');
+	
+	          if (0 === _key.indexOf(prop) && props[props.length - 1] === _keys[props.length - 1]) {
+	
 	            var oldValue = oldSeries[_key];
 	            var newValue = newSeries[_key];
 	
@@ -9252,31 +9414,36 @@
 	      $fire: function $fire(prop, newVal, oldVal) {
 	        var handlers = watchers.find(prop);
 	        for (var _iterator2 = handlers, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-	          var _ref2;
+	          var _ref3;
 	
 	          if (_isArray2) {
 	            if (_i2 >= _iterator2.length) break;
-	            _ref2 = _iterator2[_i2++];
+	            _ref3 = _iterator2[_i2++];
 	          } else {
 	            _i2 = _iterator2.next();
 	            if (_i2.done) break;
-	            _ref2 = _i2.value;
+	            _ref3 = _i2.value;
 	          }
 	
-	          var handler = _ref2;
+	          var handler = _ref3;
 	
 	          handler(newVal, oldVal);
 	        }
 	      },
-	      $pipe: function $pipe(val, pipes) {
-	        return _pipe2.default.compile(val, pipes, $ctx);
-	      },
+	
+	
+	      // $pipe(val, pipes) {
+	      //   return pipe.compile(val, pipes, $ctx);
+	      // },
+	
 	      $mount: function $mount() {
 	        series = this.$series(this);
+	        return this;
 	      },
 	      $unmount: function $unmount() {
 	        series = null;
 	        watchers.clear();
+	        return this;
 	      }
 	    }), obj);
 	  };
@@ -9284,6 +9451,9 @@
 	  $ctx.$scope = factory($ctx.$scope);
 	  $ctx.$get = $ctx.$scope.$get.bind($ctx.$scope);
 	  $ctx.$set = $ctx.$scope.$set.bind($ctx.$scope);
+	  $ctx.$watch = $ctx.$scope.$watch.bind($ctx.$scope);
+	  $ctx.$unwatch = $ctx.$scope.$unwatch.bind($ctx.$scope);
+	  $ctx.$fire = $ctx.$scope.$fire.bind($ctx.$scope);
 	
 	  return $ctx.$scope;
 	};
@@ -9336,27 +9506,69 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	// 全局管道指令
 	var pipes = {};
 	
-	var pipe = function pipe(name, _pipe) {
-	  pipes[name] = _pipe;
+	/**
+	 * 管道
+	 * 利用管道符“|”将两个命令隔开，管道符左边命令的输出就会作为管道符右边命令的输入。
+	 * 连续使用管道意味着第一个命令的输出会作为第二个命令的输入，第二个命令的输出又会作为第三个命令的输入，依此类推。
+	 * 例如: {{'name | uppercase'}}
+	 * @param name 管道名称
+	 * @param factory 工厂函数
+	 */
+	var pipe = function pipe(name, factory) {
+	  pipes[name] = factory;
 	};
 	
 	(0, _utils.assign)(pipe, {
+	
+	  /**
+	    * 初始化,在编译器初始化时调用
+	    * @param $ctx 上下文
+	    */
 	  initial: function initial($ctx) {
+	
+	    // 加载全局管道、局部管道至当前上下文
 	    $ctx.$pipes = (0, _utils.assign)({}, pipes, $ctx.$pipes);
+	
+	    // 记录管道实例,便于销毁释放
 	    $ctx.$pipes._instances = new _utils.MapList();
 	  },
+	
+	  /**
+	    * 管道编译
+	    * @param $source 原始字段
+	    * @param $pipes 管道组
+	    * @param $scope 作用域
+	    * @param $update 更新函数
+	    * @param $ctx 上下文
+	    * 例如{{name | uppercase | lowercase}}中
+	    * $source = name
+	    * $pipes = ['uppercase', 'lowercase']
+	    * $update函数句柄,调用该函数触发更新,用于管道中的双向绑定
+	   */
 	  compile: function compile($source, $pipes, $scope, $update, $ctx) {
 	
 	    var id = (0, _utils.unique)('p');
 	
+	    /**
+	       * 管道线
+	       * 在一个指令中可能有多个管道,例如{{name | uppercase | lowercase}}
+	       * @param value
+	       * @returns {*}
+	       */
 	    var pipeline = function pipeline(value) {
+	
+	      // 触发所有宏指令替换,获得结果字符串
 	      return $ctx.$pipes._instances.find(id).reduce(function (value, instance) {
 	        return instance.$iterator(value);
 	      }, value);
 	    };
 	
+	    /**
+	       * 对指令中的管道进行编译
+	       */
 	    for (var _iterator = $pipes, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
 	      var _ref;
 	
@@ -9369,33 +9581,49 @@
 	        _ref = _i.value;
 	      }
 	
-	      var _pipe2 = _ref;
+	      var _pipe = _ref;
 	
-	      var exp = void 0;
-	      var index = _pipe2.indexOf(':');
+	      var name = void 0,
+	          exp = void 0;
+	      var index = _pipe.indexOf(':');
 	      if (index != -1) {
-	        var ori = _pipe2;
-	        _pipe2 = ori.substring(0, index).trim();
-	        exp = ori.substring(index + 1).trim();
+	        name = _pipe.substring(0, index).trim();
+	        exp = _pipe.substring(index + 1).trim();
+	      } else {
+	        name = _pipe;
+	        exp = null;
 	      }
 	
-	      var instance = $ctx.$pipes[_pipe2]({
-	        $source: $source,
-	        $ctx: $ctx,
-	        $pipe: _pipe2,
-	        $scope: $scope,
-	        $exp: exp,
-	        $update: $update,
-	        $pipeline: pipeline
+	      /**
+	          * 获取管道实例
+	          * 以income | number: fixedField 为例
+	          * 如income = 1000, fixedField = 2, 结果1000.00
+	          */
+	      var instance = $ctx.$pipes[name]({
+	        $source: $source, //原始字段。 示例值: income
+	        $ctx: $ctx, // 上下文
+	        $scope: $scope, // 作用域
+	        //$pipe: name, // 管道名称。示例值: number
+	        $exp: exp, // 表达式。示例值: fixedField字段
+	        $update: $update, // 更新函数。如需要,管道同样可以进行双向绑定,当管道发生变化时,触发update函数
+	        $pipeline: pipeline //管道线
 	      });
 	
 	      if (instance) {
+	        // $mount hook
 	        instance.$mount && instance.$mount($ctx);
+	
+	        // 增加管道实例
 	        $ctx.$pipes._instances.add(id, instance);
 	      }
 	    }
 	
+	    // 返回管道线,使调用方可以保持管道线实例
 	    return (0, _utils.assign)(pipeline, {
+	      /**
+	          * 赋予管道线实例销毁能力
+	          * 当管道线不需要时候,可主动销毁
+	          */
 	      destroy: function destroy() {
 	        var instances = $ctx.$pipes._instances.find(id);
 	        for (var _iterator2 = instances, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
@@ -9418,6 +9646,12 @@
 	      }
 	    });
 	  },
+	
+	
+	  /**
+	    * 销毁
+	    * @param $ctx
+	    */
 	  destroy: function destroy($ctx) {
 	    $ctx.$pipes._instances.clear();
 	    $ctx.$pipes._instances = null;
@@ -9427,7 +9661,7 @@
 	
 	exports.default = pipe;
 	
-	// install build-in
+	// 内建管道
 	
 	pipe('lowercase', _lowercase2.default);
 	pipe('uppercase', _uppercase2.default);
@@ -9488,7 +9722,7 @@
 /* 310 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
@@ -9522,13 +9756,19 @@
 	    var asc = $scope.$get(ascProp);
 	
 	    return $value.sort(function (a, b) {
-	      if (a[field] > b[field]) {
-	        return asc ? 1 : -1;
-	      } else if (a[field] < b[field]) {
-	        return asc ? -1 : 1;
+	      if (asc === 'asc') {
+	        return a[field] > b[field] ? 1 : -1;
 	      } else {
-	        return 0;
+	        return a[field] > b[field] ? -1 : 1;
 	      }
+	
+	      // if (a[field] > b[field]) {
+	      //   return asc === 'asc' ? 1 : -1;
+	      // } else if (a[field] < b[field]) {
+	      //   return asc === 'asc' ? 1 : -1;
+	      // } else {
+	      //   return 0;
+	      // }
 	    });
 	  };
 	
@@ -9557,7 +9797,7 @@
 	      };
 	    }();
 	
-	    if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	  } else {
 	    return {
 	      $iterator: iterator
@@ -9598,14 +9838,14 @@
 	    return ($value || []).slice(0, ((0, _utils.isNumeric)($exp) ? $exp : $scope.$get($exp)) - 0);
 	  };
 	
-	  if (sourceWatch && (0, _utils.isNumeric)(prop)) {
+	  if (sourceWatch) {
 	    var _ret = function () {
 	      var unwatcher = null;
 	      return {
 	        v: {
 	          $mount: function $mount() {
 	            unwatcher = $scope.$watch(prop, function () {
-	              $update($pipeline($scope.$secure(sourceProp, sourceSecure)));
+	              $update($pipeline(sourceProp ? (0, _utils.secureHtml)($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
 	            });
 	          },
 	
@@ -9647,7 +9887,7 @@
 	  EQUAL: '=',
 	  STRICT_EQUAL: '==',
 	  NOT_EQUAL: '!=',
-	  NOT_STRICT_EQUAL: '!=',
+	  STRICT_NOT_EQUAL: '!==',
 	  START_WITH: '^=',
 	  END_WITH: '$=',
 	  CONTAINS: '*='
@@ -9701,7 +9941,7 @@
 	        return true;
 	      } else if (symbol === SYMBOLS.NOT_EQUAL && obj[prop] != val) {
 	        return true;
-	      } else if (symbol === SYMBOLS.NOT_EQUAL && obj[prop] !== val) {
+	      } else if (symbol === SYMBOLS.STRICT_NOT_EQUAL && obj[prop] !== val) {
 	        return true;
 	      } else if (symbol === SYMBOLS.START_WITH && new RegExp('^' + val).test(obj[prop])) {
 	        return true;
@@ -9892,7 +10132,7 @@
 	        v: {
 	          $mount: function $mount() {
 	            unwatcher = $scope.$watch(prop, function () {
-	              $update($pipeline($scope.$secure(sourceProp, sourceSecure)));
+	              $update($pipeline(sourceProp ? (0, _utils.secureHtml)($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
 	            });
 	          },
 	
@@ -9943,20 +10183,20 @@
 	
 	  var iterator = function iterator($value) {
 	    if ((0, _utils.isNumeric)($value)) {
-	      return $value.toFixed($exp - 0);
+	      return $value.toFixed($scope.$get($exp) - 0);
 	    } else {
 	      return $value;
 	    }
 	  };
 	
-	  if (sourceWatch && (0, _utils.isNumeric)(prop)) {
+	  if (sourceWatch) {
 	    var _ret = function () {
 	      var unwatcher = null;
 	      return {
 	        v: {
 	          $mount: function $mount() {
 	            unwatcher = $scope.$watch(prop, function () {
-	              $update($pipeline($scope.$secure(sourceProp, sourceSecure)));
+	              $update($pipeline(sourceProp ? (0, _utils.secureHtml)($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
 	            });
 	          },
 	
@@ -9992,8 +10232,10 @@
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
-	var event = function event($ctx) {
-	  var _ref3;
+	var event = function event(_ref) {
+	  var _ref4;
+	
+	  var $ctx = _ref.$ctx;
 	
 	  var events = new _utils.MapList();
 	
@@ -10016,18 +10258,18 @@
 	  $ctx.$fire = function (name, data) {
 	    var handlers = events.find(name);
 	    for (var _iterator = handlers, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	      var _ref;
+	      var _ref2;
 	
 	      if (_isArray) {
 	        if (_i >= _iterator.length) break;
-	        _ref = _iterator[_i++];
+	        _ref2 = _iterator[_i++];
 	      } else {
 	        _i = _iterator.next();
 	        if (_i.done) break;
-	        _ref = _i.value;
+	        _ref2 = _i.value;
 	      }
 	
-	      var handler = _ref;
+	      var handler = _ref2;
 	
 	      if (handler.call($ctx, data) === false) {
 	        return false;
@@ -10047,18 +10289,18 @@
 	
 	  $ctx.$broadcast = function (name, data) {
 	    for (var _iterator2 = $ctx.$children, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-	      var _ref2;
+	      var _ref3;
 	
 	      if (_isArray2) {
 	        if (_i2 >= _iterator2.length) break;
-	        _ref2 = _iterator2[_i2++];
+	        _ref3 = _iterator2[_i2++];
 	      } else {
 	        _i2 = _iterator2.next();
 	        if (_i2.done) break;
-	        _ref2 = _i2.value;
+	        _ref3 = _i2.value;
 	      }
 	
-	      var child = _ref2;
+	      var child = _ref3;
 	
 	      if (child.$fire(name, data) === false) {
 	        break;
@@ -10067,16 +10309,16 @@
 	    }
 	  };
 	
-	  return _ref3 = {
+	  return _ref4 = {
 	    $on: $ctx.$on,
 	    $off: $ctx.$off,
 	    $fire: $ctx.$fire,
 	    $emit: $ctx.$emit,
 	    $broadcast: $ctx.$broadcast
-	  }, _defineProperty(_ref3, '$fire', $ctx.$fire), _defineProperty(_ref3, '$unmount', function $unmount() {
+	  }, _defineProperty(_ref4, '$fire', $ctx.$fire), _defineProperty(_ref4, '$unmount', function $unmount() {
 	    events.clear();
 	    events = null;
-	  }), _ref3;
+	  }), _ref4;
 	};
 	
 	exports.default = event;
@@ -10093,7 +10335,9 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var timeout = function timeout($ctx) {
+	var timeout = function timeout(_ref) {
+	  var $ctx = _ref.$ctx;
+	
 	  var ids = [];
 	
 	  $ctx.$timeout = (0, _utils.assign)(function (handler, delay) {
@@ -10128,7 +10372,9 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var timeout = function timeout($ctx) {
+	var timeout = function timeout(_ref) {
+	  var $ctx = _ref.$ctx;
+	
 	  var ids = [];
 	
 	  $ctx.$interval = (0, _utils.assign)(function (handler, delay) {
@@ -10165,7 +10411,9 @@
 	
 	//import $ from 'Zepto';
 	
-	var http = function http($ctx) {
+	var http = function http(_ref) {
+	  var $ctx = _ref.$ctx;
+	
 	
 	  $ctx.$http = (0, _utils.assign)(function (options) {
 	    return $.ajax(options);
@@ -10174,8 +10422,7 @@
 	    $post: $.post,
 	    $json: $.getJSON,
 	    $jsonp: $.ajaxJSONP,
-	    $settings: $.Settings,
-	    $param: $.param
+	    $settings: $.ajaxSettings || $.ajaxSetup
 	  });
 	
 	  return $ctx.$http;
@@ -10195,7 +10442,9 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var find = function find($ctx) {
+	var find = function find(_ref) {
+	  var $ctx = _ref.$ctx;
+	
 	  $ctx.$find = function (selector) {
 	    return $ctx.$el.find(selector);
 	  };
@@ -10250,63 +10499,76 @@
 	
 	var _value2 = _interopRequireDefault(_value);
 	
-	var _show = __webpack_require__(329);
+	var _show = __webpack_require__(336);
 	
 	var _show2 = _interopRequireDefault(_show);
 	
-	var _hide = __webpack_require__(330);
+	var _hide = __webpack_require__(337);
 	
 	var _hide2 = _interopRequireDefault(_hide);
 	
-	var _disable = __webpack_require__(331);
+	var _disable = __webpack_require__(338);
 	
 	var _disable2 = _interopRequireDefault(_disable);
 	
-	var _enable = __webpack_require__(332);
+	var _enable = __webpack_require__(339);
 	
 	var _enable2 = _interopRequireDefault(_enable);
 	
-	var _readonly = __webpack_require__(333);
+	var _readonly = __webpack_require__(340);
 	
 	var _readonly2 = _interopRequireDefault(_readonly);
 	
-	var _src = __webpack_require__(334);
+	var _src = __webpack_require__(341);
 	
 	var _src2 = _interopRequireDefault(_src);
 	
-	var _href = __webpack_require__(335);
+	var _href = __webpack_require__(342);
 	
 	var _href2 = _interopRequireDefault(_href);
 	
-	var _klass = __webpack_require__(336);
+	var _klass = __webpack_require__(343);
 	
 	var _klass2 = _interopRequireDefault(_klass);
 	
-	var _attr = __webpack_require__(337);
+	var _attr = __webpack_require__(344);
 	
 	var _attr2 = _interopRequireDefault(_attr);
 	
-	var _css = __webpack_require__(338);
+	var _css = __webpack_require__(345);
 	
 	var _css2 = _interopRequireDefault(_css);
 	
-	var _data = __webpack_require__(339);
+	var _data = __webpack_require__(346);
 	
 	var _data2 = _interopRequireDefault(_data);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	// 优先级常量, 最高-9, 默认0
 	var PRIOR = {
 	  EMERGENCY: -9,
 	  DEFAULT: 0
 	};
 	
+	// 优先级
 	var priorities = [];
+	
+	// 全局指令
 	var directives = {};
 	
-	var directive = function directive(name, _directive) {
+	/**
+	 * 指令模块
+	 * 指令模块解析DOM上定义的属性并进行实例化
+	 * @param name 指令名
+	 * @param factory 工厂函数
+	 * @param priority 优先级
+	 */
+	var directive = function directive(name, factory) {
 	  var priority = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : PRIOR.DEFAULT;
 	
+	
+	  // 创建优先级
 	  if (!(0, _utils.includes)(priorities, priority)) {
 	    priorities.push(priority);
 	    priorities.sort(function (prev, next) {
@@ -10314,44 +10576,53 @@
 	    });
 	  }
 	
-	  _directive.priority = priority;
-	  directives[name] = _directive;
+	  // 工厂函数上附加优先级
+	  factory.priority = priority;
+	  directives[name] = factory;
 	};
 	
 	(0, _utils.assign)(directive, {
 	  PRIOR: PRIOR,
 	  initial: function initial($ctx) {
+	
+	    // 加载全局指令、局部指令至当前上下文
 	    $ctx.$directives = (0, _utils.assign)({}, directives, $ctx.$directives);
+	
+	    // 记录指令实例,便于销毁释放
 	    $ctx.$directives._instances = new _utils.MapList();
 	  },
 	  compile: function compile($el, $scope, $ctx) {
 	
 	    var handler = function handler($el, $ctx, priority) {
 	
+	      // 是否为组件
 	      if (_component2.default.isComponent($el, $ctx)) {
 	        return $el;
 	      }
 	
+	      // 获得当前元素的所有ATTR属性并进行编译
 	      var attrs = (0, _utils.getAttrs)($el);
 	      for (var attr in attrs) {
-	
+	        var name = void 0,
+	            arg = void 0;
 	        var index = attr.indexOf(':');
-	        var ori = attr;
-	        var arg = void 0;
 	        if (index != -1) {
-	          attr = ori.substring(0, index);
-	          arg = ori.substring(index + 1);
+	          name = attr.substring(0, index);
+	          arg = attr.substring(index + 1);
+	        } else {
+	          name = attr;
+	          arg = null;
 	        }
 	
-	        var _directive2 = $ctx.$directives[attr];
-	        if (_directive2 && _directive2.priority === priority) {
-	          var instance = _directive2({
+	        var factory = $ctx.$directives[name];
+	        if (factory && factory.priority === priority) {
+	          var instance = factory({
 	            $ctx: $ctx,
 	            $el: $el,
 	            $arg: arg,
-	            $exp: attrs[ori],
+	            $exp: attrs[attr],
 	            $scope: $scope,
-	            $directive: attr
+	            $directive: name
 	          });
 	
 	          if (instance) {
@@ -10374,6 +10645,7 @@
 	      return $el;
 	    };
 	
+	    // 根据指令优先级由高至低进行编译
 	    $el = priorities.reduce(function ($el, priority) {
 	      if (!$el) {
 	        return null;
@@ -10383,52 +10655,6 @@
 	    }, $el);
 	
 	    return $el;
-	
-	    /*
-	    const iterator = function ($el, $ctx, priority) {
-	       if ($el.attr('hi-compiled') || component.isComponent($el, $ctx)) {
-	        return;
-	      }
-	       const attrs = getAttrs($el);
-	      for (var attr in attrs) {
-	         const index = attr.indexOf(':');
-	        const ori = attr;
-	        let arg = void 0;
-	        if (index != -1) {
-	          attr = ori.substring(0, index);
-	          arg = ori.substring(index + 1);
-	        }
-	         const directive = $ctx.$directives[attr];
-	        if (directive && directive.priority === priority) {
-	           const instance = directive({
-	            $ctx,
-	            $el,
-	            $arg: arg,
-	            $exp: attrs[ori],
-	            $scope,
-	            $directive: attr
-	          });
-	           if (instance) {
-	            instance.$mount && instance.$mount($ctx);
-	            $ctx.$directives._instances.add(element.getId($el, true), instance);
-	          }
-	        }
-	      }
-	       for (const childNode of Array.prototype.slice.call($el.children())) {
-	        iterator($(childNode), $ctx, priority);
-	      }
-	    };
-	     //iterator($el, $ctx, priority);
-	     if (priority != null) {
-	      iterator($el, $ctx, priority);
-	    } else {
-	      for (const tmp of priorities) {
-	        if (tmp !== PRIOR.EMERGENCY) {
-	          iterator($el, $ctx, tmp);
-	        }
-	      }
-	    }
-	     */
 	  },
 	  pattern: function pattern($exp, $scope, $ctx, $update) {
 	    var _deconstruct = (0, _utils.deconstruct)($exp),
@@ -10495,26 +10721,6 @@
 	      }
 	      $ctx.$directives._instances.remove(id);
 	    }
-	
-	    /*
-	    const iterator = function ($el, $ctx) {
-	      if (component.isComponent($el, $ctx)) {
-	        return;
-	      }
-	       for (const childNode of Array.prototype.slice.call($el.children())) {
-	        iterator($(childNode), $ctx);
-	      }
-	       const id = element.getId($el);
-	      if (id != null) {
-	        const instances = $ctx.$directives._instances.find(id);
-	        for (const instance of instances) {
-	          instance.$unmount && instance.$unmount($ctx);
-	        }
-	        $ctx.$directives._instances.remove(id);
-	      }
-	    };
-	     iterator($el, $ctx);
-	    */
 	  },
 	  destroy: function destroy($ctx) {
 	    var keys = $ctx.$directives._instances.keys();
@@ -10546,7 +10752,7 @@
 	
 	exports.default = directive;
 	
-	// install build-in
+	// 内建指令
 	
 	directive('hi-if', _if2.default, directive.PRIOR.EMERGENCY);
 	directive('hi-repeat', _repeat2.default, directive.PRIOR.EMERGENCY);
@@ -10578,6 +10784,10 @@
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _utils = __webpack_require__(300);
+	
+	var _compiler = __webpack_require__(302);
+	
+	var _compiler2 = _interopRequireDefault(_compiler);
 	
 	var _element = __webpack_require__(303);
 	
@@ -10616,18 +10826,22 @@
 	      } else {
 	        $new.appendTo($parent);
 	      }
-	      $ctx.$compile($new);
+	
+	      _compiler2.default.compile($new, $scope, $ctx);
+	      //$ctx.$compile($new);
 	      //$new.attr('hi-compiled', 'true');
 	
 	      $scope.$unwatch(prop, watcher);
 	    } else {
-	      $ctx.$remove($new);
+	      _compiler2.default.remove($new, $ctx);
+	      //$ctx.$remove($new);
 	      $scope.$watch(prop, watcher);
 	    }
 	  };
 	
 	  if (!$ctx.$scope.$get(prop)) {
-	    $ctx.$remove($el);
+	    _compiler2.default.remove($el, $ctx);
+	    //$ctx.$remove($el);
 	  }
 	
 	  if (watch) {
@@ -10665,11 +10879,15 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
+	var _utils = __webpack_require__(300);
+	
+	var _compiler = __webpack_require__(302);
+	
+	var _compiler2 = _interopRequireDefault(_compiler);
+	
 	var _pipe = __webpack_require__(307);
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
-	
-	var _utils = __webpack_require__(300);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -10700,7 +10918,8 @@
 	  var scopes = [];
 	
 	  // remove current el
-	  $ctx.$remove($el);
+	  //$ctx.$remove($el);
+	  _compiler2.default.remove($el, $ctx);
 	
 	  var clear = function clear() {
 	    // clear els
@@ -10718,7 +10937,8 @@
 	
 	      var _$el = _ref2;
 	
-	      $ctx.$remove(_$el);
+	      //$ctx.$remove($el);
+	      _compiler2.default.remove(_$el, $ctx);
 	    }
 	    $els = [];
 	
@@ -10757,16 +10977,19 @@
 	          }
 	
 	          // create new scope
-	          var scope = $scope.$create(data);
-	          scope.$parent = $scope;
-	          scope.$mount();
+	          var scope = $scope.$create(data).$mount();
+	          //scope.$parent = $scope;
 	          scopes.push(scope);
 	
 	          // create new element
 	          var $el = $clone.clone();
 	
 	          // compile
-	          $ctx.$compile($el, scope);
+	          $ctx.$scope = scope;
+	          _compiler2.default.compile($el, scope, $ctx);
+	          $ctx.$scope = $scope;
+	
+	          //$ctx.$compile($el, scope);
 	
 	          $el.attr('hi-compiled', 'true');
 	
@@ -10850,6 +11073,7 @@
 	            });
 	          },
 	          $unmount: function $unmount() {
+	
 	            pipeline.destroy();
 	
 	            clear();
@@ -10952,20 +11176,29 @@
 	
 	var _input2 = _interopRequireDefault(_input);
 	
+	var _textarea = __webpack_require__(334);
+	
+	var _textarea2 = _interopRequireDefault(_textarea);
+	
+	var _select = __webpack_require__(335);
+	
+	var _select2 = _interopRequireDefault(_select);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var value = function value(_ref) {
 	  var $ctx = _ref.$ctx,
 	      $el = _ref.$el,
-	      $arg = _ref.$arg,
 	      $exp = _ref.$exp,
 	      $scope = _ref.$scope;
 	  //$ctx, $el, $arg, $exp
 	  switch ($el[0].nodeName.toLowerCase()) {
 	    case 'input':
+	      return (0, _input2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	    case 'textarea':
+	      return (0, _textarea2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	    case 'select':
-	      return (0, _input2.default)({ $ctx: $ctx, $el: $el, $arg: $arg, $exp: $exp, $scope: $scope });
+	      return (0, _select2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	  }
 	};
 	
@@ -10985,24 +11218,49 @@
 	
 	var _text2 = _interopRequireDefault(_text);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _number = __webpack_require__(329);
 	
-	//http://www.runoob.com/tags/att-input-type.html
+	var _number2 = _interopRequireDefault(_number);
+	
+	var _tel = __webpack_require__(330);
+	
+	var _tel2 = _interopRequireDefault(_tel);
+	
+	var _password = __webpack_require__(331);
+	
+	var _password2 = _interopRequireDefault(_password);
+	
+	var _radio = __webpack_require__(332);
+	
+	var _radio2 = _interopRequireDefault(_radio);
+	
+	var _checkbox = __webpack_require__(333);
+	
+	var _checkbox2 = _interopRequireDefault(_checkbox);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	var input = function input(_ref) {
 	  var $ctx = _ref.$ctx,
 	      $el = _ref.$el,
-	      $arg = _ref.$arg,
 	      $exp = _ref.$exp,
 	      $scope = _ref.$scope;
 	  //$ctx, $el, $arg, $exp
 	  switch (($el.attr('type') || '').toLowerCase()) {
 	    case 'text':
+	      return (0, _text2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	    case 'number':
+	      return (0, _number2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	    case 'tel':
+	      return (0, _tel2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	    case 'password':
+	      return (0, _password2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
+	    case 'radio':
+	      return (0, _radio2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
+	    case 'checkbox':
+	      return (0, _checkbox2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	    default:
-	      return (0, _text2.default)({ $ctx: $ctx, $el: $el, $arg: $arg, $exp: $exp, $scope: $scope });
+	      return (0, _text2.default)({ $ctx: $ctx, $el: $el, $exp: $exp, $scope: $scope });
 	  }
 	};
 	
@@ -11031,7 +11289,6 @@
 	var text = function text(_ref) {
 	  var $ctx = _ref.$ctx,
 	      $el = _ref.$el,
-	      $arg = _ref.$arg,
 	      $exp = _ref.$exp,
 	      $scope = _ref.$scope;
 	
@@ -11094,6 +11351,291 @@
 	  value: true
 	});
 	
+	var _text = __webpack_require__(328);
+	
+	var _text2 = _interopRequireDefault(_text);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var number = _text2.default;
+	
+	exports.default = number;
+
+/***/ },
+/* 330 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _text = __webpack_require__(328);
+	
+	var _text2 = _interopRequireDefault(_text);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var tel = _text2.default;
+	
+	exports.default = tel;
+
+/***/ },
+/* 331 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _text = __webpack_require__(328);
+	
+	var _text2 = _interopRequireDefault(_text);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var password = _text2.default;
+	
+	exports.default = password;
+
+/***/ },
+/* 332 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _pipe = __webpack_require__(307);
+	
+	var _pipe2 = _interopRequireDefault(_pipe);
+	
+	var _utils = __webpack_require__(300);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var radio = function radio(_ref) {
+	  var $ctx = _ref.$ctx,
+	      $el = _ref.$el,
+	      $exp = _ref.$exp,
+	      $scope = _ref.$scope;
+	
+	  //$ctx, $el, $arg, $exp
+	  var _deconstruct = (0, _utils.deconstruct)($exp),
+	      prop = _deconstruct.prop,
+	      watch = _deconstruct.watch,
+	      secure = _deconstruct.secure,
+	      pipes = _deconstruct.pipes;
+	
+	  var watcher = function watcher(value) {
+	    if (value === $el.val()) {
+	      $el.attr('checked', true);
+	    } else {
+	      $el.removeAttr('checked');
+	    }
+	  };
+	  var inputer = function inputer() {
+	    $scope.$set(prop, $el.val());
+	  };
+	  var pipeline = _pipe2.default.compile({
+	    prop: prop, watch: watch, secure: secure
+	  }, pipes, $scope, watcher, $ctx);
+	
+	  // if already checked
+	  if ($el[0].checked) {
+	    inputer();
+	  }
+	
+	  watcher(pipeline($scope.$get(prop)));
+	
+	  if (watch) {
+	    var _ret = function () {
+	      var unwatcher = null;
+	      return {
+	        v: {
+	          $mount: function $mount() {
+	            unwatcher = $scope.$watch(prop, function (value) {
+	              watcher(pipeline(value));
+	            });
+	            $el.on('change', inputer);
+	          },
+	          $unmount: function $unmount() {
+	            unwatcher();
+	            $el.off('change', inputer);
+	            pipeline.destroy();
+	          }
+	        }
+	      };
+	    }();
+	
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  } else {
+	    pipeline.destroy();
+	  }
+	};
+	
+	exports.default = radio;
+
+/***/ },
+/* 333 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _pipe = __webpack_require__(307);
+	
+	var _pipe2 = _interopRequireDefault(_pipe);
+	
+	var _utils = __webpack_require__(300);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var checkbox = function checkbox(_ref) {
+	  var $ctx = _ref.$ctx,
+	      $el = _ref.$el,
+	      $exp = _ref.$exp,
+	      $scope = _ref.$scope;
+	
+	  //$ctx, $el, $arg, $exp
+	  var _deconstruct = (0, _utils.deconstruct)($exp),
+	      prop = _deconstruct.prop,
+	      watch = _deconstruct.watch,
+	      secure = _deconstruct.secure,
+	      pipes = _deconstruct.pipes;
+	
+	  var indexOf = function indexOf(values, value) {
+	    values = values || [];
+	    for (var i = 0, ii = values.length; i < ii; i++) {
+	      if (values[i] === value) {
+	        return i;
+	      }
+	    }
+	    return -1;
+	  };
+	
+	  var watcher = function watcher(values) {
+	    if (-1 != indexOf(values, $el.val())) {
+	      $el[0].checked = true;
+	    } else {
+	      $el[0].checked = false;
+	    }
+	  };
+	  var inputer = function inputer() {
+	    var values = $scope.$get(prop) || [];
+	    if ($el[0].checked) {
+	      values.push($el.val());
+	    } else {
+	
+	      var index = indexOf(values, $el.val());
+	      if (-1 != index) {
+	        values.splice(index, 1);
+	      }
+	    }
+	
+	    $scope.$set(prop, values);
+	  };
+	  var pipeline = _pipe2.default.compile({
+	    prop: prop, watch: watch, secure: secure
+	  }, pipes, $scope, watcher, $ctx);
+	
+	  // if already checked
+	  if ($el[0].checked) {
+	    inputer();
+	  }
+	
+	  watcher(pipeline($scope.$get(prop)));
+	
+	  if (watch) {
+	    var _ret = function () {
+	      var unwatcher = null;
+	      return {
+	        v: {
+	          $mount: function $mount() {
+	            unwatcher = $scope.$watch(prop, function (value) {
+	              watcher(pipeline(value));
+	            });
+	            $el.on('change', inputer);
+	          },
+	          $unmount: function $unmount() {
+	            unwatcher();
+	            $el.off('change', inputer);
+	            pipeline.destroy();
+	          }
+	        }
+	      };
+	    }();
+	
+	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	  } else {
+	    pipeline.destroy();
+	  }
+	};
+	
+	exports.default = checkbox;
+
+/***/ },
+/* 334 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _text = __webpack_require__(328);
+	
+	var _text2 = _interopRequireDefault(_text);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var textarea = _text2.default;
+	
+	exports.default = textarea;
+
+/***/ },
+/* 335 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _text = __webpack_require__(328);
+	
+	var _text2 = _interopRequireDefault(_text);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var select = _text2.default;
+	
+	exports.default = select;
+
+/***/ },
+/* 336 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
 	var _directive = __webpack_require__(321);
 	
 	var _directive2 = _interopRequireDefault(_directive);
@@ -11120,7 +11662,7 @@
 	exports.default = show;
 
 /***/ },
-/* 330 */
+/* 337 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11154,7 +11696,7 @@
 	exports.default = hide;
 
 /***/ },
-/* 331 */
+/* 338 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11193,7 +11735,7 @@
 	exports.default = disable;
 
 /***/ },
-/* 332 */
+/* 339 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11232,7 +11774,7 @@
 	exports.default = enable;
 
 /***/ },
-/* 333 */
+/* 340 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11271,7 +11813,7 @@
 	exports.default = readonly;
 
 /***/ },
-/* 334 */
+/* 341 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11305,7 +11847,7 @@
 	exports.default = src;
 
 /***/ },
-/* 335 */
+/* 342 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11339,7 +11881,7 @@
 	exports.default = href;
 
 /***/ },
-/* 336 */
+/* 343 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11488,7 +12030,7 @@
 	exports.default = klass;
 
 /***/ },
-/* 337 */
+/* 344 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11528,7 +12070,7 @@
 	exports.default = attr;
 
 /***/ },
-/* 338 */
+/* 345 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11564,7 +12106,7 @@
 	exports.default = css;
 
 /***/ },
-/* 339 */
+/* 346 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11600,7 +12142,7 @@
 	exports.default = data;
 
 /***/ },
-/* 340 */
+/* 347 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11608,8 +12150,6 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _component = __webpack_require__(304);
 	
@@ -11621,156 +12161,175 @@
 	
 	var _utils = __webpack_require__(300);
 	
-	var _bind = __webpack_require__(341);
+	var _bind = __webpack_require__(348);
 	
 	var _bind2 = _interopRequireDefault(_bind);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	// 全局宏指令
 	var macros = {};
-	var macro = function macro(exp, _macro) {
-	  macros[exp] = _macro;
+	
+	/**
+	 * 宏指令
+	 * 在文本中的绑定,称之为宏,例如<span>hi, i am {{name}}, {{sex}}</span>
+	 * 宏指令使用正则表达式进行文本匹配,当文本匹配,调用相应的工厂函数生成宏指令实例
+	 * @param exp 正则表达式
+	 * @param factory 工厂函数
+	 */
+	var macro = function macro(exp, factory) {
+	  macros[exp] = factory;
 	};
 	
 	(0, _utils.assign)(macro, {
+	
+	  /**
+	    * 宏指令初始化
+	    * @param $ctx 上下文
+	    */
 	  initial: function initial($ctx) {
-	    $ctx.$macros = (0, _utils.assign)({}, macros, $ctx.macros);
+	
+	    // 加载全局宏指令、局部宏指令至当前上下文
+	    $ctx.$macros = (0, _utils.assign)({}, macros, $ctx.$macros, true);
+	
+	    // 记录宏实例,便于销毁释放
 	    $ctx.$macros._instances = new _utils.MapList();
 	  },
+	
+	
+	  /**
+	    * 宏指令编译
+	    * @param $el 元素
+	    * @param $scope 作用域
+	    * @param $ctx 上下文
+	    * @returns {*}
+	    */
 	  compile: function compile($el, $scope, $ctx) {
 	
-	    if (!$el.children().length) {
-	      var _ret = function () {
-	        var text = $el.html();
-	        if (text == null || text === '') {
-	          return {
-	            v: void 0
-	          };
-	        }
-	
-	        var instances = [];
-	        var update = function update() {
-	          if (!instances || !instances.length) {
-	            return;
-	          }
-	
-	          var newHtml = instances.reduce(function (text, instance) {
-	            var $iterator = instance.$iterator;
-	            if (!$iterator) {
-	              return text;
-	            }
-	
-	            if ($.isFunction($iterator)) {
-	              return $iterator(text);
-	            } else {
-	              return text.replace($iterator.$exp, $iterator.$value);
-	            }
-	
-	            //return instance.$iterator ? instance.$iterator(text) : text;
-	          }, text);
-	
-	          $el.html(newHtml == null ? '' : newHtml);
-	        };
-	
-	        for (var exp in macros) {
-	          var matches = text.match(new RegExp(exp, 'gm'));
-	          if (matches) {
-	            for (var _iterator = matches, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-	              var _ref;
-	
-	              if (_isArray) {
-	                if (_i >= _iterator.length) break;
-	                _ref = _iterator[_i++];
-	              } else {
-	                _i = _iterator.next();
-	                if (_i.done) break;
-	                _ref = _i.value;
-	              }
-	
-	              var match = _ref;
-	
-	              var instance = macros[exp]({
-	                $ctx: $ctx,
-	                $el: $el,
-	                $exp: match,
-	                $update: update,
-	                $scope: $scope
-	              });
-	              instance.$mount && instance.$mount($ctx);
-	              instances.push(instance);
-	              $ctx.$macros._instances.add(_element2.default.getId($el, true), instance);
-	            }
-	          }
-	        }
-	
-	        update();
-	      }();
-	
-	      if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+	    // 当前元素有子元素
+	    if ($el.children().length) {
+	      return $el;
 	    }
 	
-	    return $el;
+	    // 获取元素原始文本
+	    var text = $el.text();
+	    if (text == null || text === '') {
+	      return $el;
+	    }
 	
-	    /*
-	    const iterator = function ($el, $ctx) {
-	       if (component.isComponent($el, $ctx)) {
+	    /**
+	       * 在一段文本中,可能有多个宏指令,例如<span>hi, i am {{name}}, {{sex}}</span>
+	       * 其中任意一个字段值发生变化,都需要进行整体更新
+	       * @type {Array}
+	       */
+	    var instances = [];
+	    var update = function update() {
+	      if (!instances || !instances.length) {
 	        return;
 	      }
-	       if (!$el.children().length) {
-	        const text = $el.html();
-	        if (text == null || text === '') {
-	          return;
+	
+	      //分别调用了宏指令实例的$iterator方法,获得最后的目标值
+	      var newHtml = instances.reduce(function (text, instance) {
+	        var $iterator = instance.$iterator;
+	        if (!$iterator) {
+	          return text;
 	        }
-	         const instances = [];
-	        const update = function () {
-	          if (!instances || !instances.length) {
-	            return;
-	          }
-	           const newHtml = instances.reduce(function (text, instance) {
-	            const $iterator = instance.$iterator;
-	            if (!$iterator) {
-	              return text;
-	            }
-	             if ($.isFunction($iterator)) {
-	              return $iterator(text);
-	            } else {
-	              return text.replace($iterator.$exp, $iterator.$value);
-	            }
-	             //return instance.$iterator ? instance.$iterator(text) : text;
-	          }, text);
-	           $el.html(newHtml == null ? '' : newHtml);
-	        };
-	         for (const exp in macros) {
-	          const matches = text.match(new RegExp(exp, 'gm'));
-	          if (matches) {
-	            for (const match of matches) {
-	              const instance = macros[exp]({
-	                $ctx,
-	                $el,
-	                $exp: match,
-	                $update: update,
-	                $scope
-	              });
-	              instance.$mount && instance.$mount($ctx);
-	              instances.push(instance);
-	              $ctx.$macros._instances.add(element.getId($el, true), instance);
-	            }
-	          }
+	
+	        // 如$iterator是个函数,则调用
+	
+	        /**
+	             * 判断$iterator类型
+	             * 如函数,则调用;如不是,直接进行replace
+	             * 为什么需要判断$iterator类型?
+	             * Highway同时支持双向绑定{{}}和单向绑定[[]]
+	             * 例如<span>hi, i am {{name}}, [[sex]]</span>
+	             * {{name}}双向, [[sex]]单向
+	             * 双向绑定相较于单向绑定会耗费更多的内存资源,对于大多数情况而言,单向绑定已满足需求
+	             * 在使用单向绑定时直接返回目标值,可以减少内存资源占用
+	             */
+	        if ($.isFunction($iterator)) {
+	          return $iterator(text);
+	        } else {
+	          return text.replace($iterator.$exp, $iterator.$value);
 	        }
-	         update();
-	      }
-	       for (const childNode of Array.prototype.slice.call($el.children())) {
-	        iterator($(childNode), $ctx);
-	      }
+	      }, text);
+	
+	      /**
+	          * 获取目标值后进行更新
+	          * 为什么使用html()而不是text()?
+	          * Highway支持安全编码{{ }}、[[ ]]和非安全编码{{{ }}}、[[[ ]]]
+	          * 例如使用name值为&nbsp; {{name}}输出{{&nbsp;}}, {{{name}}}输出{{{ }}}
+	          * 在使用时尽量使用安全编码,防止跨站攻击等安全问题
+	          */
+	
+	      $el.html(newHtml == null ? '' : newHtml);
 	    };
-	     iterator($el, $ctx);
-	    */
+	
+	    /**
+	       * 对当期文本调用宏指令正则表达式
+	       * 如果匹配,则生成宏指令实例
+	       */
+	    for (var exp in $ctx.$macros) {
+	      var matches = text.match(new RegExp(exp, 'gm'));
+	      if (matches) {
+	        // 有可能匹配到了多个, 例如: <span>hi, i am {{name}}, {{sex}}</span>
+	        for (var _iterator = matches, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
+	          var _ref;
+	
+	          if (_isArray) {
+	            if (_i >= _iterator.length) break;
+	            _ref = _iterator[_i++];
+	          } else {
+	            _i = _iterator.next();
+	            if (_i.done) break;
+	            _ref = _i.value;
+	          }
+	
+	          var match = _ref;
+	
+	          //以匹配到{{name}}为例
+	          var instance = $ctx.$macros[exp]({
+	            $ctx: $ctx, // 上下文
+	            $el: $el, // 元素。 示例值为: span
+	            $exp: match, // name
+	            $update: update, // 更新函数,如果字段值发生变化,需要即使更新显示值
+	            $scope: $scope // 作用域
+	          });
+	          if (!$.isFunction(instance.$iterator)) {
+	            instance.$iterator.$exp = match;
+	          };
+	
+	          // $mount hook
+	          instance.$mount && instance.$mount($ctx);
+	
+	          // instance
+	          instances.push(instance);
+	
+	          // 为元素编码,在删除元素时需要释放对应的宏指令实例
+	          $ctx.$macros._instances.add(_element2.default.getId($el, true), instance);
+	        }
+	      }
+	    }
+	
+	    // 首次调用触发更新
+	    update();
+	
+	    return $el;
 	  },
+	
+	  /**
+	    * 销毁元素上的宏指令实例
+	    * @param $el DOM元素
+	    * @param $ctx 上下文
+	    */
 	  remove: function remove($el, $ctx) {
+	
+	    // 如果是组件, 返回, 组件的销毁由组件模块进行销毁
 	    if (_component2.default.isComponent($el, $ctx)) {
 	      return;
 	    }
 	
+	    // 获取DOM元素上的ID,得到对应的宏指令实例,并进行销毁
 	    var id = _element2.default.getId($el);
 	    if (id != null) {
 	      var instances = $ctx.$macros._instances.find(id);
@@ -11792,28 +12351,15 @@
 	      }
 	      $ctx.$macros._instances.remove(id);
 	    }
-	
-	    /*
-	    const iterator = function ($el, $ctx) {
-	      if (component.isComponent($el, $ctx)) {
-	        return;
-	      }
-	       for (const childNode of Array.prototype.slice.call($el.children())) {
-	        iterator($(childNode), $ctx);
-	      }
-	       const id = element.getId($el);
-	      if (id != null) {
-	        let instances = $ctx.$macros._instances.find(id);
-	        for (const instance of instances) {
-	          instance.$unmount && instance.$unmount($ctx);
-	        }
-	        $ctx.$macros._instances.remove(id);
-	      }
-	    };
-	     iterator($el, $ctx);
-	    */
 	  },
+	
+	  /**
+	    * 销毁宏指令模块
+	    * @param $ctx 上下文
+	    */
 	  destroy: function destroy($ctx) {
+	
+	    // 销毁所有宏指令实例
 	    var keys = $ctx.$macros._instances.keys();
 	    for (var key in keys) {
 	      var instances = $ctx.$macros._instances.find(key);
@@ -11842,12 +12388,13 @@
 	
 	exports.default = macro;
 	
-	// install build-in
+	// 内建宏指令
 	
-	macro('\\[?\\[\\[(\\S+)]]]?|\\{?\\{\\{(\\S+)}}}?', _bind2.default);
+	macro('\\[?\\[\\[([^\\]]+)]]]?|\\{?\\{\\{([^}]+)}}}?', _bind2.default);
+	//macro('\\[?\\[\\[(\\S+)]]]?|\\{?\\{\\{(\\S+)}}}?', bind);
 
 /***/ },
-/* 341 */
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11858,15 +12405,27 @@
 	
 	var _utils = __webpack_require__(300);
 	
+	var _pipe = __webpack_require__(307);
+	
+	var _pipe2 = _interopRequireDefault(_pipe);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	var bind = function bind(_ref) {
 	  var $exp = _ref.$exp,
 	      $update = _ref.$update,
-	      $scope = _ref.$scope;
+	      $scope = _ref.$scope,
+	      $ctx = _ref.$ctx;
 	
 	  var _deconstruct = (0, _utils.deconstruct)($exp),
 	      prop = _deconstruct.prop,
 	      watch = _deconstruct.watch,
-	      secure = _deconstruct.secure;
+	      secure = _deconstruct.secure,
+	      pipes = _deconstruct.pipes;
+	
+	  var pipeline = _pipe2.default.compile({
+	    prop: prop, watch: watch, secure: secure
+	  }, pipes, $scope, $update, $ctx);
 	
 	  if (watch) {
 	    return {
@@ -11875,17 +12434,19 @@
 	      },
 	      $unmount: function $unmount() {
 	        $scope.$unwatch(prop, $update);
+	        pipeline.destroy();
 	      },
 	      $iterator: function $iterator($text) {
 	        return $text.replace($exp, function () {
-	          var value = $scope.$get(prop);
+	          var value = pipeline($scope.$get(prop));
 	          value = value == null ? '' : value;
 	          return secure ? (0, _utils.secureHtml)(value) : value;
 	        });
 	      }
 	    };
 	  } else {
-	    var value = $scope.$get(prop);
+	    var value = pipeline($scope.$get(prop));
+	    pipeline.destroy();
 	    return {
 	      $iterator: {
 	        $exp: $exp,

@@ -17,5 +17,8 @@
   ],
   "dependencies": {
     "zepto": "^1.1.6"
+  },
+  "devDependencies": {
+    "babel-standalone": "^6.19.0"
   }
 }

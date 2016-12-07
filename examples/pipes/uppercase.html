@@ -1,0 +1,28 @@
+<!-- examples/pipes/uppercase.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>quick-start</title>
+</head>
+<body>
+<div id="app">
+  <p hi-bind="name | uppercase"></p>
+  <p>{{name | uppercase}}</p>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.min.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      name: 'World'
+    }
+  });
+</script>
+</body>
+</html>

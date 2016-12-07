@@ -2,25 +2,26 @@ import {assign} from './utils';
 
 const services = {};
 
-const service = function (name, service) {
-  services[name] = service;
+const service = function (name, factory) {
+  services[name] = factory;
 };
 
 assign(service, {
   initial($ctx) {
     $ctx.$services = assign({}, services, $ctx.$services);
-    for (const service in $ctx.$services) {
-      const instance = $ctx.$services[service]($ctx);
-      $ctx.$services[service] = instance;
-      instance.$mount && instance.$mount($ctx);
+    for (const name in $ctx.$services) {
+      const instance = $ctx.$services[name]({$ctx});
+      $ctx.$services[name] = instance;
+      instance.$mount && instance.$mount({$ctx});
     }
   },
   //compile($el, $scope, $ctx) {
 	//
   //},
   destroy($ctx) {
-    for (const instance in $ctx.$services) {
-      instance.$unmount && instance.$unmount($ctx);
+    for (const name in $ctx.$services) {
+      const instance = $ctx.$services[name];
+      instance.$unmount && instance.$unmount({$ctx});
     }
 
     $ctx.$services = null;

@@ -1,4 +1,4 @@
-import {isDate, deconstruct} from '../utils';
+import {isDate, deconstruct, secureHtml} from '../utils';
 
 const date = function ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
@@ -41,7 +41,7 @@ const date = function ({$source: {
     return {
       $mount() {
         unwatcher = $scope.$watch(prop, function () {
-          $update($pipeline($scope.$secure(sourceProp, sourceSecure)));
+          $update($pipeline(sourceProp ? secureHtml($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
         });
       },
       $iterator: iterator,

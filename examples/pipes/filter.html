@@ -1,0 +1,46 @@
+<!-- examples/pipes/filter.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>json</title>
+</head>
+<body>
+<div id="app">
+  <ul>
+    <li hi-repeat="user in users | filter: 'id' = '001' or 'name' *= 'j'">id: {{user.id}}, name: {{user.name}}</li>
+  </ul>
+
+  <ul>
+    <li hi-repeat="user in users | filter: 'name' ^= 'a' | filter: 'name' *= 'n' ">id: {{user.id}}, name: {{user.name}}</li>
+  </ul>
+  <ul>
+    <li hi-repeat="user in users | filter: 'name' *= contains">id: {{user.id}}, name: {{user.name}}</li>
+  </ul>
+  <button hi-on:click="change">change</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      users: [
+        {id: '001', name: 'ann'},
+        {id: '002', name: 'lily'},
+        {id: '003', name: 'jack'},
+        {id: '004', name: 'alex'},
+      ],
+      contains: 'a'
+    },
+    change() {
+      this.$set('contains', 'n');
+    }
+  });
+</script>
+</body>
+</html>

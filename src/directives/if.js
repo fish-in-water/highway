@@ -1,4 +1,5 @@
 import {deconstruct, secureHtml} from '../utils';
+import compiler from '../compiler';
 import element from '../element';
 import directive from '../directive';
 
@@ -19,18 +20,22 @@ const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
       } else {
         $new.appendTo($parent);
       }
-      $ctx.$compile($new);
+
+      compiler.compile($new, $scope, $ctx);
+      //$ctx.$compile($new);
       //$new.attr('hi-compiled', 'true');
 
       $scope.$unwatch(prop, watcher);
     } else {
-      $ctx.$remove($new);
+      compiler.remove($new, $ctx);
+      //$ctx.$remove($new);
       $scope.$watch(prop, watcher);
     }
   };
 
   if (!$ctx.$scope.$get(prop)) {
-    $ctx.$remove($el);
+    compiler.remove($el, $ctx);
+    //$ctx.$remove($el);
   }
 
   if (watch) {

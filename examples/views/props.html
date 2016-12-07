@@ -1,0 +1,58 @@
+<!-- examples/views/props.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>json</title>
+</head>
+<body>
+<div id="app">
+
+</div>
+
+<script id="template" type="text/template">
+  <div>i will destory after {{timeout}} seconds</div>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $template: $('#template').html(),
+    $scope: {
+      timeout: 3
+    },
+    $willmount() {
+      console.log('>>>::$willmount');
+    },
+    $mount() {
+      console.log('>>>::$mount');
+
+      this.$interval(() => {
+        const timeout = this.$scope.$get('timeout') - 1;
+        if (timeout >= 0) {
+          this.$scope.$set('timeout', timeout);
+        } else {
+          this.$destroy();
+        }
+      }, 1000);
+    },
+    $didmount() {
+      console.log('>>>::$didmount');
+    },
+    $willunmount() {
+      console.log('>>>::$willunmount');
+    },
+    $unmount() {
+      console.log('>>>::$unmount');
+    },
+    $didunmount() {
+      console.log('>>>::$didunmount');
+    },
+  });
+</script>
+</body>
+</html>

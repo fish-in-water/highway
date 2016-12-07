@@ -1,5 +1,6 @@
-import pipe from '../pipe';
 import {deconstruct, secureHtml, isArray, isObject, assign} from '../utils';
+import compiler from '../compiler';
+import pipe from '../pipe';
 
 let counter = 0;
 
@@ -17,12 +18,14 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
   let scopes = [];
 
   // remove current el
-  $ctx.$remove($el);
+  //$ctx.$remove($el);
+  compiler.remove($el, $ctx);
 
   const clear = function () {
     // clear els
     for (const $el of $els) {
-      $ctx.$remove($el);
+      //$ctx.$remove($el);
+      compiler.remove($el, $ctx);
     }
     $els = [];
 
@@ -47,18 +50,20 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
             data[itemProp] = value[i];
           }
 
-
           // create new scope
-          const scope = $scope.$create(data);
-          scope.$parent = $scope;
-          scope.$mount();
+          const scope = $scope.$create(data).$mount();
+          //scope.$parent = $scope;
           scopes.push(scope);
 
           // create new element
           const $el = $clone.clone();
 
           // compile
-          $ctx.$compile($el, scope);
+          $ctx.$scope = scope;
+          compiler.compile($el, scope, $ctx);
+          $ctx.$scope = $scope;
+
+          //$ctx.$compile($el, scope);
 
           $el.attr('hi-compiled', 'true');
 
@@ -98,6 +103,7 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
         });
       },
       $unmount() {
+
         pipeline.destroy();
 
         clear();

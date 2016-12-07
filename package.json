@@ -4,7 +4,8 @@
   "description": "highway",
   "main": "dest/highway.js",
   "scripts": {
-    "dev": "webpack-dev-server",
+    "dev": "webpack-dev-server --config webpack.config.dev.js",
+    "build": "webpack --progress --colors --config webpack.config.dev.js && webpack --progress --colors --config webpack.config.build.js",
     "unit": "karma start ./karma.conf.js",
     "e2e": "casperjs test --concise ./test/e2e"
   },

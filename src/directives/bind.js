@@ -1,5 +1,5 @@
 import directive from '../directive';
-import {secureHtml, isObject, isEqual} from '../utils';
+import {secureHtml, isObject, isEqual, deconstruct} from '../utils';
 
 const bind = function ({$el, $exp, $scope, $ctx}) { //$ctx, $el, $arg, $exp
   return directive.pattern($exp, $scope, $ctx, function ({newVal, secure}) {

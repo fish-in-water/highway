@@ -1,7 +1,7 @@
 import {assign} from '../utils';
 //import $ from 'Zepto';
 
-const http = function ($ctx) {
+const http = function ({$ctx}) {
 
   $ctx.$http = assign(function (options) {
     return $.ajax(options);
@@ -10,8 +10,7 @@ const http = function ($ctx) {
     $post: $.post,
     $json: $.getJSON,
     $jsonp: $.ajaxJSONP,
-    $settings: $.Settings,
-    $param: $.param
+    $settings: $.ajaxSettings || $.ajaxSetup
   });
 
   return $ctx.$http;
