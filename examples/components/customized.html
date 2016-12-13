@@ -1,0 +1,54 @@
+<!-- examples/components/customized.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>customized</title>
+  <style type="text/css">
+    #app {
+      background-color: red;
+    }
+
+    .component {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component hi-ref="component" class="component"></my-component>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}</p>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const myComponent = Highway.extend({
+    $template: $('#t-my-component').html(),
+    $scope: {
+      name: 'component'
+    }
+  });
+
+  // 全局
+  //Highway.component('my-component', myComponent);
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      name: 'app'
+    },
+    //局部
+    $components: {
+      'my-component': myComponent
+    }
+  });
+</script>
+</body>
+</html>

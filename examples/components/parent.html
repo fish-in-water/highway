@@ -1,0 +1,61 @@
+<!-- examples/components/parent.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>parent</title>
+  <style type="text/css">
+    #app {
+      background-color: red;
+    }
+
+    .component {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component class="component"></my-component>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}, my parent is {{$parent.name}}</p>
+  <button hi-on:click="getParentName">getParentName</button>
+  <button hi-on:click="triggerParentHandler">triggerParentHandler</button>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const myComponent = Highway.extend({
+    $template: $('#t-my-component').html(),
+    $scope: {
+      name: 'component'
+    },
+    getParentName() {
+      alert(this.$parent.$get('name'));
+    },
+    triggerParentHandler() {
+      this.$parent.introduce();
+    }
+  });
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      name: 'app'
+    },
+    $components: {
+      'my-component': myComponent
+    },
+    introduce() {
+      alert('hi, i am app');
+    }
+  });
+</script>
+</body>
+</html>

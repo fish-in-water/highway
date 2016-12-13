@@ -4,7 +4,7 @@
 
 ## 0. 前言
 
-Highway是一个验证型MVVM框架，用于验证MVVM架构的内部实现原理。Highway的核心源码非常精简，并且做了详尽的注释解读，前期您可以通过阅读源码了解其中的实现原理。但请不要随意用于您的生产环境，因为它并没有被完整的测试过，除非您对Highway已非常了解。后续虾哥会推出相关教程，解读MVVM框架的实现细节，尽情期待。:-)
+Highway是一个验证型MVVM框架，用于实现MVVM架构的内部原理。Highway的核心源码非常精简，并且做了详尽的注释解读，前期您可以通过阅读源码了解其中的实现原理。但请不要随意用于您的生产环境，因为它并没有被系统地验证过，除非您对Highway已非常了解。后续虾哥会推出相关教程，解读MVVM框架的实现细节，尽情期待。:-)
 
 ## 1. 快速开始
 
@@ -19,7 +19,7 @@ Highway是一个验证型MVVM框架，用于验证MVVM架构的内部实现原�
 4. 新建html文件，复制以下内容，注意文件引用，并使用Chrome打开
 
    ```
-   <!-- examples/basic/quick-start.html -->
+   <!-- examples/quick-start.html -->
 
    <!doctype html>
    <html>
@@ -49,14 +49,8 @@ Highway是一个验证型MVVM框架，用于验证MVVM架构的内部实现原�
        $el: $('#app'),
        $scope: {
          name: 'world'
-       },
-       $mount() {
-         this.$timeout(() => {
-           this.$scope.$set('name', 'friend');
-         }, 3000);
        }
      });
-
    </script>
    </body>
    </html>
@@ -137,7 +131,6 @@ const app = new Highway({
     console.log('>>>::$didunmount');
   },
 });
-
 ```
 
 
@@ -151,15 +144,16 @@ const app = new Highway({
 采用{{ property }}或者不指定{{ }}
 
 ```
+<!-- examples/views/data-bind.html -->
+
 // html
-<div hi-bind="user.name"><div> // 'hi&lt;script&gt;'
+<p>{{msg}}</p> // '&lt;script&gt;alert(1)'
 
 // js
-new Highway({
+const app = new Highway({
+  $el: $('#app'),
   $scope: {
-    user: {
-      name: 'hi<script>'
-    }
+    msg: '<script>alert(1)'
   }
 });
 ```
@@ -171,7 +165,9 @@ new Highway({
 采用{{{ property }}}
 
 ```
-<div hi-bind="{{{user.name}}}"><div> // 'hi<script>'
+<!-- examples/views/data-bind.html -->
+
+<p>{{{msg}}}</p> // '<script>alert(1)'
 ```
 
 
@@ -187,7 +183,9 @@ new Highway({
 采用[[ property ]]
 
 ```
-<div hi-bind="[[user.name]]"><div> // 'hi&lt;script&gt;'
+<!-- examples/views/data-bind.html -->
+
+<p>[[msg]]</p> // '&lt;script&gt;alert(1)'
 ```
 
 
@@ -197,7 +195,9 @@ new Highway({
 采用[[[ property ]]]
 
 ```
-<div hi-bind="[[[user.name]]]"><div> // 'hi<script>'
+<!-- examples/views/data-bind.html -->
+
+<p>[[[msg]]]</p> // '<script>alert(1)'
 ```
 
 
@@ -207,12 +207,19 @@ new Highway({
 使用$scope作为MVVM框架中的Model
 
 ```
-var app = new Highway({
-    $el: $('#app'),
-    $scope: {
-      name: 'world'
-    }
-  });
+<!-- examples/views/scope.html -->
+
+<div id="app">
+  <input type="text" hi-value="name"/>
+  <p>{{name}}</p>
+</div>  
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'highway'
+  }
+});
 ```
 
 
@@ -222,15 +229,25 @@ var app = new Highway({
 使用$scope.$get(prop)方法获取属性值，缩写为$get
 
 ```
-var app = new Highway({
-    $el: $('#app'),
-    $scope: {
-      name: 'world'
-    },
-    clickMe: function () {
-      var name = this.$get('name'); //equal to this.$scope.$get
+<!-- examples/views/get.html -->
+
+<div id="app">
+  <input type="text" hi-value="user.name"/>
+  <button hi-on:click="showMe">showMe</button>
+</div>  
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    user: {
+      name: 'highway'
     }
-  });
+  },
+  showMe() {
+    // equal to this.$scope.$get
+    alert(this.$get('user.name'));
+  }
+});
 ```
 
 > 如是嵌套属性，可通过属性分割符"."获取，例如this.$scope.$get('user.name')，$set类同
@@ -244,74 +261,88 @@ var app = new Highway({
 使用$scope.$set(prop, value)方法获取属性值，缩写为$get
 
 ```
-var app = new Highway({
-    $el: $('#app'),
-    $scope: {
-      name: 'world'
-    },
-    clickMe: function () {
-      this.$set('name', 'xiage'); // equal to this.$scope.$set
+<!-- examples/views/set.html -->
+
+<div id="app">
+  <input type="text" hi-value="user.name"/>
+  <button hi-on:click="changeMe">changeMe</button>
+</div>  
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    user: {
+      name: 'highway'
     }
-  });
+  },
+  changeMe() {
+    // equal to this.$scope.$set
+    this.$set('user.name', 'xiage');
+  }
+});
 ```
 
 
 
 #### 2-4-3. $watch
 
-使用$scope.$watch(prop, handler)监控属性变化，缩写为$watch
+使用$scope.$watch(prop, handler)监控属性变化，缩写为$watch，返回unwather句柄，调用可解除监听
 
 ```
-var app = new Highway({
-    $el: $('#app'),
-    $scope: {
-      name: 'world'
-    },
-    $mount: {
-      // watch name value chanage
-      // equal to this.$scope.$watch
-      var unwatcher = this.$watch('name', function (newVal, oldVal) { 
-        console.log(newVal + ',' + oldVal);
-      });	
-      
-      // clear wathcer after 3s
-      this.$timeout(function () {
-        unwatcher();
-      }, 3000);
-    }
-  }); 
+<!-- examples/views/watch.html -->
+
+<div id="app">
+  <input type="text" hi-value="name"/>
+  <p>{{name}}</p>
+  <p>{{logs}}</p>
+</div>  
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'highway'
+  },
+  $mount() {
+    const unwatcher = this.$watch('name', (newVal, oldVal) => {
+      this.$set('logs', `value changed, newVal is: ${newVal}, oldVal is: ${oldVal}`);
+    });
+
+    // remove wather
+    //unwatcher();
+  }
+});
 ```
 
 
 
 #### 2-4-4. $unwatch
 
-使用$scope.$unwatch(prop, [handler])监控属性变化，可缩写为$unwatch
+使用$scope.$unwatch(prop, [handler])监控属性变化，可缩写为$unwatch，如handler不指定，则移除prop上所有的监听器
 
 ```
-var app = new Highway({
-    $el: $('#app'),
-    $scope: {
-      name: 'world'
-    },
-    $mount: {
-      var handler = function (newVal, oldVal) {
-        console.log(newVal + ',' + oldVal);
-      };
-    
-      // watch name value chanage
-      // equal to this.$ctx.$watch
-      this.$watch('name', handler);	
+<!-- examples/views/unwatch.html -->
 
-      this.$timeout((function () {
-        // equal to this.$ctx.$unwatch
-        this.$unwatch('name', handler);	
-        
-        // scope will remove all watchers on name if handler is empty
-        //this.$unwatch('name');	
-      }).bind(this), 3000);
-    }
-  });
+<div id="app">
+  <input type="text" hi-value="name"/>
+  <p>{{name}}</p>
+  <p>{{logs}}</p>
+  <button hi-on:click="unwatch">unwatch</button>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'highway'
+  },
+  $mount() {
+    this.$watch('name', (newVal, oldVal) => {
+      this.$set('logs', `value changed, newVal is: ${newVal}, oldVal is: ${oldVal}`);
+    });
+  },
+  unwatch() {
+    this.$unwatch('name');
+  }
+});
 ```
 
 
@@ -321,42 +352,56 @@ var app = new Highway({
 单引号或双引号标记的值为常量，并不会从$scope值取值
 
 ```
-// 单引号
-<div hi-bind="'user.name'"><div> // 'user.name'
+<!-- examples/views/const.html -->
 
-// 双引号
-<div hi-bind='"user.name"'><div> // 'user.name'
+<div id="app">
+  <input type="text" hi-value="user.name"/>
+  <p>{{user.name}}</p>
+  <p>{{'user.name'}}</p>
+  <p>{{"user.name"}}</p>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    user: {
+      name: 'highway'
+    }
+  }
+});
 ```
 
 
 
-### 2-5. 作用域链
+### 2-5. 类定义
 
-视图与子视图作用域(不同于上下文)相互隔离
-
-```
-<view-parent>
-
-  <p>{{name}}</p>
-
-  <view-child>
-    <p>hi, i am {{name}}, my parent is {{$parent.name}}</p>
-  <view-child>
-
-</view-parent>
+可通过Highway.extend抽取为自定义类
 
 ```
+<!-- examples/views/klass.html -->
 
-name属性值只会从当前上下文作用域获取值，如遇空值并不会自动向父组件寻找，如需向上寻找添加$parent前缀。
+<div id="app-0"></div>
+<div id="app-1"></div>
 
-参考如下name取值
+<script id="t-app" type="text/template">
+  <p>i am {{name}}</p>
+</script>
 
-| view- child | view-parent | <p>hi, i am {{name}}, my parent is {{$parent.name}}</p> |
-| ----------- | ----------- | ---------------------------------------- |
-| ' child'    | 'parent'    | <p>hi, i am child, my parent is parent</p> |
-| undefined   | 'parent'    | <p>hi, i am , my parent is parent</p>    |
-| 'child'     | undefined   | <p>hi, i am child, my parent is</p>      |
-| undefined   | undefined   | <p>hi, i am , my parent is </p>          |
+const App = Highway.extend({
+  $template: $('#t-app').html(),
+  $scope: {
+    name: 'highway'
+  }
+});
+
+const app0 = new App({
+  $el: $('#app-0')
+});
+
+const app1 = new App({
+  $el: $('#app-1')
+});
+```
 
 
 
@@ -369,7 +414,21 @@ name属性值只会从当前上下文作用域获取值，如遇空值并不会�
 元素innerHTML绑定
 
 ```
-<div hi-bind="name"></div>
+<!-- examples/directives/bind.html -->
+
+<div id="app">
+  <input type="text" hi-value="user.name"/>
+  <div hi-bind="user.name">{{user.name}}</div>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    user: {
+      name: 'highway'
+    }
+  }
+});
 ```
 
 
@@ -381,37 +440,49 @@ name属性值只会从当前上下文作用域获取值，如遇空值并不会�
 1. text
 
    ````
-   <input type="text" hi-value="name">
+   <!-- examples/directives/value.html -->
+
+   <input type="text" hi-value="user.name">
    ````
 
 2. password
 
    ```
-   <input type="password" hi-value="password">
+   <!-- examples/directives/value.html -->
+
+   <input type="password" hi-value="user.password">
    ```
 
 3. number
 
    ```
-   <input type="number" hi-value="amount">
+   <!-- examples/directives/value.html -->
+
+   <input type="number" hi-value="user.income">
    ```
 
 4. tel
 
    ```
-   <input type="tel" hi-value="amount">
+   <!-- examples/directives/value.html -->
+
+   <input type="tel" hi-value="user.amount">
    ```
 
 5. textarea
 
    ```
-   <textarea hi-value="desc"></textarea>
+   <!-- examples/directives/value.html -->
+
+   <textarea hi-value="user.description"></textarea>
    ```
 
 6. select
 
    ```
-   <select hi-value="city">
+   <!-- examples/directives/value.html -->
+
+   <select hi-value="user.city">
      <option value="shanghai">shanghai</option>
      <option value="guangzhou">guangzhou</option>
      <option value="shenzhen">shenzhen</option>
@@ -421,17 +492,20 @@ name属性值只会从当前上下文作用域获取值，如遇空值并不会�
 7. radio
 
    ```
-   <input name="sex" type="radio" value="male" hi-value="sex"> male
-   <input name="sex" type="radio" value="female" hi-value="sex"> female
+   <!-- examples/directives/value.html -->
+
+   <input name="sex" type="radio" value="male" hi-value="user.sex"> male
+   <input name="sex" type="radio" value="female" hi-value="user.sex"> female
    ```
 
 8. checkbox
 
    ```
-   <input name="hobbies" type="checkbox" value="sports" hi-value="hobbies"> sports
-   <input name="hobbies" type="checkbox" value="games" hi-value="hobbies"> games
-   <input name="hobbies" type="checkbox" value="reading" hi-value="hobbies"> reading
+   <!-- examples/directives/value.html -->
 
+   <input name="hobbies" type="checkbox" value="sports" hi-value="user.hobbies"> sports
+   <input name="hobbies" type="checkbox" value="games" hi-value="user.hobbies"> games
+   <input name="hobbies" type="checkbox" value="reading" hi-value="user.hobbies"> reading
    ```
 
    > checkbox的绑定值是一个数组，如上，选中sports, games, 得到hobbies值为['sports', 'games']
@@ -440,7 +514,7 @@ name属性值只会从当前上下文作用域获取值，如遇空值并不会�
 
 #### 3-1-3. hi-on
 
-事件绑定, 格式hi-on:event="handler"
+事件绑定, 格式hi-on:event="handler"，支持所有的DOM事件
 
 触发时handler获得
 
@@ -448,17 +522,18 @@ name属性值只会从当前上下文作用域获取值，如遇空值并不会�
 * $ev: window.event事件
 
 ```
-<div hi-on:click="clickMe"></div>
+<!-- examples/directives/on.html -->
 
-var app = new Highway({
-    $el: $('#app'),
-    $scope: {
-      name: 'world'
-    },
-    clickMe: function ($el, $ev) {
-      alert('hello world');
-    }
-  });
+<div id="app">
+  <button id="btn" hi-on:click="clickMe">clickMe</button>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  clickMe($el, $ev) {
+    console.log(`element id is ${$el.attr('id')}, event type is ${$ev.type}`)
+  }
+});
 ```
 
 
@@ -468,8 +543,16 @@ var app = new Highway({
 显示绑定，显示元素当属性值为true
 
 ```
-<div hi-show="showMe"></div>
+<!-- examples/directives/show.html -->
+
+<div id="app">
+  <div hi-show="see">you can see me</div>
+  <input name="show" type="radio" value="1" hi-value="see" checked> show
+  <input name="show" type="radio" value="0" hi-value="see"> hide
+</div>
 ```
+
+> false、'false’、''、'0'、null、undefined、0均被判断为boolean false
 
 
 
@@ -478,19 +561,62 @@ var app = new Highway({
 隐藏绑定，显示元素当属性值为true
 
 ```
-<div hi-show="hideMe"></div>
+<!-- examples/directives/hide.html -->
+
+<div id="app">
+  <div hi-hide="see">you can see me</div>
+  <input name="show" type="radio" value="1" hi-value="see" checked> hide
+  <input name="show" type="radio" value="0" hi-value="see" > show
+</div>
 ```
+
+> false、'false’、''、'0'、null、undefined、0均被判断为boolean false
 
 
 
 #### 3-1-6. hi-if
 
-局部插入绑定,，插入元素当属性值为true，如为false将被移除
+插入元素当属性值为true，如为false将被移除
 
 ```
-<div hi-if="ifMe"></div>
+<!-- examples/directives/if.html -->
+
+<div id="app">
+  <div hi-if="ifMe">
+    <p>you can see me</p>
+    <my-component></my-component>
+  </div>
+  <input name="if" type="radio" value="true" hi-value="ifMe" checked> render
+  <input name="if" type="radio" value="false" hi-value="ifMe"> destroy
+</div>
+
+<script id="template" type="text/template">
+  <div>i am {{name}}</div>
+</script>
+
+const myComponent = Highway.extend({
+  $template: $('#template').html(),
+  $scope: {
+    name: 'myComponent'
+  },
+  $mount() {
+    console.log('>>>::myComponent rendered');
+  },
+  $unmount() {
+    console.log('>>>::myComponent destroyed');
+  }
+});
+
+const app = new Highway({
+  $el: $('#app'),
+  $components: {
+    'my-component': myComponent
+  }
+});
 ```
 
+>false、'false’、''、'0'、null、undefined、0均被判断为boolean false
+>
 >hi-if会触发局部编译/销毁过程，同时移除元素
 >
 >hi-show/hi-hide仅会隐藏元素，并不会移除
@@ -502,11 +628,41 @@ var app = new Highway({
 重复绑定
 
 ```
-<ul>
-  <li hi-repeat="book in books">
-    id: {{book.id}}, name: {{book.name}}
-  </li>
-</ul>
+<!-- examples/directives/repeat.html -->
+
+<div id="app">
+  <ul>
+    <li hi-repeat="user in data.users" hi-data:id="{{user.id}}">
+      <p>{{user.name}}</p>
+    </li>
+  </ul>
+  <button hi-on:click="change">change</button>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    data: {
+      users: [
+        {
+          'id': '001',
+          'name': 'jackey'
+        },
+        {
+          'id': '002',
+          'name': 'suse'
+        },
+        {
+          'id': '003',
+          'name': 'ann'
+        },
+      ]
+    }
+  },
+  change() {
+    this.$set('data.users[2].name', 'highway');
+  }
+});
 ```
 
 > repeat指令会触发局部编译，同时临时伸展作用域
@@ -518,8 +674,11 @@ var app = new Highway({
 元素src绑定
 
 ```
-<iframe hi-src="url"></iframe>
-<img hi-src="url"></img>
+<!-- examples/directives/src.html -->
+
+<div id="app">
+  <img hi-src="imageUrl" width="100%"/>
+</div>
 ```
 
 
@@ -529,7 +688,11 @@ var app = new Highway({
 元素href绑定
 
 ```
-<a hi-href="href"></a>
+<!-- examples/directives/href.html -->
+
+<div id="app">
+  <a hi-href="link">click me</a>
+</div>
 ```
 
 
@@ -539,7 +702,21 @@ var app = new Highway({
 元素data属性绑定, hi-data:dataProp="prop"
 
 ```
-<a hi-data:name="name"></a> // => <a data-name="name in scope"></a>
+<!-- examples/directives/data.html -->
+
+<div id="app">
+  <button hi-on:click="clickMe" hi-data:name="name">clickMe</button>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: "highway"
+  },
+  clickMe($el) {
+    alert($el.data('name'));
+  }
+});
 ```
 
 
@@ -549,7 +726,20 @@ var app = new Highway({
 元素enable绑定
 
 ```
-<button hi-enable="enableMe">button</button>
+<!-- examples/directives/enable.html -->
+
+<div id="app">
+  <button hi-enable="enable" hi-on:click="clickMe">button</button>
+  <input name="enable" type="radio" value="1" hi-value="enable" > enable
+  <input name="enable" type="radio" value="0" hi-value="enable"> disable
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  clickMe() {
+    alert(1)
+  }
+});
 ```
 
 
@@ -559,7 +749,20 @@ var app = new Highway({
 元素disable绑定
 
 ```
-<button hi-disable="disableMe">button</button>
+<!-- examples/directives/disable.html -->
+
+<div id="app">
+  <button hi-enable="disable" hi-on:click="clickMe">button</button>
+  <input name="disable" type="radio" value="1" hi-value="disable" checked> disable
+  <input name="disable" type="radio" value="0" hi-value="disable"> enable
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  clickMe() {
+    alert(1)
+  }
+});
 ```
 
 
@@ -567,7 +770,21 @@ var app = new Highway({
 #### 3-1-13. hi-readonly
 
 ```
-<input type="text" hi-readonly="readonlyMe" >
+<!-- examples/directives/readonly.html -->
+
+<div id="app">
+  <p>{{name}}</p>
+  <input type="text" hi-readonly="readonly" hi-value="name"/>
+  <input name="readonly" type="radio" value="1" hi-value="readonly" checked> readonly
+  <input name="readonly" type="radio" value="0" hi-value="readonly" > editable
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'highway'
+  }
+});
 ```
 
 
@@ -577,11 +794,19 @@ var app = new Highway({
 元素属性值绑定。hi-attr:domAttr="prop"，任意绑定指定DOM属性值。
 
 ````
-// 绑定src
-<img hi-attr:src="url"></img>
+<!-- examples/directives/attr.html -->
 
-// 绑定alt
-<img hi-attr:alt="alt"></img>
+<div id="app">
+  <img hi-attr:src="imageUrl" hi-attr:width="width" />
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    width: '50%',
+    imageUrl: './dog.jpeg'
+  }
+});
 ````
 
 
@@ -591,18 +816,128 @@ var app = new Highway({
 元素css值绑定。hi-css:css="prop"。
 
 ```
-<div hi-css:background-color="{{bgColor}}"></div>
+<!-- examples/directives/css.html -->
+
+<div id="app">
+  <div hi-css:background-color="{{bgColor}}">div</div>
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    bgColor: 'red'
+  }
+});
 ```
 
 
 
 #### 3-1-16. hi-class
 
-元素样式值绑定。hi-class="obj[prop]"，遇多个中间以；分割
+元素样式值绑定。hi-class:unique="obj[prop]"，遇多个中间以；分割
+
+##### 3-1-16-1. 直接量
+
+###### 3-1-16-1-1. 单个
 
 ```
-  <div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[bgColor];{'fs20': 'fs-20', 'fs30': 'fs-30'}[fontSize]"></div>
+<div hi-class="direct.bgColor">direct-0</div>
+<div hi-class="direct.fontSize">direct-1</div>
+```
 
+
+
+###### 3-1-16-1-2. 组合
+
+中间以","号分隔，如使用多个hi-class指令，需指定uniqueid，例如hi-class:bgColor="direct.bgColor", uniqueid="bgColor"
+
+```
+<div hi-class:bgColor="direct.bgColor", hi-class:fontSize="direct.fontSize">direct-2</div>
+<div hi-class="direct.bgColor, direct.fontSize">direct-3</div>
+```
+
+
+
+##### 3-1-16-2. 映射
+
+###### 3-1-16-2-1. 单个
+
+```
+<div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];">mapping-0</div>
+<div hi-class="{'fs20': 'fs-20', 'fs40': 'fs-40'}[mapping.fontSize]">mapping-1</div>
+```
+
+
+
+###### 3-1-16-2-2. 组合
+
+中间以","号分隔，如使用多个hi-class指令，需指定uniqueid。
+
+```
+<div hi-class:bgColor="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];" hi-class:bgColor="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];">mapping-2</div>
+
+<div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];{'fs20': 'fs-20', 'fs40': 'fs-40'}[mapping.fontSize]">mapping-3</div>
+
+```
+
+
+
+##### 3-1-16-3. 示例
+
+```
+<!-- examples/directives/class.html -->
+
+<style type="text/css">
+  .bg-red {
+    background-color: red;
+  }
+
+  .bg-green {
+    background-color: green;
+  }
+
+  .fs-20 {
+    font-size: 20px;
+  }
+
+  .fs-40 {
+    font-size: 40px;
+  }
+</style>
+
+<div id="app">
+  <p>>>> direct - single</p>
+  <div hi-class="direct.bgColor">direct-0</div>
+  <div hi-class="direct.fontSize">direct-1</div>
+
+  <p>>>> direct - combi</p>
+  <div hi-class:bgColor="direct.bgColor", hi-class:fontSize="direct.fontSize">direct-2</div>
+  <div hi-class="direct.bgColor, direct.fontSize">direct-3</div>
+  <hr>
+
+  <p>>>> mapping - single</p>
+  <div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];">mapping-0</div>
+  <div hi-class="{'fs20': 'fs-20', 'fs40': 'fs-40'}[mapping.fontSize]">mapping-1</div>
+
+  <p>>>> mapping - combi</p>
+  <div hi-class:bgColor="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];" hi-class:bgColor="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];">mapping-2</div>
+  <div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];{'fs20': 'fs-20', 'fs40': 'fs-40'}[mapping.fontSize]">mapping-3</div>
+
+</div>
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    mapping: {
+      bgColor: 'red',
+      fontSize: 'fs40'
+    },
+    direct: {
+      bgColor: 'bg-red',
+      fontSize: 'fs-20'
+    }
+  }
+});
 ```
 
 
@@ -610,6 +945,8 @@ var app = new Highway({
 ### 3-2. 自定义
 
 自定义指令为一个工厂函数
+
+#### 3-2-1. 入参
 
 参数
 
@@ -626,7 +963,16 @@ const bgColor = function ({$el, $exp}) {
 };
 ```
 
-#### 3-2-1. 全局
+
+
+#### 3-2-2. 出参
+
+* $mount：生命周期函数，挂载时调用。
+* $unmount：生命周期函数，卸载时调用
+
+
+
+#### 3-2-3. 全局
 
 全局有效，通过Highway.directive指定
 
@@ -634,15 +980,76 @@ const bgColor = function ({$el, $exp}) {
 Highway.directive('bg-color', bgColor);
 ```
 
-#### 3-2-2. 局部
 
-指定视图中有效，通过$directives指定
+
+#### 3-2-4. 局部
+
+指定视图中有效，通过View.$directives指定
+
+
+
+#### 3-2-5. 示例
+
+自定义指令，指令格式为hi-bgcolor="color"
 
 ```
-var app = new Highway({
+<!-- examples/directives/customized.html -->
+
+<div id="app">
+  <div hi-bgcolor="#ff0000">highway</div>
+</div>
+
+const bgColor = function ({$el, $exp}) { //$ctx, $el, $arg, $exp
+  $el.css('background-color', $exp);
+};
+
+//Highway.directive('hi-bgcolor', bgColor);
+
+const app = new Highway({
   $el: $('#app'),
   $directives: {
-    'bg-color': bgColor
+    'hi-bgcolor': bgColor
+  }
+});
+
+```
+
+
+
+#### 3-2-3. 指令模式
+
+Highway中预置了指令模式，快速构建您的自定义指令，可通过Highway.directive.pattern指定
+
+接收4个参数，依次为
+
+* $exp：表达式
+* $scope：作用域
+* $ctx：上下文
+* $updater：更新函数
+
+```
+<!-- examples/directives/pattern.html -->
+
+<div id="app">
+  <div hi-bgcolor="bgColor">highway</div>
+</div>
+
+const bgColor = function ({$el, $exp, $scope, $ctx}) { //$ctx, $el, $arg, $exp
+  return Highway.directive.pattern($exp, $scope, $ctx, function ({newVal, secure}) {
+    newVal = secure ? Highway.utils.secureHtml(newVal) : newVal;
+    $el.css('background-color', newVal);
+  });
+};
+
+//Highway.directive('hi-bgcolor', bgColor);
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    bgColor: 'red'
+  },
+  $directives: {
+    'hi-bgcolor': bgColor
   }
 });
 ```
@@ -941,13 +1348,297 @@ export default lowercase;
 
 ### 6-1. 自定义
 
-TODO
+通过Highway.extend抽取为类，需指定标签名
 
 
 
-### 6-2. 通信
+#### 6-1-1. 全局
 
-TODO
+通过Highway.component指定
+
+
+
+#### 6-1-2. 局部
+
+通过View.$components指定
+
+
+
+#### 6-1-3. 示例
+
+```
+<!-- examples/components/customized.html -->
+
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component hi-ref="component" class="component"></my-component>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}</p>
+</script>
+
+const myComponent = Highway.extend({
+  $template: $('#t-my-component').html(),
+  $scope: {
+    name: 'component'
+  }
+});
+
+// 全局
+//Highway.component('my-component', myComponent);
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'app'
+  },
+  // 局部
+  $components: {
+    'my-component': myComponent
+  }
+});
+```
+
+
+
+### 6-2. 引用
+
+#### 6-2-1. 子视图
+
+父视图通过$refs['name']获取子视图上下文，子视图需指定hi-ref指令
+
+```
+<!-- examples/components/ref.html -->
+
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component hi-ref="component" class="component"></my-component>
+  <button hi-on:click="getComponentName">getComponentName</button>
+  <button hi-on:click="triggerComponentHandler">triggerComponentHandler</button>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}, my parent is {{$parent.name}}</p>
+</script>
+
+const myComponent = Highway.extend({
+  $template: $('#t-my-component').html(),
+  $scope: {
+    name: 'component'
+  },
+  introduce() {
+    alert('hi, i am component');
+  }
+});
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'app'
+  },
+  $components: {
+    'my-component': myComponent
+  },
+  getComponentName() {
+    const $component = this.$components.$refs['component'];
+
+    alert($component.$get('name'));
+  },
+  triggerComponentHandler() {
+    const $component = this.$components.$refs['component'];
+    $component.introduce();
+  }
+});
+```
+
+
+
+#### 6-2-2. 父视图
+
+子视图通过$parent获得父视图上下文
+
+```
+<!-- examples/components/parent.html -->
+
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component class="component"></my-component>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}, my parent is {{$parent.name}}</p>
+  <button hi-on:click="getParentName">getParentName</button>
+  <button hi-on:click="triggerParentHandler">triggerParentHandler</button>
+</script>
+
+const myComponent = Highway.extend({
+  $template: $('#t-my-component').html(),
+  $scope: {
+    name: 'component'
+  },
+  getParentName() {
+    alert(this.$parent.$get('name'));
+  },
+  triggerParentHandler() {
+    this.$parent.introduce();
+  }
+});
+
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    name: 'app'
+  },
+  $components: {
+    'my-component': myComponent
+  },
+  introduce() {
+    alert('hi, i am app');
+  }
+});
+```
+
+
+
+### 6-3. 通信
+
+#### 6-3-1. $on
+
+监听事件，需指定事件名与处理函数，返回停止监听
+
+```
+<!-- examples/components/event.html -->
+
+this.$on('app:event', this.eventHandler.bind(this));
+
+// stop listening if stopper is called
+//stopper()
+```
+
+
+
+#### 6-3-2. $off
+
+关闭监听，需指定事件名与处理函数，如处理函数不指定，关闭在该事件上的所有处理器
+
+```
+<!-- examples/components/event.html -->
+
+this.$off('app:event');
+```
+
+
+
+#### 6-3-2. $broadcast
+
+广播事件，向子视图发送通知消息
+
+```
+<!-- examples/components/event.html -->
+
+this.$broadcast('app:event', 'this is event from app');
+```
+
+
+
+#### 6-3-3. $emit
+
+冒泡事件，向父视图发送通知消息
+
+```
+<!-- examples/components/event.html -->
+
+this.$emit('component:event', 'this is event from component');
+```
+
+
+
+#### 6-3-4. $fire
+
+触发自身事件，并不会触发$broadcast、$emit
+
+```
+<!-- examples/components/event.html -->
+
+this.$fire('component:self', 'this is event from self');
+```
+
+
+
+#### 6-3-5. $listenTo
+
+监听指定对象事件，指定对象通过$fire触发事件
+
+```
+<!-- examples/components/listen.html -->
+
+const $component = this.$components.$refs['component'];
+const stopper = this.$listenTo($component, 'component:event', this.eventHandler.bind(this));
+
+// stop listening if stopper is called
+//stopper()      
+```
+
+
+
+#### 6-3-6. $listenToOnce
+
+监听一次指定对象事件，指定对象通过$fire触发事件
+
+```
+<!-- examples/components/listen.html -->
+
+const stopper = this.$listenToOnce($component, 'component:event', this.eventHandler.bind(this));
+
+// stop listening if stopper is called
+//stopper()
+```
+
+
+
+#### 6-3-7. $stopListening
+
+取消监听指定对象事件
+
+```
+<!-- examples/components/listen.html -->
+
+const $component = this.$components.$refs['component'];
+this.$stopListening($component, 'component:event');
+```
+
+
+
+### 6-4. 作用域链
+
+视图与子视图作用域(不同于上下文)相互隔离，可通过$parent中获取作用域
+
+```
+<!-- examples/components/scope.html -->
+
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component class="component"></my-component>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}, my parent is {{$parent.name}}</p>
+</script>
+```
+
+name属性值只会从当前上下文作用域获取值，如遇空值并不会自动向父组件寻找，如需向上寻找添加$parent前缀。
+
+参考如下name取值
+
+| view- child | view-parent | <p>hi, i am {{name}}, my parent is {{$parent.name}}</p> |
+| ----------- | ----------- | ---------------------------------------- |
+| ' child'    | 'parent'    | <p>hi, i am child, my parent is parent</p> |
+| undefined   | 'parent'    | <p>hi, i am , my parent is parent</p>    |
+| 'child'     | undefined   | <p>hi, i am child, my parent is</p>      |
+| undefined   | undefined   | <p>hi, i am , my parent is </p>          |
+
+> repeat指令会产生临时作用域
 
 
 
@@ -1043,9 +1734,9 @@ const app = new Highway({
 
 
 
-#### 7.1.4. 事件
+#### 7.1.4. $event
 
-参阅6-xxx. 组件件通信
+参阅6-3. 通信
 
 
 
@@ -1145,17 +1836,199 @@ const app = new Highway({
 
 
 
+## 8. 工具
+
+Highway内置工具函数，可通过Highway.utils引用
+
+### 8-1. unique 
+
+获取唯一标识
+
+```
+<!-- examples/tools/unique.html -->
+
+const id0 = Highway.utils.unique();
+const id1 = Highway.utils.unique('c');
+alert(`${id0}, ${id1}`);
+```
 
 
 
+### 8-2. assign
 
- 
+拓展对象
+
+```
+<!-- examples/tools/assign.html -->
+
+const obj0 = {
+  a: 'a',
+  b: 'b'
+};
+const obj1 = {
+  a: 'aa',
+  c: 'c'
+};
+
+const obj2 = Highway.utils.assign({}, obj0, obj1);
+alert(JSON.stringify(obj2));
+```
 
 
 
+### 8-3. include
+
+返回数组中指定数据下标，如未找到，返回 -1
+
+```
+<!-- examples/tools/include.html -->
+
+const arr = [1, 2, 3, 4];
+const idx0 = Highway.utils.include(arr, 5);
+const idx1 = Highway.utils.include(arr, 2);
+alert(`${idx0},${idx1}`);
+```
 
 
 
+### 8-4. isPlainObject
+
+是否为原生Object对象
+
+```
+<!-- examples/tools/isPlainObject.html -->
+
+alert(Highway.utils.isPlainObject({a: 'a'})); // true
+alert(Highway.utils.isPlainObject([0, 1])); // false
+```
+
+
+
+### 8-5. isDate
+
+是否为日期
+
+```
+<!-- examples/tools/isDate.html -->
+
+alert(Highway.utils.isDate({})); // false
+alert(Highway.utils.isDate(new Date)); // true
+```
+
+
+
+### 8-6. isObject
+
+是否为对象
+
+```
+<!-- examples/tools/isObject.html -->
+
+alert(Highway.utils.isObject({})); // true
+alert(Highway.utils.isObject(new Date)); // true
+alert(Highway.utils.isObject(function () {})); // true
+alert(Highway.utils.isObject(1)); // false
+```
+
+
+
+### 8-7. isNumeric
+
+是否为数字
+
+```
+<!-- examples/tools/isNumeric.html -->
+
+alert(Highway.utils.isNumeric(1)); // true
+alert(Highway.utils.isDate({})); // false
+```
+
+
+
+### 8-8. isTrue
+
+是否为boolean true
+
+```
+<!-- examples/tools/isTrue.html -->
+
+alert(Highway.utils.isTrue(true)); // true
+alert(Highway.utils.isTrue('false')); // false
+alert(Highway.utils.isTrue('1')); // true
+```
+
+> false、'false’、''、'0'、null、undefined、0均被判断为boolean false，其他均被判断为true
+
+
+
+### 8-9. MapList
+
+映射列表
+
+* add(key, value)
+* find(key, value)
+* remove(key, value)
+* clear()
+* keys()
+* values()
+
+```
+<!-- examples/tools/MapList.html -->
+
+const mapList = new Highway.utils.MapList;
+mapList.add('a', '0');
+mapList.add('a', '1');
+mapList.add('a', '2');
+console.dir(mapList.find('a')); // ['0', '1', '2']
+
+mapList.remove('a', '1');
+console.dir(mapList.find('a')); // ['0', '2']
+
+mapList.add('b', '2');
+console.dir(mapList.keys()); // ['a', 'b']
+
+console.dir(mapList.values()); // ['0', '2', '2']
+
+mapList.clear();
+```
+
+
+
+### 8-10. secureHtml
+
+安全HTML编码
+
+````
+<!-- examples/tools/secureHtml.html -->
+
+console.log(Highway.utils.secureHtml('<script>alert(1)')); // &lt;script&gt;alert(1)
+````
+
+
+
+### 8-10.  secureUri
+
+安全URI编码
+
+```
+<!-- examples/tools/secureUri.html -->
+
+// http://uri?q=11&amp;&lt;script&gt;alert(1)
+console.log(Highway.utils.secureHtml('http://uri?q=11&<script>alert(1)')); 
+```
+
+
+
+### 8-11. getAttrs
+
+获取DOM元素所有属性
+
+```
+<div id="attr" directive-0:attr="exp" style="backgrond-color:red;"></div>
+
+//{"id":"attr","directive-0:attr":"exp","style":"backgrond-color:red;"}
+console.dir(Highway.utils.getAttrs($('#attr')));
+```
 
 
 

@@ -29,6 +29,7 @@ const bind = function ({$exp, $update, $scope, $ctx}) {
     };
   } else {
     let value = pipeline($scope.$get(prop));
+    value = value == null ? '' : value;
     pipeline.destroy();
     return {
       $iterator: {

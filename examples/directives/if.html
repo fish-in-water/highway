@@ -1,0 +1,54 @@
+<!-- examples/directives/if.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>if</title>
+</head>
+<body>
+<div id="app">
+  <div hi-if="ifMe">
+    <p>you can see me</p>
+    <my-component></my-component>
+  </div>
+  <input name="if" type="radio" value="true" hi-value="ifMe" checked> render
+  <input name="if" type="radio" value="false" hi-value="ifMe"> destroy
+</div>
+
+<script id="template" type="text/template">
+  <div>i am {{name}}</div>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const myComponent = Highway.extend({
+    $template: $('#template').html(),
+    $scope: {
+      name: 'myComponent'
+    },
+    $mount() {
+      console.log('>>>::myComponent rendered');
+    },
+    $unmount() {
+      console.log('>>>::myComponent destroyed');
+    }
+  });
+
+  const app = new Highway({
+    $el: $('#app'),
+    $components: {
+      'my-component': myComponent
+    },
+    showMe() {
+      this.$set('ifMe', 'true');
+    },
+    hideMe() {
+      this.$set('ifMe', 'false');
+    }
+  });
+</script>
+</body>
+</html>

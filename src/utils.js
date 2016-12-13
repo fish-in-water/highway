@@ -19,14 +19,14 @@ export const assign = function () {
   return $.extend.apply(this, args);
 };
 
-export function includes(arr, val) {
+export function include(arr, val) {
   for (var i = 0, ii = arr.length; i < ii; i++) {
     if (arr[i] === val) {
-      return true;
+      return i;
     }
   }
 
-  return false;
+  return -1;
 }
 
 export const isPlainObject = $.isPlainObject;
@@ -48,8 +48,13 @@ export function isNumeric(val) {
   return !isNaN(val);
 }
 
-export function keys(obj) {
-
+export function isTrue(val) {
+  return !(
+    val === false ||
+    val === 'false' ||
+    val === '' ||
+    val == null ||
+    (isNumeric(val) && !(val - 0)));
 }
 
 export function isEqual(val0, val1) {
@@ -253,7 +258,7 @@ export function secureHtml(html) {
   }
 }
 
-export function secureUrl(html) {
+export function secureUri(html) {
   if (null == html || '' == html) {
     return html;
   }
@@ -278,4 +283,25 @@ export function getAttrs($el) {
     }
   }
   return attrs;
+}
+
+export default {
+  unique,
+  assign,
+  include,
+  isPlainObject,
+  isDate,
+  isArray,
+  isObject,
+  isNumeric,
+  isTrue,
+  //isEqual,
+  //extend,
+  //inject,
+  MapList,
+  deconstruct,
+  construct,
+  secureHtml,
+  secureUri,
+  getAttrs
 }

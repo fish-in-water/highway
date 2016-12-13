@@ -1,17 +1,18 @@
-import {deconstruct, secureHtml} from '../utils';
+import {deconstruct, secureHtml, isTrue} from '../utils';
 import compiler from '../compiler';
 import element from '../element';
 import directive from '../directive';
 
-const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
+const ef = function ({$ctx, $el, $arg, $directive, $exp, $scope}) { //$ctx, $el, $arg, $exp
   const {prop, watch} = deconstruct($exp);
-  const $clone = $el.clone();
+  const $clone = $el.clone().removeAttr($directive);
   const $prev = $el.prev();
   const $next = $el.next();
   const $parent = $el.parent();
   let $new = $el;
   const watcher = function (value) {
-    if (value) {
+
+    if (isTrue(value)) {
       $new = $clone.clone();
       if ($next.length && $next.parent().length) {
         $new.insertBefore($next);
@@ -23,13 +24,13 @@ const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
 
       compiler.compile($new, $scope, $ctx);
       //$ctx.$compile($new);
-      //$new.attr('hi-compiled', 'true');
+      //
 
-      $scope.$unwatch(prop, watcher);
+      //$scope.$unwatch(prop, watcher);
     } else {
       compiler.remove($new, $ctx);
       //$ctx.$remove($new);
-      $scope.$watch(prop, watcher);
+      //$scope.$watch(prop, watcher);
     }
   };
 
@@ -47,7 +48,7 @@ const ef = function ({$ctx, $el, $arg, $exp, $scope}) { //$ctx, $el, $arg, $exp
       $unmount() {
         unwatcher();
       },
-      $halt: true
+      $el: null
     };
   }
 };

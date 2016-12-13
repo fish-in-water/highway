@@ -1,0 +1,85 @@
+<!-- examples/components/event.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>customized</title>
+  <style type="text/css">
+    #app {
+      background-color: red;
+    }
+
+    .component {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component hi-ref="component" class="component"></my-component>
+  <button hi-on:click="broadcastAppEvent">broadcastAppEvent</button>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}</p>
+  <button hi-on:click="emitComponentEvent">emitComponentEvent</button>
+  <button hi-on:click="fireSelfEvent">fireSelfEvent</button>
+  <button hi-on:click="stopListening">stopListening</button>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const myComponent = Highway.extend({
+    $template: $('#t-my-component').html(),
+    $scope: {
+      name: 'component'
+    },
+    $mount() {
+      const stopper = this.$on('app:event', this.eventHandler.bind(this));
+
+      // stop listening if stopper is called
+      //stopper()
+
+      this.$on('component:self', this.eventHandler.bind(this));
+    },
+    emitComponentEvent() {
+      this.$emit('component:event', 'this is event from component');
+    },
+    fireSelfEvent() {
+      this.$fire('component:self', 'this is event from self');
+    },
+    stopListening() {
+      this.$off('app:event');
+
+      alert('stoped')
+    },
+    eventHandler(msg) {
+      alert(msg)
+    }
+  });
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      name: 'app'
+    },
+    $components: {
+      'my-component': myComponent
+    },
+    $mount() {
+      this.$on('component:event', this.eventHandler.bind(this));
+    },
+    broadcastAppEvent() {
+      this.$broadcast('app:event', 'this is event from app');
+    },
+    eventHandler(msg) {
+      alert(msg)
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!-- examples/views/klass.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>klass</title>
+</head>
+<body>
+<div id="app-0"></div>
+<div id="app-1"></div>
+
+<script id="t-app" type="text/template">
+  <p>i am {{name}}</p>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+const App = Highway.extend({
+  $template: $('#t-app').html(),
+  $scope: {
+    name: 'highway'
+  }
+});
+
+const app0 = new App({
+  $el: $('#app-0')
+});
+
+const app1 = new App({
+  $el: $('#app-1')
+});
+
+</script>
+</body>
+</html>

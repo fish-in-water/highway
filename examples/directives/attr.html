@@ -1,0 +1,28 @@
+<!-- examples/directives/attr.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>attr</title>
+</head>
+<body>
+<div id="app">
+  <img hi-attr:src="imageUrl" hi-attr:width="width" />
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      width: '50%',
+      imageUrl: './dog.jpeg'
+    }
+  });
+</script>
+</body>
+</html>

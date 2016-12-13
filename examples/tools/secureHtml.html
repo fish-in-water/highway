@@ -1,0 +1,19 @@
+<!-- examples/tools/secureHtml.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>secureHtml</title>
+</head>
+<body>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  console.log(Highway.utils.secureHtml('<script>alert(1)')); // &lt;script&gt;alert(1)
+
+</script>
+</body>
+</html>

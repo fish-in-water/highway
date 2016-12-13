@@ -1,10 +1,10 @@
 import directive from '../directive';
-import {secureHtml} from '../utils';
+import {secureHtml, isTrue} from '../utils';
 
 const readonly = function ({$el, $exp, $scope, $ctx}) { //$ctx, $el, $arg, $exp
   return directive.pattern($exp, $scope, $ctx, function ({newVal, secure}) {
     newVal = secure ? secureHtml(newVal) : newVal;
-    if (!(newVal === 'false' || !newVal)) {
+    if (isTrue(newVal)) {
       $el.attr('readonly', 'readonly');
     } else {
       $el.removeAttr('readonly');

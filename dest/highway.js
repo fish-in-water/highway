@@ -8124,9 +8124,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
-	
-	var _view = __webpack_require__(301);
+	var _view = __webpack_require__(300);
 	
 	var _view2 = _interopRequireDefault(_view);
 	
@@ -8150,23 +8148,107 @@
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
+	var _utils = __webpack_require__(301);
+	
+	var _utils2 = _interopRequireDefault(_utils);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	/**
 	 * Highway MVVM
 	 */
-	var highway = (0, _utils.assign)(_view2.default, {
+	
+	var highway = _utils2.default.assign(_view2.default, {
 	  component: _component2.default,
 	  directive: _directive2.default,
 	  service: _service2.default,
 	  macro: _macro2.default,
-	  pipe: _pipe2.default
+	  pipe: _pipe2.default,
+	  utils: _utils2.default
 	});
 	
 	exports.default = highway;
 
 /***/ },
 /* 300 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _utils = __webpack_require__(301);
+	
+	var _compiler = __webpack_require__(302);
+	
+	var _compiler2 = _interopRequireDefault(_compiler);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * 视图层
+	 */
+	var View = function () {
+	
+	  /**
+	   * 构造
+	   * @param options 参数
+	   */
+	  function View(options) {
+	    _classCallCheck(this, View);
+	
+	    (0, _utils.assign)(this, options);
+	
+	    // $willmount hook
+	    this.$willmount && this.$willmount();
+	
+	    // compiler, initial -> compile
+	    _compiler2.default.initial(this).compile(this.$el, this.$scope, this);
+	
+	    // $mount hook，最常用
+	    this.$mount && this.$mount();
+	
+	    // $didmount hook
+	    this.$didmount && this.$didmount();
+	  }
+	
+	  /**
+	   * 销毁
+	   */
+	
+	
+	  _createClass(View, [{
+	    key: '$destroy',
+	    value: function $destroy() {
+	
+	      // $willunmount hook
+	      this.$willunmount && this.$willunmount();
+	
+	      // compiler, remove -> destroy
+	      _compiler2.default.remove(this.$el, this).destroy(this);
+	
+	      // $unmount hook, 最常用
+	      this.$unmount && this.$unmount();
+	
+	      // $didunmount hook
+	      this.$didunmount && this.$didunmount();
+	    }
+	  }]);
+	
+	  return View;
+	}();
+	
+	View.extend = _utils.extend;
+	exports.default = View;
+
+/***/ },
+/* 301 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -8179,19 +8261,19 @@
 	
 	exports.noop = noop;
 	exports.unique = unique;
-	exports.includes = includes;
+	exports.include = include;
 	exports.isDate = isDate;
 	exports.isArray = isArray;
 	exports.isObject = isObject;
 	exports.isNumeric = isNumeric;
-	exports.keys = keys;
+	exports.isTrue = isTrue;
 	exports.isEqual = isEqual;
 	exports.extend = extend;
 	exports.inject = inject;
 	exports.deconstruct = deconstruct;
 	exports.construct = construct;
 	exports.secureHtml = secureHtml;
-	exports.secureUrl = secureUrl;
+	exports.secureUri = secureUri;
 	exports.getAttrs = getAttrs;
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -8221,14 +8303,14 @@
 	  return $.extend.apply(this, args);
 	};
 	
-	function includes(arr, val) {
+	function include(arr, val) {
 	  for (var i = 0, ii = arr.length; i < ii; i++) {
 	    if (arr[i] === val) {
-	      return true;
+	      return i;
 	    }
 	  }
 	
-	  return false;
+	  return -1;
 	}
 	
 	var isPlainObject = exports.isPlainObject = $.isPlainObject;
@@ -8250,7 +8332,9 @@
 	  return !isNaN(val);
 	}
 	
-	function keys(obj) {}
+	function isTrue(val) {
+	  return !(val === false || val === 'false' || val === '' || val == null || isNumeric(val) && !(val - 0));
+	}
 	
 	function isEqual(val0, val1) {
 	  if (!isObject(val0) && !isObject(val1)) {
@@ -8493,7 +8577,7 @@
 	  }
 	}
 	
-	function secureUrl(html) {
+	function secureUri(html) {
 	  if (null == html || '' == html) {
 	    return html;
 	  }
@@ -8515,84 +8599,27 @@
 	  }
 	  return attrs;
 	}
-
-/***/ },
-/* 301 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _utils = __webpack_require__(300);
-	
-	var _compiler = __webpack_require__(302);
-	
-	var _compiler2 = _interopRequireDefault(_compiler);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/**
-	 * 视图层
-	 */
-	var View = function () {
-	
-	  /**
-	   * 构造
-	   * @param options 参数
-	   */
-	  function View(options) {
-	    _classCallCheck(this, View);
-	
-	    (0, _utils.assign)(this, options);
-	
-	    // $willmount hook
-	    this.$willmount && this.$willmount();
-	
-	    // compiler, initial -> compile
-	    _compiler2.default.initial(this).compile(this.$el, this.$scope, this);
-	
-	    // $mount hook，最常用
-	    this.$mount && this.$mount();
-	
-	    // $didmount hook
-	    this.$didmount && this.$didmount();
-	  }
-	
-	  /**
-	   * 销毁
-	   */
-	
-	
-	  _createClass(View, [{
-	    key: '$destroy',
-	    value: function $destroy() {
-	
-	      // $willunmount hook
-	      this.$willunmount && this.$willunmount();
-	
-	      // compiler, remove -> destroy
-	      _compiler2.default.remove(this.$el, this).destroy(this);
-	
-	      // $unmount hook, 最常用
-	      this.$unmount && this.$unmount();
-	
-	      // $didunmount hook
-	      this.$didunmount && this.$didunmount();
-	    }
-	  }]);
-	
-	  return View;
-	}();
-	
-	View.extend = _utils.extend;
-	exports.default = View;
+	exports.default = {
+	  unique: unique,
+	  assign: assign,
+	  include: include,
+	  isPlainObject: isPlainObject,
+	  isDate: isDate,
+	  isArray: isArray,
+	  isObject: isObject,
+	  isNumeric: isNumeric,
+	  isTrue: isTrue,
+	  //isEqual,
+	  //extend,
+	  //inject,
+	  MapList: MapList,
+	  deconstruct: deconstruct,
+	  construct: construct,
+	  secureHtml: secureHtml,
+	  secureUri: secureUri,
+	  getAttrs: getAttrs
+	};
 
 /***/ },
 /* 302 */
@@ -8820,7 +8847,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _component = __webpack_require__(304);
 	
@@ -8894,7 +8921,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _element = __webpack_require__(303);
 	
@@ -9060,9 +9087,11 @@
 	        instance.$destroy();
 	
 	        // 删除引用
-	        var ref = instance.$el.attr('hi-ref');
-	        if (ref) {
-	          delete $ctx.$components.$refs[ref];
+	        if (instance.$el) {
+	          var ref = instance.$el.attr('hi-ref');
+	          if (ref) {
+	            delete $ctx.$components.$refs[ref];
+	          }
 	        }
 	      });
 	      $ctx.$components._instances.remove(id);
@@ -9095,7 +9124,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _scope = __webpack_require__(306);
 	
@@ -9173,7 +9202,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _pipe = __webpack_require__(307);
 	
@@ -9364,6 +9393,11 @@
 	        var newSeries = series = this.$series(this);
 	
 	        //const reg = new RegExp(`^${prop}`);
+	        var arrayIndex = prop.indexOf('[');
+	        if (-1 != arrayIndex) {
+	          prop = prop.substring(0, arrayIndex);
+	        }
+	
 	        var keys = watchers.keys();
 	        for (var _iterator = keys, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
 	          var _ref2;
@@ -9470,7 +9504,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _lowercase = __webpack_require__(308);
 	
@@ -9730,7 +9764,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var sort = function sort(_ref) {
 	  var _ref$$source = _ref.$source,
@@ -9819,7 +9853,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var limit = function limit(_ref) {
 	  var _ref$$source = _ref.$source,
@@ -9879,7 +9913,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	// =,!=,^=,$=,*=
 	
@@ -10052,7 +10086,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var json = function json() {
 	  return {
@@ -10080,7 +10114,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var date = function date(_ref) {
 	  var _ref$$source = _ref.$source,
@@ -10166,7 +10200,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var number = function number(_ref) {
 	  var _ref$$source = _ref.$source,
@@ -10228,7 +10262,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 	
@@ -10247,12 +10281,22 @@
 	    events.remove(name, handler);
 	  };
 	
-	  $ctx.$listenTo = function (instance, name, handler) {
-	    return instance.$on(name, handler);
+	  $ctx.$listenTo = function (obj, name, handler) {
+	    return obj.$on(name, handler);
 	  };
 	
-	  $ctx.$stopListening = function (instance, name, handler) {
-	    return instance.$off(name, handler);
+	  $ctx.$listenToOnce = function (obj, name, handler) {
+	    var stopper = null;
+	    var once = function once() {
+	      handler.apply(this, arguments);
+	      stopper();
+	    };
+	
+	    return stopper = $ctx.$listenTo(obj, name, once);
+	  };
+	
+	  $ctx.$stopListening = function (obj, name, handler) {
+	    return obj.$off(name, handler);
 	  };
 	
 	  $ctx.$fire = function (name, data) {
@@ -10288,7 +10332,7 @@
 	  };
 	
 	  $ctx.$broadcast = function (name, data) {
-	    for (var _iterator2 = $ctx.$children, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
+	    for (var _iterator2 = $ctx.$components._instances.values(), _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
 	      var _ref3;
 	
 	      if (_isArray2) {
@@ -10315,7 +10359,7 @@
 	    $fire: $ctx.$fire,
 	    $emit: $ctx.$emit,
 	    $broadcast: $ctx.$broadcast
-	  }, _defineProperty(_ref4, '$fire', $ctx.$fire), _defineProperty(_ref4, '$unmount', function $unmount() {
+	  }, _defineProperty(_ref4, '$fire', $ctx.$fire), _defineProperty(_ref4, '$listenTo', $ctx.$listenTo), _defineProperty(_ref4, '$listenToOnce', $ctx.listenToOnce), _defineProperty(_ref4, '$$stopListening', $ctx.$stopListening), _defineProperty(_ref4, '$unmount', function $unmount() {
 	    events.clear();
 	    events = null;
 	  }), _ref4;
@@ -10333,7 +10377,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var timeout = function timeout(_ref) {
 	  var $ctx = _ref.$ctx;
@@ -10370,7 +10414,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var timeout = function timeout(_ref) {
 	  var $ctx = _ref.$ctx;
@@ -10407,7 +10451,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	//import $ from 'Zepto';
 	
@@ -10440,7 +10484,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var find = function find(_ref) {
 	  var $ctx = _ref.$ctx;
@@ -10477,7 +10521,7 @@
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _if = __webpack_require__(322);
 	
@@ -10569,7 +10613,7 @@
 	
 	
 	  // 创建优先级
-	  if (!(0, _utils.includes)(priorities, priority)) {
+	  if (-1 === (0, _utils.include)(priorities, priority)) {
 	    priorities.push(priority);
 	    priorities.sort(function (prev, next) {
 	      return prev - next;
@@ -10615,7 +10659,7 @@
 	        }
 	
 	        var factory = $ctx.$directives[name];
-	        if (factory && factory.priority === priority) {
+	        if (factory && (factory.priority || PRIOR.DEFAULT) === priority) {
 	          var instance = factory({
 	            $ctx: $ctx,
 	            $el: $el,
@@ -10630,12 +10674,12 @@
 	            $ctx.$directives._instances.add(_element2.default.getId($el, true), instance);
 	
 	            // halt compile
-	            if (instance.$halt) {
-	              return null;
-	            }
+	            // if (instance.$halt) {
+	            //   return null;
+	            // }
 	
 	            // if $el changed after compile
-	            if (instance.$el) {
+	            if (typeof instance.$el != 'undefined') {
 	              $el = instance.$el;
 	            }
 	          }
@@ -10783,7 +10827,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _compiler = __webpack_require__(302);
 	
@@ -10803,6 +10847,7 @@
 	  var $ctx = _ref.$ctx,
 	      $el = _ref.$el,
 	      $arg = _ref.$arg,
+	      $directive = _ref.$directive,
 	      $exp = _ref.$exp,
 	      $scope = _ref.$scope;
 	
@@ -10811,13 +10856,14 @@
 	      prop = _deconstruct.prop,
 	      watch = _deconstruct.watch;
 	
-	  var $clone = $el.clone();
+	  var $clone = $el.clone().removeAttr($directive);
 	  var $prev = $el.prev();
 	  var $next = $el.next();
 	  var $parent = $el.parent();
 	  var $new = $el;
 	  var watcher = function watcher(value) {
-	    if (value) {
+	
+	    if ((0, _utils.isTrue)(value)) {
 	      $new = $clone.clone();
 	      if ($next.length && $next.parent().length) {
 	        $new.insertBefore($next);
@@ -10829,13 +10875,13 @@
 	
 	      _compiler2.default.compile($new, $scope, $ctx);
 	      //$ctx.$compile($new);
-	      //$new.attr('hi-compiled', 'true');
+	      //
 	
-	      $scope.$unwatch(prop, watcher);
+	      //$scope.$unwatch(prop, watcher);
 	    } else {
 	      _compiler2.default.remove($new, $ctx);
 	      //$ctx.$remove($new);
-	      $scope.$watch(prop, watcher);
+	      //$scope.$watch(prop, watcher);
 	    }
 	  };
 	
@@ -10856,7 +10902,7 @@
 	            unwatcher();
 	          },
 	
-	          $halt: true
+	          $el: null
 	        }
 	      };
 	    }();
@@ -10879,7 +10925,7 @@
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _compiler = __webpack_require__(302);
 	
@@ -10986,6 +11032,7 @@
 	
 	          // compile
 	          $ctx.$scope = scope;
+	
 	          _compiler2.default.compile($el, scope, $ctx);
 	          $ctx.$scope = $scope;
 	
@@ -11081,7 +11128,7 @@
 	            unwatcher();
 	          },
 	
-	          $halt: true
+	          $el: null
 	        }
 	      };
 	    }();
@@ -11140,7 +11187,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11282,7 +11329,7 @@
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11299,11 +11346,19 @@
 	      secure = _deconstruct.secure,
 	      pipes = _deconstruct.pipes;
 	
+	  var $srcEl = null;
 	  var watcher = function watcher(value) {
+	    if ($srcEl === $el) {
+	      return;
+	    }
+	
+	    value = value == null ? '' : value + '';
 	    $el.val(secure ? (0, _utils.secureHtml)(value) : value);
 	  };
 	  var inputer = function inputer() {
+	    $srcEl = $el;
 	    $scope.$set(prop, $el.val());
+	    $srcEl = null;
 	  };
 	  var pipeline = _pipe2.default.compile({
 	    prop: prop, watch: watch, secure: secure
@@ -11417,7 +11472,7 @@
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11435,10 +11490,12 @@
 	      pipes = _deconstruct.pipes;
 	
 	  var watcher = function watcher(value) {
-	    if (value === $el.val()) {
-	      $el.attr('checked', true);
+	
+	    if (value + '' === $el.val()) {
+	      //$el.attr('checked', true);
+	      $el[0].checked = true;
 	    } else {
-	      $el.removeAttr('checked');
+	      $el[0].checked = false;
 	    }
 	  };
 	  var inputer = function inputer() {
@@ -11499,7 +11556,7 @@
 	
 	var _pipe2 = _interopRequireDefault(_pipe);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11519,7 +11576,7 @@
 	  var indexOf = function indexOf(values, value) {
 	    values = values || [];
 	    for (var i = 0, ii = values.length; i < ii; i++) {
-	      if (values[i] === value) {
+	      if (values[i] === value + '') {
 	        return i;
 	      }
 	    }
@@ -11640,7 +11697,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11655,7 +11712,11 @@
 	        secure = _ref2.secure;
 	
 	    newVal = secure ? (0, _utils.secureHtml)(newVal) : newVal;
-	    $el.css('display', newVal ? '' : 'none');
+	    if ((0, _utils.isTrue)(newVal)) {
+	      $el.css('display', '');
+	    } else {
+	      $el.css('display', 'none');
+	    }
 	  });
 	};
 	
@@ -11675,7 +11736,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11689,7 +11750,12 @@
 	    var newVal = _ref2.newVal,
 	        secure = _ref2.secure;
 	
-	    $el.css('display', !(secure ? (0, _utils.secureHtml)(newVal) : newVal) ? '' : 'none');
+	    newVal = secure ? (0, _utils.secureHtml)(newVal) : newVal;
+	    if (!(0, _utils.isTrue)(newVal)) {
+	      $el.css('display', '');
+	    } else {
+	      $el.css('display', 'none');
+	    }
 	  });
 	};
 	
@@ -11709,7 +11775,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11724,7 +11790,7 @@
 	        secure = _ref2.secure;
 	
 	    newVal = secure ? (0, _utils.secureHtml)(newVal) : newVal;
-	    if (!(newVal === 'false' || !newVal)) {
+	    if ((0, _utils.isTrue)(newVal)) {
 	      $el.attr('disabled', true);
 	    } else {
 	      $el.removeAttr('disabled');
@@ -11748,7 +11814,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11763,7 +11829,7 @@
 	        secure = _ref2.secure;
 	
 	    newVal = secure ? (0, _utils.secureHtml)(newVal) : newVal;
-	    if (!(newVal === 'false' || !newVal)) {
+	    if ((0, _utils.isTrue)(newVal)) {
 	      $el.removeAttr('disabled');
 	    } else {
 	      $el.attr('disabled', true);
@@ -11787,7 +11853,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11802,7 +11868,7 @@
 	        secure = _ref2.secure;
 	
 	    newVal = secure ? (0, _utils.secureHtml)(newVal) : newVal;
-	    if (!(newVal === 'false' || !newVal)) {
+	    if ((0, _utils.isTrue)(newVal)) {
 	      $el.attr('readonly', 'readonly');
 	    } else {
 	      $el.removeAttr('readonly');
@@ -11826,7 +11892,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11840,7 +11906,7 @@
 	    var newVal = _ref2.newVal,
 	        secure = _ref2.secure;
 	
-	    $el.attr('src', secure ? (0, _utils.secureUrl)(newVal) : newVal);
+	    $el.attr('src', secure ? secureUri(newVal) : newVal);
 	  });
 	};
 	
@@ -11860,7 +11926,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11874,7 +11940,7 @@
 	    var newVal = _ref2.newVal,
 	        secure = _ref2.secure;
 	
-	    $el.attr('href', secure ? (0, _utils.secureUrl)(newVal, ['&']) : newVal);
+	    $el.attr('href', secure ? secureUri(newVal, ['&']) : newVal);
 	  });
 	};
 	
@@ -11896,7 +11962,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -11919,6 +11985,10 @@
 	  if (regexp.test(prop)) {
 	    var _ret = function () {
 	      var instances = prop.split(';').map(function (klass) {
+	        if (klass == null || klass === '') {
+	          return;
+	        }
+	
 	        var matches = klass.match(regexp); //{'red': 'bg-red', 'green': 'bf-green'}[bgColor]
 	        var data = {};
 	        matches[1].split(',').forEach(function (kv) {
@@ -11940,9 +12010,6 @@
 	          }
 	        };
 	
-	        //if (matches[2] == 'submenu.active') {
-	        //  debugger;
-	        //}
 	        watcher($scope.$get(matches[2]));
 	
 	        return {
@@ -11970,27 +12037,32 @@
 	                      _ref2 = _i.value;
 	                    }
 	
-	                    var _ref3 = _ref2,
-	                        _prop = _ref3.prop,
-	                        watcher = _ref3.watcher;
+	                    var instance = _ref2;
+	
+	                    if (!instance) {
+	                      continue;
+	                    }
+	
+	                    var _prop = instance.prop,
+	                        watcher = instance.watcher;
 	
 	                    unwatchers.push($scope.$watch(_prop, watcher));
 	                  }
 	                },
 	                $unmount: function $unmount() {
 	                  for (var _iterator2 = unwatchers, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-	                    var _ref4;
+	                    var _ref3;
 	
 	                    if (_isArray2) {
 	                      if (_i2 >= _iterator2.length) break;
-	                      _ref4 = _iterator2[_i2++];
+	                      _ref3 = _iterator2[_i2++];
 	                    } else {
 	                      _i2 = _iterator2.next();
 	                      if (_i2.done) break;
-	                      _ref4 = _i2.value;
+	                      _ref3 = _i2.value;
 	                    }
 	
-	                    var unwatcher = _ref4;
+	                    var unwatcher = _ref3;
 	
 	                    unwatcher();
 	                  }
@@ -12007,10 +12079,14 @@
 	
 	    if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
 	  } else {
-	    var _instances = prop.split(',').map(function (exp) {
-	      return _directive2.default.pattern((0, _utils.construct)(exp, watch, secure), $scope, $ctx, function (_ref5) {
-	        var newVal = _ref5.newVal,
-	            oldVal = _ref5.oldVal;
+	    prop.split(',').map(function (exp) {
+	      if (exp == null || exp === '') {
+	        return;
+	      }
+	
+	      return _directive2.default.pattern((0, _utils.construct)(exp, watch, secure), $scope, $ctx, function (_ref4) {
+	        var newVal = _ref4.newVal,
+	            oldVal = _ref4.oldVal;
 	
 	        newVal = secure ? (0, _utils.secureHtml)(newVal) : newVal;
 	        oldVal = secure ? (0, _utils.secureHtml)(oldVal) : oldVal;
@@ -12043,7 +12119,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12083,7 +12159,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12119,7 +12195,7 @@
 	
 	var _directive2 = _interopRequireDefault(_directive);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -12159,7 +12235,7 @@
 	
 	var _element2 = _interopRequireDefault(_element);
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _bind = __webpack_require__(348);
 	
@@ -12403,7 +12479,7 @@
 	  value: true
 	});
 	
-	var _utils = __webpack_require__(300);
+	var _utils = __webpack_require__(301);
 	
 	var _pipe = __webpack_require__(307);
 	
@@ -12446,6 +12522,7 @@
 	    };
 	  } else {
 	    var value = pipeline($scope.$get(prop));
+	    value = value == null ? '' : value;
 	    pipeline.destroy();
 	    return {
 	      $iterator: {

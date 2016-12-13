@@ -1,0 +1,51 @@
+<!-- examples/directives/repeat.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>repeat</title>
+</head>
+<body>
+<div id="app">
+  <ul>
+    <li hi-repeat="user in data.users" hi-data:id="{{user.id}}">
+      <p>{{user.name}}</p>
+    </li>
+  </ul>
+  <button hi-on:click="change">change</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      data: {
+        users: [
+          {
+            'id': '001',
+            'name': 'jackey'
+          },
+          {
+            'id': '002',
+            'name': 'suse'
+          },
+          {
+            'id': '003',
+            'name': 'ann'
+          },
+        ]
+      }
+    },
+    change() {
+      this.$set('data.users[2].name', 'highway');
+    }
+  });
+</script>
+</body>
+</html>

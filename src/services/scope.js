@@ -176,6 +176,11 @@ const scope = function ({$ctx}) {
         const newSeries = series = this.$series(this);
 
         //const reg = new RegExp(`^${prop}`);
+        const arrayIndex = prop.indexOf('[');
+        if (-1 != arrayIndex) {
+          prop = prop.substring(0, arrayIndex);
+        }
+
         const keys = watchers.keys();
         for (const key of keys) {
           const props = prop.split('.');

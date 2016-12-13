@@ -8,6 +8,10 @@ const klass = function ({$el, $exp, $arg, $scope, $ctx}) { //$ctx, $el, $arg, $e
   // mapping
   if (regexp.test(prop)) {
     const instances = prop.split(';').map(function (klass) {
+      if (klass == null || klass === '') {
+        return;
+      }
+
       const matches = klass.match(regexp);   //{'red': 'bg-red', 'green': 'bf-green'}[bgColor]
       const data = {};
       matches[1].split(',').forEach(function (kv) {
@@ -29,9 +33,6 @@ const klass = function ({$el, $exp, $arg, $scope, $ctx}) { //$ctx, $el, $arg, $e
         }
       };
 
-      //if (matches[2] == 'submenu.active') {
-      //  debugger;
-      //}
       watcher($scope.$get(matches[2]));
 
       return {
@@ -44,7 +45,12 @@ const klass = function ({$el, $exp, $arg, $scope, $ctx}) { //$ctx, $el, $arg, $e
       let unwatchers = [];
       return {
         $mount() {
-          for (const {prop, watcher} of instances) {
+          for (const instance of instances) {
+            if (!instance) {
+              continue;
+            }
+
+            const {prop, watcher} = instance;
             unwatchers.push($scope.$watch(prop, watcher))
           }
         },
@@ -57,7 +63,11 @@ const klass = function ({$el, $exp, $arg, $scope, $ctx}) { //$ctx, $el, $arg, $e
       };
     }
   } else {
-    const instances = prop.split(',').map(function (exp) {
+    prop.split(',').map(function (exp) {
+      if (exp == null || exp === '') {
+        return;
+      }
+
       return directive.pattern(construct(exp, watch, secure), $scope, $ctx, function ({newVal, oldVal}) {
         newVal = secure ? secureHtml(newVal) : newVal;
         oldVal = secure ? secureHtml(oldVal) : oldVal;

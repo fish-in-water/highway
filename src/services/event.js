@@ -1,4 +1,4 @@
-import {assign, MapList} from '../utils';
+import {MapList} from '../utils';
 
 const event = function ({$ctx}) {
   let events = new MapList;
@@ -11,12 +11,22 @@ const event = function ({$ctx}) {
     events.remove(name, handler);
   };
 
-  $ctx.$listenTo = function (instance, name, handler) {
-    return instance.$on(name, handler);
+  $ctx.$listenTo = function (obj, name, handler) {
+    return obj.$on(name, handler);
   };
 
-  $ctx.$stopListening = function (instance, name, handler) {
-    return instance.$off(name, handler);
+  $ctx.$listenToOnce = function (obj, name, handler) {
+    let stopper = null;
+    const once = function () {
+      handler.apply(this, arguments);
+      stopper();
+    };
+
+    return stopper = $ctx.$listenTo(obj, name, once);
+  };
+
+  $ctx.$stopListening = function (obj, name, handler) {
+    return obj.$off(name, handler);
   };
 
   $ctx.$fire = function (name, data) {
@@ -39,7 +49,7 @@ const event = function ({$ctx}) {
   };
 
   $ctx.$broadcast = function (name, data) {
-    for (const child of $ctx.$children) {
+    for (const child of $ctx.$components._instances.values()) {
       if (child.$fire(name, data) === false) {
         break;
       }
@@ -54,6 +64,9 @@ const event = function ({$ctx}) {
     $emit: $ctx.$emit,
     $broadcast: $ctx.$broadcast,
     $fire: $ctx.$fire,
+    $listenTo: $ctx.$listenTo,
+    $listenToOnce: $ctx.listenToOnce,
+    $$stopListening: $ctx.$stopListening,
     $unmount: function () {
       events.clear();
       events = null;

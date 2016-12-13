@@ -1,0 +1,34 @@
+<!-- examples/views/get.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>json</title>
+</head>
+<body>
+<div id="app">
+  <input type="text" hi-value="user.name"/>
+  <button hi-on:click="showMe">showMe</button>
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      user: {
+        name: 'highway'
+      }
+    },
+    showMe() {
+      // equal to this.$scope.$get
+      alert(this.$get('user.name'));
+    }
+  });
+</script>
+</body>
+</html>

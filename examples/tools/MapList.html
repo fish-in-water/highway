@@ -1,0 +1,32 @@
+<!-- examples/tools/MapList.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>MapList</title>
+</head>
+<body>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const mapList = new Highway.utils.MapList;
+  mapList.add('a', '0');
+  mapList.add('a', '1');
+  mapList.add('a', '2');
+  console.dir(mapList.find('a')); // ['0', '1', '2']
+
+  mapList.remove('a', '1');
+  console.dir(mapList.find('a')); // ['0', '2']
+
+  mapList.add('b', '2');
+  console.dir(mapList.keys()); // ['a', 'b']
+
+  console.dir(mapList.values()); // ['0', '2', '2']
+
+  mapList.clear();
+</script>
+</body>
+</html>

@@ -4,10 +4,12 @@ import {deconstruct, secureHtml} from '../../../utils';
 const radio = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
   const watcher = function (value) {
-    if (value === $el.val()) {
-      $el.attr('checked', true);
+
+    if (value + '' === $el.val()) {
+      //$el.attr('checked', true);
+      $el[0].checked = true;
     } else {
-      $el.removeAttr('checked');
+      $el[0].checked = false;
     }
   };
   const inputer = function () {

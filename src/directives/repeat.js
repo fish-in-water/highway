@@ -60,6 +60,7 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
 
           // compile
           $ctx.$scope = scope;
+
           compiler.compile($el, scope, $ctx);
           $ctx.$scope = $scope;
 
@@ -110,7 +111,7 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
 
         unwatcher();
       },
-      $halt: true
+      $el: null
     };
   } else {
     pipeline.destroy();

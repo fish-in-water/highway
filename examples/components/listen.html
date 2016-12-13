@@ -1,0 +1,72 @@
+<!-- examples/components/listen.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>customized</title>
+  <style type="text/css">
+    #app {
+      background-color: red;
+    }
+
+    .component {
+      background-color: green;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <p>i am {{name}}</p>
+  <my-component hi-ref="component" class="component"></my-component>
+  <button hi-on:click="stopListening">stopListening</button>
+</div>
+
+<script id="t-my-component" type="text/template">
+  <p>i am {{name}}</p>
+  <button hi-on:click="fireComponentEvent">fireComponentEvent</button>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const myComponent = Highway.extend({
+    $template: $('#t-my-component').html(),
+    $scope: {
+      name: 'component'
+    },
+    fireComponentEvent() {
+      this.$fire('component:event', 'this is event from component');
+    }
+  });
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      name: 'app'
+    },
+    $components: {
+      'my-component': myComponent
+    },
+    $mount() {
+      const $component = this.$components.$refs['component'];
+      const stopper = this.$listenTo($component, 'component:event', this.eventHandler.bind(this));
+      //const stopper = this.$listenToOnce($component, 'component:event', this.eventHandler.bind(this));
+
+      // stop listening if stopper is called
+      //stopper()
+    },
+    stopListening() {
+      const $component = this.$components.$refs['component'];
+      this.$stopListening($component, 'component:event');
+
+      alert('stoped');
+    },
+    eventHandler(msg) {
+      alert(msg)
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!-- examples/directives/value.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>value</title>
+</head>
+<body>
+<div id="app">
+  <label>name: </label>
+  <input id="name" type="text" hi-value="user.name"/>
+  <br>
+
+  <label>password: </label>
+  <input type="password" hi-value="user.password"/>
+  <br>
+
+  <label>income: </label>
+  <input type="number" hi-value="user.income"/>
+  <br>
+
+  <label>telphone: </label>
+  <input type="tel" hi-value="user.telphone"/>
+  <br>
+
+  <label>description: </label>
+  <textarea hi-value="user.description"></textarea>
+  <br>
+
+  <label>select: </label>
+  <select hi-value="user.city">
+    <option value="shanghai">shanghai</option>
+    <option value="guangzhou">guangzhou</option>
+    <option value="shenzhen">shenzhen</option>
+  </select>
+  <br>
+
+  <label>sex: </label>
+  <input name="sex" type="radio" value="male" hi-value="user.sex"> male
+  <input name="sex" type="radio" value="female" hi-value="user.sex"> female
+  <br>
+
+  <label>hobbies: </label>
+  <input name="hobbies" type="checkbox" value="sports" hi-value="user.hobbies"> sports
+  <input name="hobbies" type="checkbox" value="games" hi-value="user.hobbies"> games
+  <input name="hobbies" type="checkbox" value="reading" hi-value="user.hobbies"> reading
+  <br>
+
+  <button hi-on:click="submit">submit</button>
+
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+
+    },
+    submit() {
+      const user = this.$get('user');
+      alert(JSON.stringify(user));
+    }
+  });
+</script>
+</body>
+</html>

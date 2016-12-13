@@ -1,0 +1,67 @@
+<!-- examples/directives/class.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>class</title>
+  <style type="text/css">
+    .bg-red {
+      background-color: red;
+    }
+
+    .bg-green {
+      background-color: green;
+    }
+
+    .fs-20 {
+      font-size: 20px;
+    }
+
+    .fs-40 {
+      font-size: 40px;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+  <p>>>> direct - single</p>
+  <div hi-class="direct.bgColor">direct-0</div>
+  <div hi-class="direct.fontSize">direct-1</div>
+
+  <p>>>> direct - combi</p>
+  <div hi-class:bgColor="direct.bgColor", hi-class:fontSize="direct.fontSize">direct-2</div>
+  <div hi-class="direct.bgColor, direct.fontSize">direct-3</div>
+  <hr>
+
+  <p>>>> mapping - single</p>
+  <div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];">mapping-0</div>
+  <div hi-class="{'fs20': 'fs-20', 'fs40': 'fs-40'}[mapping.fontSize]">mapping-1</div>
+
+  <p>>>> mapping - combi</p>
+  <div hi-class:bgColor="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];" hi-class:bgColor="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];">mapping-2</div>
+  <div hi-class="{'red': 'bg-red', 'green': 'bg-green'}[mapping.bgColor];{'fs20': 'fs-20', 'fs40': 'fs-40'}[mapping.fontSize]">mapping-3</div>
+
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+const app = new Highway({
+  $el: $('#app'),
+  $scope: {
+    mapping: {
+      bgColor: 'red',
+      fontSize: 'fs40'
+    },
+    direct: {
+      bgColor: 'bg-red',
+      fontSize: 'fs-20'
+    }
+  }
+});
+</script>
+</body>
+</html>

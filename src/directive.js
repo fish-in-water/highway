@@ -1,7 +1,7 @@
 import component from './component';
 import element from './element';
 import pipe from './pipe';
-import {assign, includes, getAttrs, deconstruct, MapList} from './utils';
+import {assign, include, getAttrs, deconstruct, MapList} from './utils';
 
 // 优先级常量, 最高-9, 默认0
 const PRIOR = {
@@ -25,7 +25,7 @@ const directives = {};
 const directive = function (name, factory, priority = PRIOR.DEFAULT) {
 
   // 创建优先级
-  if (!includes(priorities, priority)) {
+  if (-1 === include(priorities, priority)) {
     priorities.push(priority);
     priorities.sort(function (prev, next) {
       return prev - next;
@@ -70,7 +70,7 @@ assign(directive, {
         }
 
         const factory = $ctx.$directives[name];
-        if (factory && factory.priority === priority) {
+        if (factory && (factory.priority || PRIOR.DEFAULT) === priority) {
           const instance = factory({
             $ctx,
             $el,
@@ -85,12 +85,12 @@ assign(directive, {
             $ctx.$directives._instances.add(element.getId($el, true), instance);
 
             // halt compile
-            if (instance.$halt) {
-              return null;
-            }
+            // if (instance.$halt) {
+            //   return null;
+            // }
 
             // if $el changed after compile
-            if (instance.$el) {
+            if (typeof instance.$el != 'undefined') {
               $el = instance.$el;
             }
           }

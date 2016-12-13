@@ -1,0 +1,30 @@
+<!-- examples/directives/readonly.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>readonly</title>
+</head>
+<body>
+<div id="app">
+  <p>{{name}}</p>
+  <input type="text" hi-readonly="readonly" hi-value="name"/>
+  <input name="readonly" type="radio" value="1" hi-value="readonly" checked> readonly
+  <input name="readonly" type="radio" value="0" hi-value="readonly" > editable
+</div>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      name: 'highway'
+    }
+  });
+</script>
+</body>
+</html>

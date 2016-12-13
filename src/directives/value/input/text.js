@@ -3,11 +3,19 @@ import {deconstruct, secureHtml} from '../../../utils';
 
 const text = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
+  let $srcEl = null;
   const watcher = function (value) {
+    if ($srcEl === $el) {
+      return;
+    }
+
+    value = value == null ? '' : value + '';
     $el.val(secure ? secureHtml(value) : value);
   };
   const inputer = function () {
+    $srcEl = $el;
     $scope.$set(prop, $el.val());
+    $srcEl = null;
   };
   const pipeline = pipe.compile({
     prop: prop, watch, secure

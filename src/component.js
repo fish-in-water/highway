@@ -158,10 +158,13 @@ assign(component, {
         instance.$destroy();
 
         // 删除引用
-        const ref = instance.$el.attr('hi-ref');
-        if (ref) {
-          delete $ctx.$components.$refs[ref];
+        if (instance.$el) {
+          const ref = instance.$el.attr('hi-ref');
+          if (ref) {
+            delete $ctx.$components.$refs[ref];
+          }
         }
+
       });
       $ctx.$components._instances.remove(id);
     }

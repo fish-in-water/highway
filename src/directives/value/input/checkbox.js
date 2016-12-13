@@ -7,7 +7,7 @@ const checkbox = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
   const indexOf = (values, value) => {
     values = values || [];
     for (let i = 0, ii = values.length; i < ii; i++) {
-      if (values[i] === value) {
+      if (values[i] === value + '') {
         return i;
       }
     }

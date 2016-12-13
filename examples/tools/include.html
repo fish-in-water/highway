@@ -1,0 +1,21 @@
+<!-- examples/tools/include.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>include</title>
+</head>
+<body>
+
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+  const arr = [1, 2, 3, 4];
+  const idx0 = Highway.utils.include(arr, 5);
+  const idx1 = Highway.utils.include(arr, 2);
+  alert(`${idx0},${idx1}`);
+</script>
+</body>
+</html>
