@@ -176,7 +176,7 @@ import ef from './directives/if';
 import repeat from './directives/repeat';
 import on from './directives/on';
 import bind from './directives/bind';
-import value from './directives/value';
+import value from './directives/value/index';
 import show from './directives/show';
 import hide from './directives/hide';
 import disable from './directives/disable';

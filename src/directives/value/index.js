@@ -1,4 +1,4 @@
-import input from './input';
+import input from './input/index';
 import textarea from './textarea';
 import select from './select';
 

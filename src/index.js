@@ -1,6 +1,5 @@
-import 'babel-polyfill';
+//import 'babel-polyfill';
 import Highway from './highway';
 
 window.Highway = Highway;
 
-export default Highway;

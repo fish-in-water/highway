@@ -7,17 +7,23 @@ module.exports = {
   },
   output: {
     path: __dirname,
-    filename: './dest/[name].js'
+    filename: './dest/[name].min.js'
     //library: 'Highway',
     //libraryTarget: 'umd'
   },
   module: {
     loaders: [
       {
-        test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/, query: {
-          //presets: ['es2015'],
-          //plugins: ["transform-class-properties"]
-        }
+        test: /\.js$/, loader: 'babel-loader', exclude: /node_modules/,
+        // query: {
+        //   "presets": ["es2015"],
+        //   "plugins": [
+        //     "transform-class-properties",
+        //     ["transform-es2015-for-of", {
+        //       "loose": true
+        //     }]
+        //   ]
+        // }
       }
     ]
   },
