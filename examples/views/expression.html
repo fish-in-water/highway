@@ -1,0 +1,33 @@
+<!-- examples/directives/if.html -->
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <title>if</title>
+</head>
+<body>
+<div id="app">
+  <div hi-if="ifMe = ">
+    <p>you can see me</p>
+  </div>
+</div>
+
+<script id="template" type="text/template">
+  <div>i am {{name}}</div>
+</script>
+<script type="text/javascript" src="../../lib/zepto/zepto.min.js"></script>
+<script type="text/javascript" src="../../dest/highway.min.js"></script>
+<script type="text/javascript" src="../../lib/babel-standalone/babel.min.js"></script>
+<script type="text/babel">
+
+  const app = new Highway({
+    $el: $('#app'),
+    $scope: {
+      ifMe: '8888'
+    }
+  });
+</script>
+</body>
+</html>
