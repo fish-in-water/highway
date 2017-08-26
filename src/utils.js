@@ -140,7 +140,7 @@ export const extend = function (options) {
  * @param handler 
  * @param options 
  */
-export const inject = function (handler, options)   {
+export const inject = function (handler, options) {
   const deps = handler.toString().match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1].replace(/ /g, '').split(',');
   const args = (deps || []).map((dep) => {
     return options[dep];
