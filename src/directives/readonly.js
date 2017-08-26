@@ -1,8 +1,12 @@
 import directive from '../directive';
 import {secureHtml, isTrue} from '../utils';
 
-const readonly = function ({$el, $exp, $scope, $ctx}) { //$ctx, $el, $arg, $exp
-  return directive.pattern($exp, $scope, $ctx, function ({newVal, secure}) {
+/**
+ * readonly指令
+ * @param param0 
+ */
+const readonly = ({$el, $exp, $scope, $ctx}) => { //$ctx, $el, $arg, $exp
+  return directive.pattern($exp, $scope, $ctx, ({newVal, secure}) => {
     newVal = secure ? secureHtml(newVal) : newVal;
     if (isTrue(newVal)) {
       $el.attr('readonly', 'readonly');

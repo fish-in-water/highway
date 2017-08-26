@@ -2,7 +2,12 @@ import {assign} from './utils';
 
 const services = {};
 
-const service = function (name, factory) {
+/**
+ * 服务模块
+ * @param name 服务名
+ * @param factory 工厂函数
+ */
+const service = (name, factory) => {
   services[name] = factory;
 };
 

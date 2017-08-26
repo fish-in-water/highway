@@ -1,9 +1,13 @@
 import {assign} from '../utils';
 
-const timeout = function ({$ctx}) {
+/**
+ * interval服务
+ * @param {*} param0 
+ */
+const interval = ({$ctx}) => {
   const ids = [];
 
-  $ctx.$interval = assign(function (handler, delay) {
+  $ctx.$interval = assign((handler, delay) => {
     return ids.push(window.setInterval(handler.bind($ctx), delay));
   }, {
     $clear(id) {
@@ -19,4 +23,4 @@ const timeout = function ({$ctx}) {
   return $ctx.$interval;
 };
 
-export default timeout;
+export default interval;

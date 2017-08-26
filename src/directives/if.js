@@ -3,14 +3,18 @@ import compiler from '../compiler';
 import element from '../element';
 import directive from '../directive';
 
-const ef = function ({$ctx, $el, $arg, $directive, $exp, $scope}) { //$ctx, $el, $arg, $exp
+/**
+ * if指令
+ * @param param0 
+ */
+const ef = ({$ctx, $el, $arg, $directive, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch} = deconstruct($exp);
   const $clone = $el.clone().removeAttr($directive);
   const $prev = $el.prev();
   const $next = $el.next();
   const $parent = $el.parent();
   let $new = $el;
-  const watcher = function (value) {
+  const watcher = (value) => {
 
     if (isTrue(value)) {
       $new = $clone.clone();

@@ -1,4 +1,7 @@
-const uppercase = function () {
+/**
+ * uppercase管道
+ */
+const uppercase = () => {
   return {
     $iterator($value) {
       if ($value == null) {

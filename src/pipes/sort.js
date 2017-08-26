@@ -1,17 +1,21 @@
 import {deconstruct, secureHtml} from '../utils';
 
-const sort = function ({$source: {
+/**
+ * sort管道
+ * @param param0 
+ */
+const sort = ({$source: {
     prop: sourceProp, watch: sourceWatch, secure: sourceSecure
-  }, $exp, $scope, $pipeline, $update}) {
+  }, $exp, $scope, $pipeline, $update}) => {
 
   const matches = $exp.match(/(\S+)\s+(\S+)/);
   const {prop: fieldProp} = deconstruct(matches[1]);
   const {prop: ascProp} = deconstruct(matches[2] || "'asc'");
-  const iterator = function ($value) {
+  const iterator = ($value) => {
     const field = $scope.$get(fieldProp);
     const asc = $scope.$get(ascProp);
 
-    return $value.sort(function (a, b) {
+    return $value.sort((a, b) => {
       if (asc === 'asc') {
         return a[field] > b[field] ? 1 : -1;
       } else {
@@ -34,11 +38,11 @@ const sort = function ({$source: {
     let ascUnwatcher;
     return {
       $mount() {
-        fieldUnwatcher = $scope.$watch(fieldProp, function () {
+        fieldUnwatcher = $scope.$watch(fieldProp, () => {
           $update($pipeline($scope.$get(sourceProp), sourceSecure));
         });
 
-        ascUnwatcher = $scope.$watch(ascProp, function () {
+        ascUnwatcher = $scope.$watch(ascProp, () => {
           $update($pipeline($scope.$get(sourceProp), sourceSecure));
         });
       },

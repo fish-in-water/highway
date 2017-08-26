@@ -1,7 +1,11 @@
 import pipe from '../../../pipe';
 import {deconstruct, secureHtml} from '../../../utils';
 
-const checkbox = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
+/**
+ * value指令:checkbox
+ * @param param0 
+ */
+const checkbox = ({$ctx, $el, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
 
   const indexOf = (values, value) => {
@@ -14,14 +18,14 @@ const checkbox = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
     return -1;
   };
 
-  const watcher = function (values) {
+  const watcher = (values) => {
     if (-1 != indexOf(values, $el.val())) {
       $el[0].checked = true;
     } else {
       $el[0].checked = false;
     }
   };
-  const inputer = function () {
+  const inputer = () => {
     const values = $scope.$get(prop) || [];
     if ($el[0].checked) {
       values.push($el.val());
@@ -50,7 +54,7 @@ const checkbox = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(prop, function (value) {
+        unwatcher = $scope.$watch(prop, (value) => {
           watcher(pipeline(value));
         });
         $el.on('change', inputer);

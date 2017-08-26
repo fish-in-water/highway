@@ -1,8 +1,12 @@
 import {assign, isArray, isObject, isDate, isEqual, secureHtml, MapList} from '../utils';
 import pipe from '../pipe';
 
-const scope = function ({$ctx}) {
-  const factory = function (obj) {
+/**
+ * scope服务
+ * @param param0 
+ */
+const scope = ({$ctx}) => {
+  const factory = (obj) => {
     let series = {};
     let watchers = new MapList;
 
@@ -17,7 +21,7 @@ const scope = function ({$ctx}) {
       $series(data) {
         const series = {};
 
-        const iterator = function (prop, data) {
+        const iterator = (prop, data) => {
 
           series[prop] = data;
 
@@ -127,7 +131,7 @@ const scope = function ({$ctx}) {
         }
 
         if (prop) {
-          const iterator = function (path, val, obj) {
+          const iterator = (path, val, obj) => {
             const props = path.split('.');
             const tmp = props.shift();
             const matches = tmp.match(/([^\[]+)\[(\d+)]/);

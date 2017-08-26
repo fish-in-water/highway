@@ -12,7 +12,7 @@ const macros = {};
  * @param exp 正则表达式
  * @param factory 工厂函数
  */
-const macro = function (exp, factory) {
+const macro = (exp, factory) => {
   macros[exp] = factory;
 };
 
@@ -57,13 +57,13 @@ assign(macro, {
      * @type {Array}
      */
     const instances = [];
-    const update = function () {
+    const update = () => {
       if (!instances || !instances.length) {
         return;
       }
 
 			//分别调用了宏指令实例的$iterator方法,获得最后的目标值
-      const newHtml = instances.reduce(function (text, instance) {
+      const newHtml = instances.reduce((text, instance) => {
         const $iterator = instance.$iterator;
         if (!$iterator) {
           return text;

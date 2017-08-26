@@ -11,6 +11,7 @@ class View {
    * 构造
    * @param options 参数
    */
+
   constructor(options) {
 
     assign(this, options);

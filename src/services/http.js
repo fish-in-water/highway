@@ -1,9 +1,12 @@
 import {assign} from '../utils';
 //import $ from 'Zepto';
 
-const http = function ({$ctx}) {
-
-  $ctx.$http = assign(function (options) {
+/**
+ * http服务
+ * @param param0 
+ */
+const http = ({$ctx}) => {
+  $ctx.$http = assign((options) => {
     return $.ajax(options);
   }, {
     $get: $.get,

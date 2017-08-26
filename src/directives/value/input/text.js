@@ -1,10 +1,14 @@
 import pipe from '../../../pipe';
 import {deconstruct, secureHtml} from '../../../utils';
 
-const text = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
+/**
+ * value指令:text
+ * @param param0 
+ */
+const text = ({$ctx, $el, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
   let $srcEl = null;
-  const watcher = function (value) {
+  const watcher = (value) => {
     if ($srcEl === $el) {
       return;
     }
@@ -12,7 +16,7 @@ const text = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
     value = value == null ? '' : value + '';
     $el.val(secure ? secureHtml(value) : value);
   };
-  const inputer = function () {
+  const inputer = () => {
     $srcEl = $el;
     $scope.$set(prop, $el.val());
     $srcEl = null;
@@ -27,7 +31,7 @@ const text = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(prop, function (value) {
+        unwatcher = $scope.$watch(prop, (value) => {
           watcher(pipeline(value));
         });
         $el.on('input', inputer);

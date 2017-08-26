@@ -9,7 +9,6 @@ import utils from './utils';
 /**
  * Highway MVVM
  */
-
 const highway = utils.assign(View, {
   component,
   directive,

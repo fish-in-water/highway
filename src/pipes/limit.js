@@ -1,11 +1,15 @@
 import {deconstruct, secureHtml, isNumeric} from '../utils';
 
-const limit = function ({$source: {
+/**
+ * limit管道
+ * @param param0 
+ */
+const limit = ({$source: {
     prop: sourceProp, watch: sourceWatch, secure: sourceSecure
-  }, $exp, $scope, $pipeline, $update}) {
+  }, $exp, $scope, $pipeline, $update}) => {
 
   const {prop} = deconstruct($exp);
-  const iterator = function ($value) {
+  const iterator = ($value) => {
     return ($value || []).slice(0, (isNumeric($exp) ? $exp: $scope.$get($exp)) - 0);
   };
 
@@ -13,7 +17,7 @@ const limit = function ({$source: {
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(prop, function () {
+        unwatcher = $scope.$watch(prop, () => {
           $update($pipeline(sourceProp ? secureHtml($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
         });
       },

@@ -11,7 +11,7 @@ const pipes = {};
  * @param name 管道名称
  * @param factory 工厂函数
  */
-const pipe = function (name, factory) {
+const pipe = (name, factory) => {
   pipes[name] = factory;
 };
 
@@ -51,10 +51,10 @@ assign(pipe, {
      * @param value
      * @returns {*}
      */
-    const pipeline = function (value) {
+    const pipeline = (value) => {
 
 			// 触发所有宏指令替换,获得结果字符串
-      return $ctx.$pipes._instances.find(id).reduce(function (value, instance) {
+      return $ctx.$pipes._instances.find(id).reduce((value, instance) => {
         return instance.$iterator(value)
       }, value);
     };
@@ -103,7 +103,7 @@ assign(pipe, {
        * 赋予管道线实例销毁能力
        * 当管道线不需要时候,可主动销毁
        */
-      destroy: function () {
+      destroy: () => {
         const instances = $ctx.$pipes._instances.find(id);
         for (const instance of instances) {
           instance.$unmount && instance.$unmount($ctx);

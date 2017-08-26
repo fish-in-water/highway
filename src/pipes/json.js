@@ -1,6 +1,9 @@
 import {isObject} from '../utils';
 
-const json = function () {
+/**
+ * json管道
+ */
+const json = () => {
   return {
     $iterator($value) {
       if (isObject($value)) {

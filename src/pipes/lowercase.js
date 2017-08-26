@@ -1,4 +1,8 @@
-const lowercase = function () {
+
+/**
+ * lowercase管道
+ */
+const lowercase = () => {
   return {
     $iterator($value) {
       if ($value == null) {

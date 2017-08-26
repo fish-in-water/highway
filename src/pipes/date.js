@@ -1,11 +1,15 @@
 import {isDate, deconstruct, secureHtml} from '../utils';
 
-const date = function ({$source: {
+/**
+ * date管道
+ * @param param0 
+ */
+const date = ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
-  }, $exp, $scope, $pipeline, $update}) {
+  }, $exp, $scope, $pipeline, $update}) => {
 
   const {prop} = deconstruct($exp);
-  const iterator = function ($value) {
+  const iterator = ($value) => {
     if (isDate($value)) {
       let format = $scope.$get(prop);
       const obj = {
@@ -40,7 +44,7 @@ const date = function ({$source: {
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(prop, function () {
+        unwatcher = $scope.$watch(prop, () => {
           $update($pipeline(sourceProp ? secureHtml($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
         });
       },
