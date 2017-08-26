@@ -1,6 +1,6 @@
 import {isObject} from '../utils';
 
-const json = function () {
+const json = () => {
   return {
     $iterator($value) {
       if (isObject($value)) {

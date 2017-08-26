@@ -2,7 +2,7 @@ import {deconstruct, secureHtml} from '../utils';
 import pipe from '../pipe';
 
 
-const bind = function ({$exp, $update, $scope, $ctx}) {
+const bind = ({$exp, $update, $scope, $ctx}) => {
 
   const {prop, watch, secure, pipes} = deconstruct($exp);
 
@@ -20,7 +20,7 @@ const bind = function ({$exp, $update, $scope, $ctx}) {
         pipeline.destroy();
       },
       $iterator($text) {
-        return $text.replace($exp, function () {
+        return $text.replace($exp, () => {
           let value = pipeline($scope.$get(prop));
           value = value == null ? '' : value;
           return secure ? secureHtml(value) : value;

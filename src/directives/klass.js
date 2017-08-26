@@ -1,26 +1,26 @@
 import directive from '../directive';
 import {secureHtml, deconstruct, construct} from '../utils';
 
-const klass = function ({$el, $exp, $arg, $scope, $ctx}) { //$ctx, $el, $arg, $exp
+const klass = ({$el, $exp, $arg, $scope, $ctx}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure} = deconstruct($exp);
   const regexp = /\{([\s\S]+)}\[([\s\S]+)]/;
 
   // mapping
   if (regexp.test(prop)) {
-    const instances = prop.split(';').map(function (klass) {
+    const instances = prop.split(';').map((klass) => {
       if (klass == null || klass === '') {
         return;
       }
 
       const matches = klass.match(regexp);   //{'red': 'bg-red', 'green': 'bf-green'}[bgColor]
       const data = {};
-      matches[1].split(',').forEach(function (kv) {
+      matches[1].split(',').forEach((kv) => {
         const index = kv.indexOf(':');
         const key = kv.substring(0, index).trim().replace(/^['"]|['"]$/g, '');
         const val = kv.substring(index + 1).trim().replace(/^['"]|['"]$/g, '');
         data[key] = val;
       });
-      const watcher = function (newVal, oldVal) {
+      const watcher = (newVal, oldVal) => {
         newVal = secure ? secureHtml(data[newVal]) : data[newVal];
         oldVal = secure ? secureHtml(data[oldVal]) : data[oldVal];
 
@@ -63,12 +63,12 @@ const klass = function ({$el, $exp, $arg, $scope, $ctx}) { //$ctx, $el, $arg, $e
       };
     }
   } else {
-    prop.split(',').map(function (exp) {
+    prop.split(',').map((exp) => {
       if (exp == null || exp === '') {
         return;
       }
 
-      return directive.pattern(construct(exp, watch, secure), $scope, $ctx, function ({newVal, oldVal}) {
+      return directive.pattern(construct(exp, watch, secure), $scope, $ctx, ({newVal, oldVal}) => {
         newVal = secure ? secureHtml(newVal) : newVal;
         oldVal = secure ? secureHtml(oldVal) : oldVal;
 

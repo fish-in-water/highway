@@ -4,7 +4,7 @@ import pipe from '../pipe';
 
 let counter = 0;
 
-const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
+const repeat = ({$ctx, $el, $arg, $exp, $scope, $directive}) => {
   const {prop, watch, secure, pipes} = deconstruct($exp);
 
   const $clone = $el.clone().removeAttr($directive).removeAttr('hi-id');
@@ -21,7 +21,7 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
   //$ctx.$remove($el);
   compiler.remove($el, $ctx);
 
-  const clear = function () {
+  const clear = () => {
     // clear els
     for (const $el of $els) {
       //$ctx.$remove($el);
@@ -36,13 +36,13 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
     scopes = [];
   };
 
-  const watcher = function (value) {
+  const watcher = (value) => {
     clear();
 
     if (value && isArray(value) && value.length) {
       for (let i = 0, ii = value.length; i < ii; i++) {
 
-        (function () {
+        (() => {
           const data = {};
           if (isObject(value[i])) {
             data[itemProp] = assign(value[i], {$index: i});
@@ -99,7 +99,7 @@ const repeat = function ({$ctx, $el, $arg, $exp, $scope, $directive}) {
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(arrayProp, function (value) {
+        unwatcher = $scope.$watch(arrayProp, (value) => {
           watcher(pipeline(value))
         });
       },

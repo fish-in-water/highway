@@ -2,7 +2,7 @@ import {assign} from './utils';
 
 const services = {};
 
-const service = function (name, factory) {
+const service = (name, factory) => {
   services[name] = factory;
 };
 

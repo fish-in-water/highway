@@ -22,12 +22,12 @@ const directives = {};
  * @param factory 工厂函数
  * @param priority 优先级
  */
-const directive = function (name, factory, priority = PRIOR.DEFAULT) {
+const directive = (name, factory, priority = PRIOR.DEFAULT) => {
 
   // 创建优先级
   if (-1 === include(priorities, priority)) {
     priorities.push(priority);
-    priorities.sort(function (prev, next) {
+    priorities.sort((prev, next) => {
       return prev - next;
     });
   }
@@ -49,7 +49,7 @@ assign(directive, {
   },
   compile($el, $scope, $ctx) {
 
-    const handler = function ($el, $ctx, priority) {
+    const handler = ($el, $ctx, priority) => {
 
       // 是否为组件
       if (component.isComponent($el, $ctx)) {
@@ -101,7 +101,7 @@ assign(directive, {
     };
 
     // 根据指令优先级由高至低进行编译
-    $el = priorities.reduce(function ($el, priority) {
+    $el = priorities.reduce(($el, priority) => {
       if (!$el) {
         return null;
       }
@@ -114,7 +114,7 @@ assign(directive, {
   },
   pattern($exp, $scope, $ctx, $update) {
     const {prop, watch, secure, pipes} = deconstruct($exp);
-    const wather = function (newVal, oldVal) {
+    const wather = (newVal, oldVal) => {
       $update({newVal, oldVal, secure}); //secure ? secureHtml(value) : value
     };
     const pipeline = pipe.compile({
@@ -127,7 +127,7 @@ assign(directive, {
       let unwatcher = null;
       return {
         $mount() {
-          unwatcher = $scope.$watch(prop, function (newVal, oldVal) {
+          unwatcher = $scope.$watch(prop, (newVal, oldVal) => {
             wather(pipeline(newVal), pipeline(oldVal));
           });
         },

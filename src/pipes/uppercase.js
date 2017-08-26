@@ -1,4 +1,4 @@
-const uppercase = function () {
+const uppercase = () => {
   return {
     $iterator($value) {
       if ($value == null) {

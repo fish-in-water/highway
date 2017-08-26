@@ -1,7 +1,7 @@
 import {assign} from '../utils';
 
-const find = function ({$ctx}) {
-  $ctx.$find = function (selector) {
+const find = ({$ctx}) => {
+  $ctx.$find = (selector) => {
     return $ctx.$el.find(selector)
   };
   return $ctx.$find;

@@ -1,9 +1,9 @@
 import {assign} from '../utils';
 
-const timeout = function ({$ctx}) {
+const timeout = ({$ctx}) => {
   const ids = [];
 
-  $ctx.$timeout = assign(function (handler, delay) {
+  $ctx.$timeout = assign((handler, delay) => {
     return ids.push(window.setTimeout(handler.bind($ctx), delay));
   }, {
     $clear(id) {

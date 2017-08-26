@@ -1,21 +1,21 @@
 import {MapList} from '../utils';
 
-const event = function ({$ctx}) {
+const event = ({$ctx}) => {
   let events = new MapList;
 
-  $ctx.$on = function (name, handler) {
+  $ctx.$on = (name, handler) => {
     return events.add(name, handler);
   };
 
-  $ctx.$off = function (name, handler) {
+  $ctx.$off = (name, handler) => {
     events.remove(name, handler);
   };
 
-  $ctx.$listenTo = function (obj, name, handler) {
+  $ctx.$listenTo = (obj, name, handler) => {
     return obj.$on(name, handler);
   };
 
-  $ctx.$listenToOnce = function (obj, name, handler) {
+  $ctx.$listenToOnce = (obj, name, handler) => {
     let stopper = null;
     const once = function () {
       handler.apply(this, arguments);
@@ -25,11 +25,11 @@ const event = function ({$ctx}) {
     return stopper = $ctx.$listenTo(obj, name, once);
   };
 
-  $ctx.$stopListening = function (obj, name, handler) {
+  $ctx.$stopListening = (obj, name, handler) => {
     return obj.$off(name, handler);
   };
 
-  $ctx.$fire = function (name, data) {
+  $ctx.$fire = (name, data) => {
     const handlers = events.find(name);
     for (const handler of handlers) {
       if (handler.call($ctx, data) === false) {
@@ -38,7 +38,7 @@ const event = function ({$ctx}) {
     }
   };
 
-  $ctx.$emit = function (name, data) {
+  $ctx.$emit = (name, data) => {
     const parent = $ctx.$parent;
     if (parent) {
       if (parent.$fire(name, data) === false) {
@@ -48,7 +48,7 @@ const event = function ({$ctx}) {
     }
   };
 
-  $ctx.$broadcast = function (name, data) {
+  $ctx.$broadcast = (name, data) => {
     for (const child of $ctx.$components._instances.values()) {
       if (child.$fire(name, data) === false) {
         break;
@@ -67,7 +67,7 @@ const event = function ({$ctx}) {
     $listenTo: $ctx.$listenTo,
     $listenToOnce: $ctx.listenToOnce,
     $$stopListening: $ctx.$stopListening,
-    $unmount: function () {
+    $unmount: () => {
       events.clear();
       events = null;
     }

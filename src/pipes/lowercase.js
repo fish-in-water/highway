@@ -1,4 +1,4 @@
-const lowercase = function () {
+const lowercase = () => {
   return {
     $iterator($value) {
       if ($value == null) {

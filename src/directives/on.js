@@ -1,6 +1,6 @@
 
-const on = function ({$ctx, $el, $arg, $exp}) { //$ctx, $el, $arg, $exp
-  const handler = function ($ev) {
+const on = ({$ctx, $el, $arg, $exp}) => { //$ctx, $el, $arg, $exp
+  const handler = ($ev) => {
     $ctx[$exp]($el, $ev);
   };
 

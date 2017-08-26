@@ -20,7 +20,7 @@ const components = {};
  * @param name 组件名称
  * @param View 视图
  */
-const component = function (name, View) {
+const component = (name, View) => {
   components[name.toLowerCase()] = View;
 };
 
@@ -154,7 +154,7 @@ assign(component, {
     const id = element.getId($el);
     if (id != null) {
 
-      $ctx.$components._instances.find(id).forEach(function (instance) {
+      $ctx.$components._instances.find(id).forEach((instance) => {
         instance.$destroy();
 
         // 删除引用
@@ -177,7 +177,7 @@ assign(component, {
   destroy($ctx) {
 
     // 所有实例进行销毁
-    $ctx.$components._instances.values().forEach(function (instance) {
+    $ctx.$components._instances.values().forEach((instance) => {
       instance.$destroy();
     });
   }

@@ -1,11 +1,11 @@
 import {deconstruct, secureHtml, isNumeric} from '../utils';
 
-const number = function ({$source: {
+const number = ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
-  }, $exp, $scope, $pipeline, $update}) {
+  }, $exp, $scope, $pipeline, $update}) => {
 
   const {prop} = deconstruct($exp);
-  const iterator = function ($value) {
+  const iterator = ($value) => {
     if (isNumeric($value)) {
       return ($value).toFixed($scope.$get($exp) - 0);
     } else {
@@ -17,7 +17,7 @@ const number = function ({$source: {
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(prop, function () {
+        unwatcher = $scope.$watch(prop, () => {
           $update($pipeline(sourceProp ? secureHtml($scope.$get(sourceProp)) : $scope.$get(sourceProp)));
         });
       },

@@ -1,9 +1,9 @@
 import pipe from '../../../pipe';
 import {deconstruct, secureHtml} from '../../../utils';
 
-const radio = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
+const radio = ({$ctx, $el, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
-  const watcher = function (value) {
+  const watcher = (value) => {
 
     if (value + '' === $el.val()) {
       //$el.attr('checked', true);
@@ -12,7 +12,7 @@ const radio = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
       $el[0].checked = false;
     }
   };
-  const inputer = function () {
+  const inputer = () => {
     $scope.$set(prop, $el.val());
   };
   const pipeline = pipe.compile({
@@ -30,7 +30,7 @@ const radio = function ({$ctx, $el, $exp, $scope}) { //$ctx, $el, $arg, $exp
     let unwatcher = null;
     return {
       $mount() {
-        unwatcher = $scope.$watch(prop, function (value) {
+        unwatcher = $scope.$watch(prop, (value) => {
           watcher(pipeline(value));
         });
         $el.on('change', inputer);

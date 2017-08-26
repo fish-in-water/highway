@@ -1,13 +1,13 @@
 //import $ from 'Zepto';
 
-export function noop() {}
+export const noop = () => {};
 
 let counter = 0;
-export function unique(prefix) {
+export const unique = (prefix) => {
   return `${prefix || ''}${counter++}`;
 }
 
-export const assign = function () {
+export const assign = function() {
   const args = Array.prototype.slice.call(arguments);
   if (typeof jQuery != 'undefined') {
     const deep = args[args.length - 1];
@@ -16,10 +16,10 @@ export const assign = function () {
       args.unshift(deep);
     }
   }
-  return $.extend.apply(this, args);
+  return $.extend.apply(null, args);
 };
 
-export function include(arr, val) {
+export const include = (arr, val) => {
   for (var i = 0, ii = arr.length; i < ii; i++) {
     if (arr[i] === val) {
       return i;
@@ -31,24 +31,24 @@ export function include(arr, val) {
 
 export const isPlainObject = $.isPlainObject;
 
-export function isDate(val) {
+export const isDate = (val) => {
   return val instanceof Date;
 }
 
-export function isArray(val) {
+export const isArray = (val) => {
   return Object.prototype.toString.call(val) === '[object Array]';
 }
 
-export function isObject(val) {
+export const isObject = (val) => {
   return val instanceof Object;
   //return Object.prototype.toString.call(obj) === '[object Object]';
 }
 
-export function isNumeric(val) {
+export const isNumeric = (val) => {
   return !isNaN(val);
 }
 
-export function isTrue(val) {
+export const isTrue = (val) => {
   return !(
     val === false ||
     val === 'false' ||
@@ -57,7 +57,7 @@ export function isTrue(val) {
     (isNumeric(val) && !(val - 0)));
 }
 
-export function isEqual(val0, val1) {
+export const isEqual = (val0, val1) => {
   if (!isObject(val0) && !isObject(val1)) {
     return val0 === val1;
   }
@@ -77,7 +77,7 @@ export function isEqual(val0, val1) {
   return false;
 }
 
-export function extend(options) {
+export const extend = function (options) {
   const Parent = this;
   class Child extends Parent {
     constructor(options) {
@@ -88,12 +88,12 @@ export function extend(options) {
   return Child;
 }
 
-export function inject(handler, options) {
+export const inject = (handler, options) => {
   const deps = handler.toString().match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1].replace(/ /g, '').split(',');
-  const args = (deps || []).map(function (dep) {
+  const args = (deps || []).map((dep) => {
     return options[dep];
   });
-  return function () {
+  return () => {
     return handler.apply(this, args);
   }
 }
@@ -168,7 +168,7 @@ export class MapList {
   }
 }
 
-export function deconstruct(exp) {
+export const deconstruct = (exp) => {
 
 
   /*
@@ -178,11 +178,11 @@ export function deconstruct(exp) {
     .replace(/[\}]{2,3}$/gi, '')
     .replace(/[\]]{2,3}$/gi, '')
     .split('|')
-    .map(function (attr) {
+    .map((attr) => {
       return attr.trim();
     });
 
-  const exps = exp.replace(/[\[\]\{\}]/gi, '').split('|').map(function (attr) {
+  const exps = exp.replace(/[\[\]\{\}]/gi, '').split('|').map((attr) => {
     return attr.trim();
   });
   */
@@ -211,7 +211,7 @@ export function deconstruct(exp) {
     secure = false;
   }
 
-  const exps = exp.split('|').map(function (attr) {
+  const exps = exp.split('|').map((attr) => {
       return attr.trim();
   });
 
@@ -223,7 +223,7 @@ export function deconstruct(exp) {
   }
 }
 
-export function construct(exp, watch, secure) {
+export const construct = (exp, watch, secure) => {
   exp = (exp || '').trim();
 
   if (watch) {
@@ -241,7 +241,7 @@ export function construct(exp, watch, secure) {
   }
 }
 
-export function secureHtml(html) {
+export const secureHtml = (html) => {
   if (null == html || '' == html) {
     return html;
   }
@@ -258,7 +258,7 @@ export function secureHtml(html) {
   }
 }
 
-export function secureUri(html) {
+export const secureUri = (html) => {
   if (null == html || '' == html) {
     return html;
   }
@@ -274,7 +274,7 @@ export function secureUri(html) {
   }
 }
 
-export function getAttrs($el) {
+export const getAttrs = ($el) => {
   const attrs = {};
   const node = $el[0];
   for (const attr in node.attributes) {

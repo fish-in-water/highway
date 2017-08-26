@@ -12,11 +12,11 @@ const SYMBOLS = {
   CONTAINS: '*='
 };
 
-const filter = function ({$source: {
+const filter = ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
-  }, $exp, $scope, $pipeline, $update}) {
+  }, $exp, $scope, $pipeline, $update}) => {
 
-  const conds = $exp.split(/or/i).map(function (exp) {
+  const conds = $exp.split(/or/i).map((exp) => {
     const matches = exp.trim().match(/(\S+)\s*([=!^$*]+)\s*(\S+)/);
     return {
       field: deconstruct(matches[1]),
@@ -25,7 +25,7 @@ const filter = function ({$source: {
     }
   });
 
-  const satisfy = function (obj) {
+  const satisfy = (obj) => {
     for (const {field: {prop: fieldProp},
       symbol,
       value: {prop: valueProp}} of conds) {
@@ -59,7 +59,7 @@ const filter = function ({$source: {
     return false;
   };
 
-  const iterator = function ($value) {
+  const iterator = ($value) => {
     const result = [];
     for (const item of $value || []) {
       satisfy(item) && result.push(item);
@@ -74,11 +74,11 @@ const filter = function ({$source: {
         for (const {field: {prop: fieldProp},
           value: {prop: valueProp}} of conds) {
 
-          unwatchers.push($scope.$watch(fieldProp, function () {
+          unwatchers.push($scope.$watch(fieldProp, () => {
             $update($pipeline($scope.$get(sourceProp)));
           }));
 
-          unwatchers.push($scope.$watch(valueProp, function () {
+          unwatchers.push($scope.$watch(valueProp, () => {
             $update($pipeline($scope.$get(sourceProp)));
           }));
         }
