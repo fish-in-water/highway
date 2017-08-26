@@ -1,3 +1,7 @@
+
+/**
+ * lowercase管道
+ */
 const lowercase = () => {
   return {
     $iterator($value) {

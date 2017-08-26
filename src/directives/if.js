@@ -3,6 +3,10 @@ import compiler from '../compiler';
 import element from '../element';
 import directive from '../directive';
 
+/**
+ * if指令
+ * @param param0 
+ */
 const ef = ({$ctx, $el, $arg, $directive, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch} = deconstruct($exp);
   const $clone = $el.clone().removeAttr($directive);

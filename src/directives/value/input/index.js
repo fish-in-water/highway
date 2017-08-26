@@ -5,6 +5,10 @@ import password from './password';
 import radio from './radio';
 import checkbox from './checkbox';
 
+/**
+ * value指令:input
+ * @param param0 
+ */
 const input = ({$ctx, $el, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   switch (($el.attr('type') || '').toLowerCase()) {
     case 'text':

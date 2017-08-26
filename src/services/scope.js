@@ -1,6 +1,10 @@
 import {assign, isArray, isObject, isDate, isEqual, secureHtml, MapList} from '../utils';
 import pipe from '../pipe';
 
+/**
+ * scope服务
+ * @param param0 
+ */
 const scope = ({$ctx}) => {
   const factory = (obj) => {
     let series = {};

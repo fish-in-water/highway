@@ -12,6 +12,10 @@ const SYMBOLS = {
   CONTAINS: '*='
 };
 
+/**
+ * filter管道
+ * @param param0 
+ */
 const filter = ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
   }, $exp, $scope, $pipeline, $update}) => {

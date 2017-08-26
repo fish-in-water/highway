@@ -1,5 +1,9 @@
 import {assign} from '../utils';
 
+/**
+ * timeout服务
+ * @param param0 
+ */
 const timeout = ({$ctx}) => {
   const ids = [];
 

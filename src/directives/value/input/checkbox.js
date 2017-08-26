@@ -1,6 +1,10 @@
 import pipe from '../../../pipe';
 import {deconstruct, secureHtml} from '../../../utils';
 
+/**
+ * value指令:checkbox
+ * @param param0 
+ */
 const checkbox = ({$ctx, $el, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
 

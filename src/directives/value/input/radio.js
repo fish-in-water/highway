@@ -1,6 +1,10 @@
 import pipe from '../../../pipe';
 import {deconstruct, secureHtml} from '../../../utils';
 
+/**
+ * value指令:radio
+ * @param param0 
+ */
 const radio = ({$ctx, $el, $exp, $scope}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure, pipes} = deconstruct($exp);
   const watcher = (value) => {

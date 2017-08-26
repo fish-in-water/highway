@@ -4,6 +4,10 @@ import pipe from '../pipe';
 
 let counter = 0;
 
+/**
+ * repeat指令
+ * @param param0 
+ */
 const repeat = ({$ctx, $el, $arg, $exp, $scope, $directive}) => {
   const {prop, watch, secure, pipes} = deconstruct($exp);
 

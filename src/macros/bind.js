@@ -1,7 +1,10 @@
 import {deconstruct, secureHtml} from '../utils';
 import pipe from '../pipe';
 
-
+/**
+ * bind宏
+ * @param param0 
+ */
 const bind = ({$exp, $update, $scope, $ctx}) => {
 
   const {prop, watch, secure, pipes} = deconstruct($exp);

@@ -1,6 +1,10 @@
 import {assign} from '../utils';
 
-const timeout = ({$ctx}) => {
+/**
+ * interval服务
+ * @param {*} param0 
+ */
+const interval = ({$ctx}) => {
   const ids = [];
 
   $ctx.$interval = assign((handler, delay) => {
@@ -19,4 +23,4 @@ const timeout = ({$ctx}) => {
   return $ctx.$interval;
 };
 
-export default timeout;
+export default interval;

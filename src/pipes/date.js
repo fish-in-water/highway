@@ -1,5 +1,9 @@
 import {isDate, deconstruct, secureHtml} from '../utils';
 
+/**
+ * date管道
+ * @param param0 
+ */
 const date = ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
   }, $exp, $scope, $pipeline, $update}) => {

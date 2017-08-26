@@ -1,5 +1,9 @@
 import {deconstruct, secureHtml, isNumeric} from '../utils';
 
+/**
+ * number管道
+ * @param param0 
+ */
 const number = ({$source: {
   prop: sourceProp, watch: sourceWatch, secure: sourceSecure
   }, $exp, $scope, $pipeline, $update}) => {

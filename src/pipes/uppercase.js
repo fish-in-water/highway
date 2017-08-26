@@ -1,3 +1,6 @@
+/**
+ * uppercase管道
+ */
 const uppercase = () => {
   return {
     $iterator($value) {

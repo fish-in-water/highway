@@ -1,6 +1,10 @@
 import directive from '../directive';
 import {secureHtml, deconstruct, construct} from '../utils';
 
+/**
+ * class指令
+ * @param param0 
+ */
 const klass = ({$el, $exp, $arg, $scope, $ctx}) => { //$ctx, $el, $arg, $exp
   const {prop, watch, secure} = deconstruct($exp);
   const regexp = /\{([\s\S]+)}\[([\s\S]+)]/;

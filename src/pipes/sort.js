@@ -1,5 +1,9 @@
 import {deconstruct, secureHtml} from '../utils';
 
+/**
+ * sort管道
+ * @param param0 
+ */
 const sort = ({$source: {
     prop: sourceProp, watch: sourceWatch, secure: sourceSecure
   }, $exp, $scope, $pipeline, $update}) => {

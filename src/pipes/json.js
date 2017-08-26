@@ -1,5 +1,8 @@
 import {isObject} from '../utils';
 
+/**
+ * json管道
+ */
 const json = () => {
   return {
     $iterator($value) {
