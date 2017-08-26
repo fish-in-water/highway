@@ -1,5 +1,9 @@
 import {MapList} from '../utils';
 
+/**
+ * 事件服务
+ * @param {*} param0 
+ */
 const event = ({$ctx}) => {
   let events = new MapList;
 
